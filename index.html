@@ -165,13 +165,30 @@
         
         @media (max-width: 768px) {
             #controls {
-                max-width: 200px;
-                padding: 10px;
+                max-width: 180px;
+                padding: 8px;
+                font-size: 12px;
+            }
+            
+            #controls h3 {
+                font-size: 14px;
+                margin-bottom: 8px;
             }
             
             .move-btn {
-                padding: 10px;
-                font-size: 16px;
+                padding: 8px;
+                font-size: 14px;
+            }
+            
+            .instruction {
+                font-size: 10px;
+                margin-top: 5px;
+            }
+            
+            button {
+                padding: 6px 12px;
+                font-size: 12px;
+                margin-top: 5px;
             }
             
             #goal {
@@ -179,7 +196,26 @@
             }
             
             #status {
-                font-size: 12px;
+                font-size: 11px;
+                padding: 8px;
+                bottom: 5px;
+                left: 5px;
+                right: 5px;
+            }
+            
+            #guide {
+                padding: 20px;
+                max-width: 90vw;
+                max-height: 85vh;
+                font-size: 14px;
+            }
+            
+            #guide h2 {
+                font-size: 18px;
+            }
+            
+            #guide h3 {
+                font-size: 16px;
             }
         }
     </style>
@@ -304,9 +340,18 @@
             let canvas = createCanvas(windowWidth, windowHeight);
             canvas.parent(document.body);
             
-            centerX = width / 2;
-            centerY = height / 2;
-            pentagonRadius = min(width, height) * 0.25;
+            // Adjust center and radius for mobile
+            if (width < 768) {
+                // Mobile: position pentagon more towards center-bottom
+                centerX = width / 2;
+                centerY = height * 0.55; // Move down a bit
+                pentagonRadius = min(width * 0.35, (height - 200) * 0.25); // Smaller radius, account for UI
+            } else {
+                // Desktop
+                centerX = width / 2;
+                centerY = height / 2;
+                pentagonRadius = min(width, height) * 0.25;
+            }
             
             // Calculate vertex positions
             vertexPositions = [];
@@ -556,9 +601,19 @@
         
         function windowResized() {
             resizeCanvas(windowWidth, windowHeight);
-            centerX = width / 2;
-            centerY = height / 2;
-            pentagonRadius = min(width, height) * 0.25;
+            
+            // Adjust center and radius for mobile
+            if (width < 768) {
+                // Mobile: position pentagon more towards center-bottom
+                centerX = width / 2;
+                centerY = height * 0.55; // Move down a bit
+                pentagonRadius = min(width * 0.35, (height - 200) * 0.25); // Smaller radius, account for UI
+            } else {
+                // Desktop
+                centerX = width / 2;
+                centerY = height / 2;
+                pentagonRadius = min(width, height) * 0.25;
+            }
             
             // Recalculate vertex positions
             vertexPositions = [];
