@@ -342,10 +342,10 @@
             
             // Adjust center and radius for mobile
             if (width < 768) {
-                // Mobile: position pentagon more towards center-bottom
+                // Mobile: position pentagon much lower to avoid controls
                 centerX = width / 2;
-                centerY = height * 0.55; // Move down a bit
-                pentagonRadius = min(width * 0.35, (height - 200) * 0.25); // Smaller radius, account for UI
+                centerY = height * 0.7; // Move down significantly
+                pentagonRadius = min(width * 0.3, (height - 300) * 0.2); // Smaller radius
             } else {
                 // Desktop
                 centerX = width / 2;
@@ -604,10 +604,10 @@
             
             // Adjust center and radius for mobile
             if (width < 768) {
-                // Mobile: position pentagon more towards center-bottom
+                // Mobile: position pentagon much lower to avoid controls
                 centerX = width / 2;
-                centerY = height * 0.55; // Move down a bit
-                pentagonRadius = min(width * 0.35, (height - 200) * 0.25); // Smaller radius, account for UI
+                centerY = height * 0.7; // Move down significantly
+                pentagonRadius = min(width * 0.3, (height - 300) * 0.2); // Smaller radius
             } else {
                 // Desktop
                 centerX = width / 2;
