@@ -54,6 +54,10 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
         }
         
         .move-btn:active {
@@ -105,6 +109,10 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
         }
         
         button:hover {
@@ -204,10 +212,14 @@
             }
             
             #guide {
-                padding: 20px;
-                max-width: 90vw;
-                max-height: 85vh;
+                padding: 15px;
+                max-width: 95vw;
+                max-height: 90vh;
                 font-size: 14px;
+                top: 5%;
+                left: 50%;
+                transform: translateX(-50%);
+                position: fixed;
             }
             
             #guide h2 {
@@ -516,16 +528,24 @@
         }
         
         function setMoveType(type) {
+            console.log('Setting move type to:', type);
             currentMoveType = type;
             
             // Update button styles
             document.querySelectorAll('.move-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            
+            // Find the button that was clicked and make it active
+            document.querySelectorAll('.move-btn').forEach(btn => {
+                if (btn.textContent.trim() === type) {
+                    btn.classList.add('active');
+                }
+            });
             
             // Update status
             document.getElementById('moveInfo').textContent = `Move ${type} selected`;
+            console.log('Move type set to:', currentMoveType);
         }
         
         function resetGame() {
@@ -632,10 +652,14 @@
         // Toggle guide function
         function toggleGuide() {
             let guide = document.getElementById('guide');
-            if (guide.style.display === 'none') {
+            console.log('Toggle guide called, current display:', guide.style.display);
+            
+            if (guide.style.display === 'none' || guide.style.display === '') {
                 guide.style.display = 'block';
+                console.log('Showing guide');
             } else {
                 guide.style.display = 'none';
+                console.log('Hiding guide');
             }
         }
     </script>
