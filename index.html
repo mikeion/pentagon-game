@@ -171,11 +171,19 @@
             border-left: 3px solid #e94560;
         }
         
+        .mobile-only {
+            display: none;
+        }
+        
         @media (max-width: 768px) {
             #controls {
                 max-width: 180px;
                 padding: 8px;
                 font-size: 12px;
+            }
+            
+            .mobile-only {
+                display: block;
             }
             
             #controls h3 {
@@ -201,6 +209,11 @@
             
             #goal {
                 display: none;
+            }
+            
+            #goal h3 {
+                font-size: 12px;
+                margin: 0 0 5px 0;
             }
             
             #status {
@@ -248,6 +261,12 @@
         <button onclick="resetGame()">Reset</button>
         <button onclick="generateNewGoal()">New Goal</button>
         <button onclick="toggleGuide()">Show Guide</button>
+        
+        <!-- Goal display for mobile -->
+        <div id="mobileGoal" class="mobile-only">
+            <h3 style="margin: 10px 0 5px 0; font-size: 12px;">Goal:</h3>
+            <div id="mobileGoalDisplay" style="font-size: 10px; line-height: 1.2;"></div>
+        </div>
     </div>
     
     <div id="goal">
@@ -606,6 +625,12 @@
                 html += `V${i}: ${v.real}${sign}${v.imag}i<br>`;
             }
             document.getElementById('goalDisplay').innerHTML = html;
+            
+            // Also update mobile goal display
+            let mobileGoalDisplay = document.getElementById('mobileGoalDisplay');
+            if (mobileGoalDisplay) {
+                mobileGoalDisplay.innerHTML = html;
+            }
         }
         
         function checkWin() {
