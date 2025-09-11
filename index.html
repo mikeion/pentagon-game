@@ -424,11 +424,19 @@
                 strokeWeight(3);
                 circle(pos.x, pos.y, 60);
                 
-                // Draw complex number
-                fill(255);
+                // Draw vertex label (V0, V1, etc.)
+                fill(233, 69, 96);
                 noStroke();
                 textAlign(CENTER, CENTER);
+                textSize(10);
+                textStyle(BOLD);
+                text(`V${i}`, pos.x - 25, pos.y - 25);
+                
+                // Draw complex number
+                fill(255);
+                textAlign(CENTER, CENTER);
                 textSize(14);
+                textStyle(NORMAL);
                 let sign = v.imag >= 0 ? '+' : '';
                 text(`${v.real}${sign}${v.imag}i`, pos.x, pos.y);
             }
@@ -648,6 +656,43 @@
         
         // Prevent context menu on right click
         document.addEventListener('contextmenu', e => e.preventDefault());
+        
+        // Add touch event listeners for mobile buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Move type buttons
+            document.querySelectorAll('.move-btn').forEach(btn => {
+                btn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const moveType = this.textContent.trim();
+                    setMoveType(moveType);
+                });
+                
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const moveType = this.textContent.trim();
+                    setMoveType(moveType);
+                });
+            });
+            
+            // Other buttons
+            document.addEventListener('touchstart', function(e) {
+                if (e.target.textContent === 'Show Guide') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleGuide();
+                } else if (e.target.textContent === 'Reset') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    resetGame();
+                } else if (e.target.textContent === 'New Goal') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    generateNewGoal();
+                }
+            });
+        });
         
         // Toggle guide function
         function toggleGuide() {
