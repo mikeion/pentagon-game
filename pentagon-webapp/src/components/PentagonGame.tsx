@@ -40,8 +40,12 @@ export default function PentagonGame() {
   });
 
   const generateNewGoal = useCallback(() => {
-    // Start from the CURRENT state and apply moves to create a goal
-    const goalVertices = gameState.vertices.map(v => ({ ...v }));
+    // Start from the INITIAL state and apply moves to create a goal
+    const initialVertices = [
+      { real: 2, imag: 4 }, { real: 2, imag: 0 }, { real: 2, imag: 2 }, 
+      { real: 3, imag: 4 }, { real: 1, imag: 3 }
+    ];
+    const goalVertices = initialVertices.map(v => ({ ...v }));
     
     // Apply 3-7 random moves to create a solvable goal
     const numMoves = Math.floor(Math.random() * 5) + 3;
@@ -73,7 +77,7 @@ export default function PentagonGame() {
       goalVertices,
       isWon: false,
     }));
-  }, [gameState.vertices]);
+  }, []); // No dependencies - goal only changes when explicitly called
 
   const applyMove = useCallback((vertexIndex: number, operation: 'add' | 'subtract' = 'add') => {
     if (vertexIndex < 0 || vertexIndex > 4) return;
