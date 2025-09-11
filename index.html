@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pentagon Complex Number Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            touch-action: none;
+        }
+        
+        main {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(22, 22, 44, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+        
+        .move-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .move-btn {
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #0f3460;
+            background: #16213e;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .move-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .move-btn.active {
+            background: #e94560;
+            border-color: #e94560;
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+        }
+        
+        #status {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: rgba(22, 22, 44, 0.9);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+            z-index: 10;
+        }
+        
+        #goal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(22, 22, 44, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 200px;
+            z-index: 10;
+        }
+        
+        .instruction {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 10px;
+        }
+        
+        button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #0f3460;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #533483;
+        }
+        
+        #guide {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(22, 22, 44, 0.98);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        #guide h2 {
+            color: #e94560;
+            margin: 0 0 20px 0;
+        }
+        
+        #guide h3 {
+            color: #4ade80;
+            margin: 20px 0 10px 0;
+            border-bottom: 1px solid #4ade80;
+            padding-bottom: 5px;
+        }
+        
+        #guide ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        #guide li {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+        
+        .move-explanation {
+            background: rgba(15, 52, 96, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .move-item {
+            margin: 10px 0;
+            padding: 8px;
+            background: rgba(83, 52, 131, 0.2);
+            border-radius: 5px;
+            border-left: 3px solid #e94560;
+        }
+        
+        @media (max-width: 768px) {
+            #controls {
+                max-width: 200px;
+                padding: 10px;
+            }
+            
+            .move-btn {
+                padding: 10px;
+                font-size: 16px;
+            }
+            
+            #goal {
+                display: none;
+            }
+            
+            #status {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <h3 style="margin: 0 0 10px 0;">Select Move Type</h3>
+        <div class="move-buttons">
+            <button class="move-btn active" onclick="setMoveType('A')" title="Add 1+i to vertex, -1-i to neighbors">A</button>
+            <button class="move-btn" onclick="setMoveType('B')" title="Add -1+i to vertex, -i to neighbors">B</button>
+            <button class="move-btn" onclick="setMoveType('C')" title="Add 1-i to vertex, +1 to neighbors">C</button>
+            <button class="move-btn" onclick="setMoveType('D')" title="Add 1-i to vertex, +i to neighbors">D</button>
+        </div>
+        <div class="instruction">
+            <strong>Click/Tap</strong>: Add<br>
+            <strong>Right-click/Long-press</strong>: Subtract
+        </div>
+        <button onclick="resetGame()">Reset</button>
+        <button onclick="generateNewGoal()">New Goal</button>
+        <button onclick="toggleGuide()">Show Guide</button>
+    </div>
+    
+    <div id="goal">
+        <h3 style="margin: 0 0 10px 0;">Goal Configuration</h3>
+        <div id="goalDisplay"></div>
+    </div>
+    
+    <div id="status">
+        <span id="moveInfo">Move A selected</span> | 
+        <span id="winStatus">Keep playing!</span>
+    </div>
+    
+    <div id="guide" style="display: none;">
+        <button onclick="toggleGuide()" style="float: right; background: transparent; border: none; color: white; font-size: 20px; cursor: pointer;">×</button>
+        <h2>How to Play Pentagon Complex Numbers</h2>
+        
+        <h3>Goal</h3>
+        <p>Transform the pentagon's complex numbers to match the goal configuration.</p>
+        
+        <h3>The Moves</h3>
+        <div class="move-explanation">
+            <div class="move-item">
+                <strong>Move A:</strong> Adds 1+i to clicked vertex, subtracts 1+i from neighbors
+            </div>
+            <div class="move-item">
+                <strong>Move B:</strong> Adds -1+i to clicked vertex, subtracts i from neighbors
+            </div>
+            <div class="move-item">
+                <strong>Move C:</strong> Adds 1-i to clicked vertex, adds 1 to neighbors
+            </div>
+            <div class="move-item">
+                <strong>Move D:</strong> Adds 1-i to clicked vertex, adds i to neighbors
+            </div>
+        </div>
+        
+        <h3>Controls</h3>
+        <ul>
+            <li><strong>Select a move type</strong> (A, B, C, or D)</li>
+            <li><strong>Left-click a vertex</strong> to add the move's values</li>
+            <li><strong>Right-click a vertex</strong> to subtract the move's values</li>
+            <li>Each vertex is connected to its 2 adjacent neighbors</li>
+        </ul>
+        
+        <h3>Tips</h3>
+        <ul>
+            <li>Move A and Move C are opposites (they cancel each other)</li>
+            <li>Move B and Move D are opposites (they cancel each other)</li>
+            <li>Complex numbers are shown as a+bi (real + imaginary)</li>
+            <li>Watch how moves affect both the clicked vertex AND its neighbors</li>
+        </ul>
+        
+        <p style="margin-top: 20px; font-size: 12px; color: #888;">
+            Based on mathematical research into group actions on complex number configurations.
+            There are exactly 162 unique orbital configurations possible!
+        </p>
+    </div>
+
+    <script>
+        // Wait for p5.js to load
+        window.addEventListener('load', () => {
+            console.log('Page loaded, p5.js should be ready');
+        });
+        
+        // Game state
+        let vertices = [
+            {real: 2, imag: 4},  // vertex 0
+            {real: 2, imag: 0},  // vertex 1
+            {real: 2, imag: 2},  // vertex 2
+            {real: 3, imag: 4},  // vertex 3
+            {real: 1, imag: 3}   // vertex 4
+        ];
+        
+        let goalVertices = [];
+        let currentMoveType = 'A';
+        let pentagonRadius;
+        let centerX, centerY;
+        let vertexPositions = [];
+        let selectedVertex = -1;
+        let animationFrames = 0;
+        let longPressTimer;
+        let isLongPress = false;
+        
+        // Adjacency for pentagon (each vertex connects to its 2 neighbors)
+        const adjacency = {
+            0: [1, 4],
+            1: [0, 2],
+            2: [1, 3],
+            3: [2, 4],
+            4: [3, 0]
+        };
+        
+        // Move definitions
+        const moves = {
+            'A': {vertex: {real: 1, imag: 1}, adjacent: {real: -1, imag: -1}},
+            'B': {vertex: {real: -1, imag: 1}, adjacent: {real: 0, imag: -1}},
+            'C': {vertex: {real: 1, imag: -1}, adjacent: {real: 1, imag: 0}},
+            'D': {vertex: {real: 1, imag: -1}, adjacent: {real: 0, imag: 1}}
+        };
+        
+        function setup() {
+            // Create canvas and attach to body
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent(document.body);
+            
+            centerX = width / 2;
+            centerY = height / 2;
+            pentagonRadius = min(width, height) * 0.25;
+            
+            // Calculate vertex positions
+            vertexPositions = [];
+            for (let i = 0; i < 5; i++) {
+                let angle = -PI/2 + (TWO_PI * i / 5);
+                vertexPositions.push({
+                    x: centerX + cos(angle) * pentagonRadius,
+                    y: centerY + sin(angle) * pentagonRadius
+                });
+            }
+            
+            generateNewGoal();
+            
+            // Disable right-click context menu
+            canvas.canvas.addEventListener('contextmenu', e => e.preventDefault());
+        }
+        
+        function draw() {
+            background(26, 26, 46);
+            
+            // Draw pentagon edges
+            stroke(15, 52, 96);
+            strokeWeight(2);
+            noFill();
+            beginShape();
+            for (let pos of vertexPositions) {
+                vertex(pos.x, pos.y);
+            }
+            endShape(CLOSE);
+            
+            // Draw additional edges (complete graph)
+            stroke(15, 52, 96, 100);
+            strokeWeight(1);
+            for (let i = 0; i < 5; i++) {
+                for (let j = i + 2; j < 5; j++) {
+                    if (j - i !== 1 && !(i === 0 && j === 4)) {
+                        line(vertexPositions[i].x, vertexPositions[i].y,
+                             vertexPositions[j].x, vertexPositions[j].y);
+                    }
+                }
+            }
+            
+            // Draw vertices
+            for (let i = 0; i < 5; i++) {
+                let v = vertices[i];
+                let pos = vertexPositions[i];
+                
+                // Highlight selected vertex
+                if (i === selectedVertex) {
+                    fill(233, 69, 96, 100);
+                    noStroke();
+                    circle(pos.x, pos.y, 80);
+                }
+                
+                // Draw vertex circle
+                fill(22, 33, 62);
+                stroke(83, 52, 131);
+                strokeWeight(3);
+                circle(pos.x, pos.y, 60);
+                
+                // Draw complex number
+                fill(255);
+                noStroke();
+                textAlign(CENTER, CENTER);
+                textSize(14);
+                let sign = v.imag >= 0 ? '+' : '';
+                text(`${v.real}${sign}${v.imag}i`, pos.x, pos.y);
+            }
+            
+            // Animate selection
+            if (selectedVertex >= 0) {
+                animationFrames++;
+                if (animationFrames > 30) {
+                    selectedVertex = -1;
+                    animationFrames = 0;
+                }
+            }
+            
+            checkWin();
+        }
+        
+        function mousePressed() {
+            handlePress(mouseX, mouseY);
+            
+            // Start long press timer for mobile
+            isLongPress = false;
+            longPressTimer = setTimeout(() => {
+                isLongPress = true;
+            }, 500);
+            
+            return false; // Prevent default
+        }
+        
+        function mouseReleased() {
+            clearTimeout(longPressTimer);
+            
+            if (mouseButton === RIGHT || isLongPress) {
+                handleRightClick(mouseX, mouseY);
+            } else {
+                handleLeftClick(mouseX, mouseY);
+            }
+            
+            isLongPress = false;
+            return false;
+        }
+        
+        function handlePress(x, y) {
+            // Find clicked vertex
+            for (let i = 0; i < 5; i++) {
+                let pos = vertexPositions[i];
+                let d = dist(x, y, pos.x, pos.y);
+                if (d < 40) {
+                    selectedVertex = i;
+                    animationFrames = 0;
+                    break;
+                }
+            }
+        }
+        
+        function handleLeftClick(x, y) {
+            // Find clicked vertex and apply move
+            for (let i = 0; i < 5; i++) {
+                let pos = vertexPositions[i];
+                let d = dist(x, y, pos.x, pos.y);
+                if (d < 40) {
+                    applyMove(i, 'add');
+                    break;
+                }
+            }
+        }
+        
+        function handleRightClick(x, y) {
+            // Find clicked vertex and apply move (subtract)
+            for (let i = 0; i < 5; i++) {
+                let pos = vertexPositions[i];
+                let d = dist(x, y, pos.x, pos.y);
+                if (d < 40) {
+                    applyMove(i, 'subtract');
+                    break;
+                }
+            }
+        }
+        
+        function applyMove(vertexIndex, operation) {
+            let move = moves[currentMoveType];
+            let multiplier = operation === 'subtract' ? -1 : 1;
+            
+            console.log(`Applying move ${currentMoveType} to vertex ${vertexIndex} (${operation})`);
+            console.log('Before:', JSON.parse(JSON.stringify(vertices)));
+            
+            // Apply to selected vertex
+            vertices[vertexIndex].real += move.vertex.real * multiplier;
+            vertices[vertexIndex].imag += move.vertex.imag * multiplier;
+            
+            // Apply to adjacent vertices
+            for (let adj of adjacency[vertexIndex]) {
+                vertices[adj].real += move.adjacent.real * multiplier;
+                vertices[adj].imag += move.adjacent.imag * multiplier;
+            }
+            
+            console.log('After:', JSON.parse(JSON.stringify(vertices)));
+        }
+        
+        function setMoveType(type) {
+            currentMoveType = type;
+            
+            // Update button styles
+            document.querySelectorAll('.move-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update status
+            document.getElementById('moveInfo').textContent = `Move ${type} selected`;
+        }
+        
+        function resetGame() {
+            vertices = [
+                {real: 2, imag: 4},
+                {real: 2, imag: 0},
+                {real: 2, imag: 2},
+                {real: 3, imag: 4},
+                {real: 1, imag: 3}
+            ];
+        }
+        
+        function generateNewGoal() {
+            // Generate a random configuration by applying random moves
+            goalVertices = [
+                {real: 2, imag: 4},
+                {real: 2, imag: 0},
+                {real: 2, imag: 2},
+                {real: 3, imag: 4},
+                {real: 1, imag: 3}
+            ];
+            
+            // Apply 5-15 random moves to create a goal
+            let numMoves = floor(random(5, 15));
+            for (let i = 0; i < numMoves; i++) {
+                let moveType = random(['A', 'B', 'C', 'D']);
+                let vertexIdx = floor(random(5));
+                let operation = random(['add', 'subtract']);
+                
+                let move = moves[moveType];
+                let multiplier = operation === 'subtract' ? -1 : 1;
+                
+                goalVertices[vertexIdx].real += move.vertex.real * multiplier;
+                goalVertices[vertexIdx].imag += move.vertex.imag * multiplier;
+                
+                for (let adj of adjacency[vertexIdx]) {
+                    goalVertices[adj].real += move.adjacent.real * multiplier;
+                    goalVertices[adj].imag += move.adjacent.imag * multiplier;
+                }
+            }
+            
+            updateGoalDisplay();
+        }
+        
+        function updateGoalDisplay() {
+            let html = '';
+            for (let i = 0; i < 5; i++) {
+                let v = goalVertices[i];
+                let sign = v.imag >= 0 ? '+' : '';
+                html += `V${i}: ${v.real}${sign}${v.imag}i<br>`;
+            }
+            document.getElementById('goalDisplay').innerHTML = html;
+        }
+        
+        function checkWin() {
+            let won = true;
+            for (let i = 0; i < 5; i++) {
+                if (vertices[i].real !== goalVertices[i].real ||
+                    vertices[i].imag !== goalVertices[i].imag) {
+                    won = false;
+                    break;
+                }
+            }
+            
+            if (won) {
+                document.getElementById('winStatus').textContent = 'YOU WON! 🎉';
+                document.getElementById('winStatus').style.color = '#4ade80';
+            } else {
+                document.getElementById('winStatus').textContent = 'Keep playing!';
+                document.getElementById('winStatus').style.color = 'white';
+            }
+        }
+        
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+            centerX = width / 2;
+            centerY = height / 2;
+            pentagonRadius = min(width, height) * 0.25;
+            
+            // Recalculate vertex positions
+            vertexPositions = [];
+            for (let i = 0; i < 5; i++) {
+                let angle = -PI/2 + (TWO_PI * i / 5);
+                vertexPositions.push({
+                    x: centerX + cos(angle) * pentagonRadius,
+                    y: centerY + sin(angle) * pentagonRadius
+                });
+            }
+        }
+        
+        // Prevent context menu on right click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        
+        // Toggle guide function
+        function toggleGuide() {
+            let guide = document.getElementById('guide');
+            if (guide.style.display === 'none') {
+                guide.style.display = 'block';
+            } else {
+                guide.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
