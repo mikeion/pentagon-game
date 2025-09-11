@@ -48,9 +48,9 @@ class PentagonGame:
         if vertex_index < 0 or vertex_index > 4:
             raise ValueError(f"Invalid vertex index: {vertex_index}")
         
-        # Get the value to apply based on move type
+        # Get the value to apply based on move type (corrected to match Alex's PDF)
         move_values = {
-            'A': (1 + 1j, -1 - 1j),  # Add 1+i to vertex, -1-i to adjacent
+            'A': (1 + 1j, -1 + 0j),  # Add 1+i to vertex, -1 to adjacent
             'B': (-1 + 1j, -1j),     # Add -1+i to vertex, -i to adjacent  
             'C': (1 - 1j, 1 + 0j),   # Add 1-i to vertex, 1 to adjacent
             'D': (1 - 1j, 1j)        # Add 1-i to vertex, i to adjacent

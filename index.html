@@ -249,7 +249,7 @@
     <div id="controls">
         <h3 style="margin: 0 0 10px 0;">Select Move Type</h3>
         <div class="move-buttons">
-            <button class="move-btn active" onclick="setMoveType('A')" title="Add 1+i to vertex, -1-i to neighbors">A</button>
+            <button class="move-btn active" onclick="setMoveType('A')" title="Add 1+i to vertex, -1 to neighbors">A</button>
             <button class="move-btn" onclick="setMoveType('B')" title="Add -1+i to vertex, -i to neighbors">B</button>
             <button class="move-btn" onclick="setMoveType('C')" title="Add 1-i to vertex, +1 to neighbors">C</button>
             <button class="move-btn" onclick="setMoveType('D')" title="Add 1-i to vertex, +i to neighbors">D</button>
@@ -289,7 +289,7 @@
         <h3>The Moves</h3>
         <div class="move-explanation">
             <div class="move-item">
-                <strong>Move A:</strong> Adds 1+i to clicked vertex, subtracts 1+i from neighbors
+                <strong>Move A:</strong> Adds 1+i to clicked vertex, subtracts 1 from neighbors
             </div>
             <div class="move-item">
                 <strong>Move B:</strong> Adds -1+i to clicked vertex, subtracts i from neighbors
@@ -358,9 +358,9 @@
             4: [3, 0]
         };
         
-        // Move definitions
+        // Move definitions (corrected to match Alex's PDF)
         const moves = {
-            'A': {vertex: {real: 1, imag: 1}, adjacent: {real: -1, imag: -1}},
+            'A': {vertex: {real: 1, imag: 1}, adjacent: {real: -1, imag: 0}},
             'B': {vertex: {real: -1, imag: 1}, adjacent: {real: 0, imag: -1}},
             'C': {vertex: {real: 1, imag: -1}, adjacent: {real: 1, imag: 0}},
             'D': {vertex: {real: 1, imag: -1}, adjacent: {real: 0, imag: 1}}
