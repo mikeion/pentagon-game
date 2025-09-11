@@ -9,7 +9,7 @@ import { ComplexNumber, GameState, Move, MoveType } from '@/types/game';
 const moves: Record<MoveType, Move> = {
   'A': { vertex: { real: 1, imag: 1 }, adjacent: { real: -1, imag: 0 } },
   'B': { vertex: { real: -1, imag: 1 }, adjacent: { real: 0, imag: -1 } },
-  'C': { vertex: { real: -1, imag: -1 }, adjacent: { real: 0, imag: 1 } },
+  'C': { vertex: { real: -1, imag: -1 }, adjacent: { real: 1, imag: 0 } },
   'D': { vertex: { real: 1, imag: -1 }, adjacent: { real: 0, imag: 1 } },
 };
 

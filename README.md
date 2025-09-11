@@ -18,7 +18,7 @@ Each move affects the clicked vertex and its two adjacent neighbors:
 
 - **Move A**: Adds `1+i` to clicked vertex, adds `-1` to neighbors
 - **Move B**: Adds `-1+i` to clicked vertex, adds `-i` to neighbors  
-- **Move C**: Adds `-1-i` to clicked vertex, adds `i` to neighbors
+- **Move C**: Adds `-1-i` to clicked vertex, adds `1` to neighbors
 - **Move D**: Adds `1-i` to clicked vertex, adds `i` to neighbors
 
 ### Controls
