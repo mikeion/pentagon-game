@@ -4,7 +4,9 @@ An interactive mathematical puzzle game where players manipulate complex numbers
 
 ## 🎮 Play Online
 
-**[Play the game here!](https://mikeion.github.io/pentagon-game/)**
+**[Play the enhanced version here!](https://pentagon-game.vercel.app/)**
+
+> A simple HTML version is also available at [GitHub Pages](https://mikeion.github.io/pentagon-game/)
 
 ## How It Works
 
@@ -14,9 +16,9 @@ The game features a pentagon where each vertex contains a complex number (in the
 
 Each move affects the clicked vertex and its two adjacent neighbors:
 
-- **Move A**: Adds `1+i` to clicked vertex, adds `-1-i` to neighbors
+- **Move A**: Adds `1+i` to clicked vertex, adds `-1` to neighbors
 - **Move B**: Adds `-1+i` to clicked vertex, adds `-i` to neighbors  
-- **Move C**: Adds `1-i` to clicked vertex, adds `1` to neighbors
+- **Move C**: Adds `-1-i` to clicked vertex, adds `i` to neighbors
 - **Move D**: Adds `1-i` to clicked vertex, adds `i` to neighbors
 
 ### Controls
@@ -35,15 +37,38 @@ Key insights:
 - Move B and Move D are inverses (they cancel each other)
 - Each vertex is connected to its two adjacent neighbors in the pentagon
 
-## Technical Details
+## Versions
 
-- **Frontend**: HTML5 Canvas with p5.js for graphics
-- **Mobile-friendly**: Touch controls with long-press support
-- **No backend required**: Pure client-side JavaScript
-- **Python prototype**: Mathematical verification in `pentagon_game.py`
+### Enhanced Version (Recommended)
+- **Framework**: Next.js with TypeScript and React
+- **Solver**: Built-in BFS algorithm to find optimal solutions
+- **UI**: Modern design with Tailwind CSS
+- **Features**: Hint system, goal generation, responsive design
+- **Deployment**: Vercel ([pentagon-game.vercel.app](https://pentagon-game.vercel.app/))
+
+### Simple Version
+- **Framework**: Pure HTML5 with p5.js
+- **Features**: Core game mechanics only
+- **Deployment**: GitHub Pages ([mikeion.github.io/pentagon-game](https://mikeion.github.io/pentagon-game/))
 
 ## Local Development
 
+### Enhanced Version (Next.js)
+1. Clone and navigate:
+```bash
+git clone https://github.com/mikeion/pentagon-game.git
+cd pentagon-game/pentagon-webapp
+```
+
+2. Install dependencies and run:
+```bash
+npm install
+npm run dev
+```
+
+3. Open http://localhost:3000
+
+### Simple Version (HTML)
 1. Clone the repository:
 ```bash
 git clone https://github.com/mikeion/pentagon-game.git
@@ -55,22 +80,43 @@ cd pentagon-game
 python -m http.server 8000
 ```
 
-3. Open http://localhost:8000 in your browser
+3. Open http://localhost:8000
 
-## Files
+## Project Structure
 
-- `index.html` - Main game file (self-contained)
-- `pentagon_game.py` - Python prototype for mathematical verification
-- `docs/Pentagon complex firing game.pdf` - Dr. Alex McDonough's original game design document
+```
+pentagon-game/
+├── pentagon-webapp/          # Enhanced Next.js version
+│   ├── src/components/       # React components
+│   ├── src/utils/           # Solver and game logic
+│   └── src/types/           # TypeScript definitions
+├── testing/                 # Python prototype for verification
+│   └── pentagon_game.py     # Mathematical testing
+├── docs/                    # Original research
+│   └── Pentagon complex firing game.pdf
+└── index.html              # Simple HTML version
+```
+
+## Future Development
+
+Planned enhancements for the Next.js version:
+- **Advanced Solver**: More sophisticated algorithms for complex puzzles
+- **Move History**: Undo/redo functionality with move tracking
+- **Puzzle Library**: Curated collection of interesting configurations
+- **Educational Mode**: Step-by-step tutorials explaining group theory
+- **Performance**: Optimize solver for deeper searches
+- **Analytics**: Track solving patterns and difficulty metrics
 
 ## Contributing
 
 This is a research-based mathematical game. Contributions welcome for:
-- Orbit detection algorithms
-- Move history/undo functionality  
-- Difficulty levels
-- Visual improvements
-- Mathematical analysis tools
+- Solver algorithm improvements
+- UI/UX enhancements
+- Educational content
+- Mathematical analysis
+- Performance optimizations
+
+Please submit PRs to the `main` branch. The enhanced version lives in `pentagon-webapp/`.
 
 ## License
 
