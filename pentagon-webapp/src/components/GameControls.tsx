@@ -12,7 +12,7 @@ interface GameControlsProps {
 const moveDescriptions = {
   'A': 'Add 1+i to vertex, -1 to neighbors',
   'B': 'Add -1+i to vertex, -i to neighbors',
-  'C': 'Add 1-i to vertex, +1 to neighbors',
+  'C': 'Add -1-i to vertex, +1 to neighbors',
   'D': 'Add 1-i to vertex, +i to neighbors',
 };
 
