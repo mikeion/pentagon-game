@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { testSolver } from '@/utils/test-solver';
 
 export default function TestSolverPage() {
@@ -15,7 +16,7 @@ export default function TestSolverPage() {
     const originalLog = console.log;
     let output = '';
     
-    console.log = (...args: any[]) => {
+    console.log = (...args: unknown[]) => {
       const line = args.map(arg => 
         typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
       ).join(' ');
@@ -79,12 +80,12 @@ export default function TestSolverPage() {
             </div>
 
             <div className="mt-6 text-center">
-              <a 
+              <Link 
                 href="/"
                 className="text-blue-400 hover:text-blue-300 underline"
               >
                 ← Back to Game
-              </a>
+              </Link>
             </div>
           </div>
         </div>

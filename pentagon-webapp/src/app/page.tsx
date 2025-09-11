@@ -11,7 +11,7 @@ export default function Home() {
             Pentagon Complex Numbers
           </h1>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-            A mathematical puzzle game based on Dr. Alex McDonough's research into 
+            A mathematical puzzle game based on Dr. Alex McDonough&apos;s research into 
             group theory and complex number operations on pentagon configurations.
           </p>
         </header>

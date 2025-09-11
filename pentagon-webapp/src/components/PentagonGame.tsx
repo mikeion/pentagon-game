@@ -9,7 +9,7 @@ import { ComplexNumber, GameState, Move, MoveType } from '@/types/game';
 const moves: Record<MoveType, Move> = {
   'A': { vertex: { real: 1, imag: 1 }, adjacent: { real: -1, imag: 0 } },
   'B': { vertex: { real: -1, imag: 1 }, adjacent: { real: 0, imag: -1 } },
-  'C': { vertex: { real: 1, imag: -1 }, adjacent: { real: 1, imag: 0 } },
+  'C': { vertex: { real: -1, imag: -1 }, adjacent: { real: 0, imag: 1 } },
   'D': { vertex: { real: 1, imag: -1 }, adjacent: { real: 0, imag: 1 } },
 };
 
@@ -41,7 +41,7 @@ export default function PentagonGame() {
 
   const generateNewGoal = useCallback(() => {
     // Start from the CURRENT state and apply moves to create a goal
-    let goalVertices = gameState.vertices.map(v => ({ ...v }));
+    const goalVertices = gameState.vertices.map(v => ({ ...v }));
     
     // Apply 3-7 random moves to create a solvable goal
     const numMoves = Math.floor(Math.random() * 5) + 3;
