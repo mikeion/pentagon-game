@@ -65,10 +65,10 @@ export default function GameControls({
 
       {/* Goal Configuration */}
       <div className="mb-4 md:mb-6">
-        <h4 className="text-base md:text-lg font-semibold text-white mb-2 md:mb-3">Goal: Get All Zeros</h4>
-        <div className="p-3 bg-slate-900/50 rounded-lg border border-green-500/30">
-          <div className="text-center text-green-400 font-mono text-sm md:text-base">
-            V0: 0+0i • V1: 0+0i • V2: 0+0i • V3: 0+0i • V4: 0+0i
+        <div className="p-4 bg-gradient-to-r from-green-600/20 to-emerald-600/20 rounded-lg border border-green-500/30">
+          <div className="text-center">
+            <h4 className="text-lg font-bold text-green-400 mb-1">🎯 Goal</h4>
+            <p className="text-green-300 text-sm">Get all vertices to 0+0i</p>
           </div>
         </div>
       </div>

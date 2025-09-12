@@ -34,8 +34,8 @@ const zeroGoal: ComplexNumber[] = [
 
 export default function PentagonGame() {
   const [gameState, setGameState] = useState<GameState>({
-    vertices: [...zeroGoal], // Will be updated by generateStartingState
-    goalVertices: [...zeroGoal], // Always all zeros
+    vertices: zeroGoal.map(v => ({ ...v })), // Will be updated by generateStartingState
+    goalVertices: zeroGoal.map(v => ({ ...v })), // Always all zeros
     currentMoveType: 'A',
     selectedVertex: -1,
     isWon: false,
@@ -46,14 +46,20 @@ export default function PentagonGame() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   const generateStartingState = useCallback(() => {
-    // Start from all zeros and apply moves to create a solvable starting state
-    const startingVertices = [...zeroGoal];
+    // Always start fresh from all zeros and apply moves to create a solvable starting state
+    const startingVertices = [
+      { real: 0, imag: 0 },
+      { real: 0, imag: 0 },
+      { real: 0, imag: 0 },
+      { real: 0, imag: 0 },
+      { real: 0, imag: 0 }
+    ];
     
-    // Apply 3-7 random moves to create a solvable starting state
-    const numMoves = Math.floor(Math.random() * 5) + 3;
+    // Apply 5-7 random moves to create a solvable starting state
+    const numMoves = Math.floor(Math.random() * 3) + 5; // 5-7 moves
     const moveTypes: MoveType[] = ['A', 'B', 'C', 'D'];
     
-    console.log(`Generating starting state by applying ${numMoves} moves from zeros`);
+    console.log(`Generating new puzzle: applying ${numMoves} moves from zeros`);
     
     for (let i = 0; i < numMoves; i++) {
       const moveType = moveTypes[Math.floor(Math.random() * 4)];
@@ -73,6 +79,8 @@ export default function PentagonGame() {
       
       console.log(`Applied ${moveType} ${operation} to vertex ${vertexIdx}`);
     }
+    
+    console.log('Final starting state:', startingVertices);
     
     setGameState(prev => ({
       ...prev,
@@ -184,12 +192,9 @@ export default function PentagonGame() {
         {/* Mobile-first layout */}
         <div className="lg:hidden h-full flex flex-col">
           {/* Compact goal at top */}
-          <div className="flex-shrink-0 bg-slate-800/95 mx-4 mt-4 p-3 rounded-xl border border-green-500/30">
+          <div className="flex-shrink-0 bg-gradient-to-r from-green-600/20 to-emerald-600/20 mx-4 mt-4 p-3 rounded-xl border border-green-500/30">
             <div className="text-center">
-              <h4 className="text-sm font-semibold text-white mb-2">Goal: Get All Zeros</h4>
-              <div className="text-green-400 font-mono text-xs">
-                V0: 0+0i • V1: 0+0i • V2: 0+0i • V3: 0+0i • V4: 0+0i
-              </div>
+              <h4 className="text-sm font-bold text-green-400">🎯 Goal: Get all vertices to 0+0i</h4>
             </div>
           </div>
           
