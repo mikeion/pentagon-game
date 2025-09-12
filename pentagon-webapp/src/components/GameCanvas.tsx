@@ -3,6 +3,13 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { GameState, VertexPosition } from '@/types/game';
 
+const moveDescriptions = {
+  'A': 'Add 1+i to vertex, -1 to neighbors',
+  'B': 'Add -1+i to vertex, -i to neighbors', 
+  'C': 'Add -1-i to vertex, +1 to neighbors',
+  'D': 'Add 1-i to vertex, +i to neighbors',
+};
+
 interface GameCanvasProps {
   gameState: GameState;
   onVertexClick: (vertexIndex: number, operation?: 'add' | 'subtract') => void;
@@ -233,8 +240,11 @@ export default function GameCanvas({ gameState, onVertexClick }: GameCanvasProps
         <p className="text-slate-400 text-sm">
           {gameState.isWon 
             ? "🎉 Puzzle Solved! Try a new goal."
-            : `Move ${gameState.currentMoveType} selected • Click vertices to apply moves`
+            : `Move ${gameState.currentMoveType}: ${moveDescriptions[gameState.currentMoveType]}`
           }
+        </p>
+        <p className="text-slate-500 text-xs mt-1">
+          Tap: Add • Long press: Subtract
         </p>
       </div>
     </div>
