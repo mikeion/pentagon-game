@@ -28,7 +28,7 @@ export default function GameControls({
   };
 
   return (
-    <div className="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-2xl border border-slate-700 w-full lg:w-80">
+    <div className="bg-slate-800/95 backdrop-blur-none md:backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-2xl border border-slate-700 w-full lg:w-80">
       {/* Move Type Selection */}
       <div className="mb-6">
         <h3 className="text-xl font-bold text-white mb-4">Select Move Type</h3>
