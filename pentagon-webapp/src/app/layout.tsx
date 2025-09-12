@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Pentagon Complex Number Firing Game",
   description: "A mathematical puzzle game based on Dr. Alex McDonough's research into group theory and complex number operations on pentagon configurations.",
+  icons: {
+    icon: '/favicon.svg?v=3',
+    shortcut: '/favicon.svg?v=3', 
+    apple: '/favicon.svg?v=3',
+  },
 };
 
 export default function RootLayout({
