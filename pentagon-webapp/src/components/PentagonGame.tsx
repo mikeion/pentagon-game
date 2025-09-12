@@ -139,9 +139,9 @@ export default function PentagonGame() {
   }, [generateNewGoal]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 items-center lg:items-start justify-center max-w-6xl mx-auto">
-      {/* Controls first on mobile, sidebar on desktop */}
-      <div className="w-full lg:w-80 order-1 lg:order-1">
+    <div className="h-screen flex flex-col lg:flex-row lg:gap-8 lg:items-start lg:justify-center lg:max-w-6xl lg:mx-auto">
+      {/* Desktop layout - sidebar controls */}
+      <div className="hidden lg:block lg:w-80">
         <GameControls
           gameState={gameState}
           onMoveTypeChange={setMoveType}
@@ -150,12 +150,76 @@ export default function PentagonGame() {
         />
       </div>
       
-      {/* Canvas second on mobile, main on desktop */}
-      <div className="w-full lg:flex-1 flex justify-center order-2 lg:order-2">
-        <GameCanvas
-          gameState={gameState}
-          onVertexClick={applyMove}
-        />
+      {/* Mobile/Desktop game area */}
+      <div className="flex-1 lg:flex lg:justify-center">
+        {/* Mobile-first layout */}
+        <div className="lg:hidden h-full flex flex-col">
+          {/* Compact goal at top */}
+          <div className="flex-shrink-0 bg-slate-800/95 mx-4 mt-4 p-3 rounded-xl border border-slate-700">
+            <div className="text-center">
+              <h4 className="text-sm font-semibold text-white mb-2">Goal</h4>
+              <div className="grid grid-cols-5 gap-1 text-xs">
+                {gameState.goalVertices.map((vertex, i) => (
+                  <div key={i} className="text-center">
+                    <div className="text-pink-400 font-mono">V{i}</div>
+                    <div className="text-white font-mono">{vertex.real}{vertex.imag >= 0 ? '+' : ''}{vertex.imag}i</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          {/* Pentagon in middle */}
+          <div className="flex-1 flex items-center justify-center px-4">
+            <GameCanvas
+              gameState={gameState}
+              onVertexClick={applyMove}
+            />
+          </div>
+          
+          {/* Move controls at bottom */}
+          <div className="flex-shrink-0 bg-slate-800/95 mx-4 mb-4 p-4 rounded-xl border border-slate-700">
+            <div className="grid grid-cols-4 gap-3 mb-3">
+              {(['A', 'B', 'C', 'D'] as const).map(moveType => (
+                <button
+                  key={moveType}
+                  onClick={() => setMoveType(moveType)}
+                  className={`
+                    px-4 py-3 rounded-lg font-semibold text-lg transition-all duration-200
+                    ${gameState.currentMoveType === moveType 
+                      ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/30' 
+                      : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                    }
+                  `}
+                >
+                  {moveType}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={resetGame}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm"
+              >
+                Reset
+              </button>
+              <button
+                onClick={generateNewGoal}
+                className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm"
+              >
+                New Goal
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Desktop layout - just the canvas */}
+        <div className="hidden lg:block">
+          <GameCanvas
+            gameState={gameState}
+            onVertexClick={applyMove}
+          />
+        </div>
       </div>
     </div>
   );
