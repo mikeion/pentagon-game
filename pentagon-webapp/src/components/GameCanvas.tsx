@@ -37,10 +37,15 @@ export default function GameCanvas({ gameState, onVertexClick }: GameCanvasProps
     const updateSize = () => {
       const container = canvasRef.current?.parentElement;
       if (container) {
-        // Mobile-friendly sizing
-        const maxWidth = window.innerWidth < 768 ? window.innerWidth - 32 : 600; // 16px padding each side
-        const maxHeight = window.innerWidth < 768 ? window.innerHeight * 0.4 : 600; // 40% of viewport height on mobile
-        const size = Math.min(container.clientWidth, maxWidth, maxHeight);
+        // Responsive sizing based on available space
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        
+        // Desktop: fit within available space, mobile: specific sizing
+        const maxWidth = window.innerWidth < 768 ? window.innerWidth - 32 : Math.min(containerWidth - 40, 550);
+        const maxHeight = window.innerWidth < 768 ? window.innerHeight * 0.4 : Math.min(containerHeight - 100, 550);
+        const size = Math.min(maxWidth, maxHeight);
+        
         setCanvasSize({ width: size, height: size });
         setVertexPositions(calculateVertexPositions(size, size));
       }
@@ -98,7 +103,7 @@ export default function GameCanvas({ gameState, onVertexClick }: GameCanvasProps
       if (i === gameState.selectedVertex) {
         ctx.fillStyle = 'rgba(236, 72, 153, 0.4)';
         ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 40, 0, 2 * Math.PI);
+        ctx.arc(pos.x, pos.y, 45, 0, 2 * Math.PI);
         ctx.fill();
       }
       
@@ -107,20 +112,20 @@ export default function GameCanvas({ gameState, onVertexClick }: GameCanvasProps
       ctx.strokeStyle = '#8B5CF6';
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.arc(pos.x, pos.y, 30, 0, 2 * Math.PI);
+      ctx.arc(pos.x, pos.y, 35, 0, 2 * Math.PI);
       ctx.fill();
       ctx.stroke();
       
       // Draw vertex label (V0, V1, etc.)
       ctx.fillStyle = '#EC4899';
-      ctx.font = 'bold 12px monospace';
+      ctx.font = 'bold 16px monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(`V${i}`, pos.x - 35, pos.y - 35);
+      ctx.fillText(`V${i}`, pos.x - 40, pos.y - 40);
       
       // Draw complex number
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = '14px monospace';
+      ctx.font = 'bold 16px monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const sign = vertex.imag >= 0 ? '+' : '';
@@ -158,7 +163,7 @@ export default function GameCanvas({ gameState, onVertexClick }: GameCanvasProps
       const pos = vertexPositions[i];
       const distance = Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2);
       
-      if (distance < 40) {
+      if (distance < 45) {
         // Start long press timer for mobile
         setIsLongPress(false);
         const timer = setTimeout(() => {
@@ -190,7 +195,7 @@ export default function GameCanvas({ gameState, onVertexClick }: GameCanvasProps
       const pos = vertexPositions[i];
       const distance = Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2);
       
-      if (distance < 40) {
+      if (distance < 45) {
         const operation = e.button === 2 || isLongPress ? 'subtract' : 'add';
         onVertexClick(i, operation);
         break;
@@ -205,7 +210,7 @@ export default function GameCanvas({ gameState, onVertexClick }: GameCanvasProps
   }, []);
 
   return (
-    <div className="bg-slate-800/50 rounded-2xl p-6 shadow-2xl border border-slate-700">
+    <div className="bg-slate-800/50 rounded-2xl p-4 shadow-2xl border border-slate-700">
       <canvas
         ref={canvasRef}
         width={canvasSize.width}

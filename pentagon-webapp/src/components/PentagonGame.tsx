@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import GameCanvas from './GameCanvas';
 import GameControls from './GameControls';
+// import EducationalPanel from './EducationalPanel';
 import { ComplexNumber, GameState, Move, MoveType } from '@/types/game';
-import { solvePuzzle } from '@/utils/solver';
+import { getHint as getBoundedHint } from '@/utils/bounded-solver';
 
 // Move definitions (corrected to match Alex's PDF)
 const moves: Record<MoveType, Move> = {
@@ -44,71 +45,56 @@ export default function PentagonGame() {
   const [hintResult, setHintResult] = useState<string>('');
   const [isGettingHint, setIsGettingHint] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  // const [showEducationalPanel, setShowEducationalPanel] = useState(false);
 
   const generateStartingState = useCallback(() => {
-    // Always start fresh from all zeros and apply moves to create a solvable starting state
-    const startingVertices = [
-      { real: 0, imag: 0 },
-      { real: 0, imag: 0 },
-      { real: 0, imag: 0 },
-      { real: 0, imag: 0 },
-      { real: 0, imag: 0 }
-    ];
+    // Generate random starting state by applying moves from zero
+    const startingVertices = Array(5).fill(null).map(() => ({ real: 0, imag: 0 }));
     
-    // Apply 8-12 random moves to create a more challenging starting state
-    const numMoves = Math.floor(Math.random() * 5) + 8; // 8-12 moves
+    // Apply 5-8 random moves to create puzzle
+    const numMoves = Math.floor(Math.random() * 4) + 5;
     const moveTypes: MoveType[] = ['A', 'B', 'C', 'D'];
     
-    console.log(`Generating new puzzle: applying ${numMoves} moves from zeros`);
+    console.log(`Generating puzzle with ${numMoves} moves from zero`);
     
     for (let i = 0; i < numMoves; i++) {
+      const vertex = Math.floor(Math.random() * 5);
       const moveType = moveTypes[Math.floor(Math.random() * 4)];
-      const vertexIdx = Math.floor(Math.random() * 5);
       const operation = Math.random() > 0.5 ? 'add' : 'subtract';
       
       const move = moves[moveType];
       const multiplier = operation === 'subtract' ? -1 : 1;
       
-      startingVertices[vertexIdx].real += move.vertex.real * multiplier;
-      startingVertices[vertexIdx].imag += move.vertex.imag * multiplier;
+      // Apply to vertex
+      startingVertices[vertex].real += move.vertex.real * multiplier;
+      startingVertices[vertex].imag += move.vertex.imag * multiplier;
       
-      for (const adj of adjacency[vertexIdx]) {
+      // Apply to adjacent vertices
+      for (const adj of adjacency[vertex]) {
         startingVertices[adj].real += move.adjacent.real * multiplier;
         startingVertices[adj].imag += move.adjacent.imag * multiplier;
       }
-      
-      console.log(`Applied ${moveType} ${operation} to vertex ${vertexIdx}`);
     }
-    
-    console.log('Final starting state:', startingVertices);
     
     setGameState(prev => ({
       ...prev,
       vertices: startingVertices,
+      goalVertices: zeroGoal.map(v => ({ ...v })),
       isWon: false,
     }));
     setIsInitialized(true);
-  }, []); // No dependencies - goal only changes when explicitly called
+  }, []); // No dependencies
 
   const getHint = useCallback(async () => {
     setIsGettingHint(true);
-    setHintResult('Calculating...');
+    setHintResult('Calculating hint...');
     
     try {
-      const result = await solvePuzzle(gameState.vertices, gameState.goalVertices, 8);
-      
-      if (result.found && result.moves.length > 0) {
-        const nextMove = result.moves[0];
-        const operation = nextMove.operation === 'add' ? 'Tap' : 'Long press';
-        setHintResult(`${operation} Move ${nextMove.moveType} on V${nextMove.vertex}`);
-      } else if (result.found && result.moves.length === 0) {
-        setHintResult('Already solved! 🎉');
-      } else {
-        setHintResult('No solution found in 8 moves. Try New Puzzle.');
-      }
+      const result = await getBoundedHint(gameState.vertices, gameState.goalVertices);
+      setHintResult(result.hint);
     } catch (error) {
       console.error('Hint error:', error);
-      setHintResult('Error calculating hint.');
+      setHintResult('Error calculating hint');
     } finally {
       setIsGettingHint(false);
     }
@@ -169,11 +155,25 @@ export default function PentagonGame() {
 
   // Generate initial starting state
   useEffect(() => {
+    console.log('PentagonGame: Generating initial starting state');
     generateStartingState();
   }, [generateStartingState]);
 
+  // Debug game state
+  useEffect(() => {
+    console.log('PentagonGame: Current game state:', gameState);
+  }, [gameState]);
+
   return (
-    <div className="h-screen flex flex-col lg:flex-row lg:gap-8 lg:items-start lg:justify-center lg:max-w-6xl lg:mx-auto">
+    <>
+      {/* Temporarily disable EducationalPanel to fix performance issues */}
+      {/* <EducationalPanel 
+        currentState={gameState.vertices}
+        isVisible={showEducationalPanel}
+        onToggle={() => setShowEducationalPanel(!showEducationalPanel)}
+      /> */}
+      
+    <div className="h-full flex flex-col lg:flex-row lg:gap-6 lg:items-center lg:justify-center lg:max-w-7xl lg:mx-auto lg:px-4">
       {/* Desktop layout - sidebar controls */}
       <div className="hidden lg:block lg:w-80">
         <GameControls
@@ -263,5 +263,6 @@ export default function PentagonGame() {
         </div>
       </div>
     </div>
+    </>
   );
 }

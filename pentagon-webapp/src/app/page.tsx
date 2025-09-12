@@ -20,22 +20,24 @@ export default function Home() {
       </div>
       
       {/* Desktop layout with full content */}
-      <div className="hidden lg:block">
-        <div className="container mx-auto px-4 py-8">
-          <header className="text-center mb-8">
-            <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4">
+      <div className="hidden lg:block lg:h-screen lg:overflow-hidden">
+        <div className="flex flex-col h-full">
+          <header className="text-center py-4 px-4 flex-shrink-0">
+            <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
               Pentagon Complex Number Firing Game
             </h1>
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto px-4">
+            <p className="text-sm text-slate-300 max-w-2xl mx-auto">
               A mathematical puzzle game based on Dr. Alex McDonough&apos;s research into 
               group theory and complex number operations on pentagon configurations.
             </p>
           </header>
           
-          <PentagonGame />
+          <div className="flex-1 overflow-auto">
+            <PentagonGame />
+          </div>
           
-          <footer className="text-center mt-12 text-slate-400 space-y-2">
-            <p className="mb-2">
+          <footer className="text-center py-4 px-4 text-slate-400 text-sm flex-shrink-0 border-t border-slate-700">
+            <p className="mb-1">
               Based on research by{' '}
               <a 
                 href="https://sites.google.com/view/alexmcdonough/home" 
@@ -45,11 +47,10 @@ export default function Home() {
               >
                 Dr. Alex McDonough
               </a>
-            </p>
-            <p className="text-sm">
+              {' • '}
               Exactly 162 unique orbital configurations exist in this mathematical system.
             </p>
-            <p className="text-xs text-slate-500 mt-4">
+            <p className="text-xs text-slate-500">
               Developed by{' '}
               <a 
                 href="https://mikeion.com/" 
