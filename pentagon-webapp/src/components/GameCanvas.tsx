@@ -55,8 +55,8 @@ export default function GameCanvas({ gameState, onVertexClick }: GameCanvasProps
   const draw = useCallback((ctx: CanvasRenderingContext2D) => {
     const { width, height } = canvasSize;
     
-    // Clear canvas
-    ctx.fillStyle = 'rgba(30, 41, 59, 0.5)';
+    // Clear canvas with solid background
+    ctx.fillStyle = 'rgb(30, 41, 59)'; // Solid background to prevent rendering issues
     ctx.fillRect(0, 0, width, height);
     
     if (vertexPositions.length === 0) return;
@@ -216,7 +216,11 @@ export default function GameCanvas({ gameState, onVertexClick }: GameCanvasProps
         className="rounded-lg cursor-pointer touch-none"
         style={{ 
           width: `${canvasSize.width}px`, 
-          height: `${canvasSize.height}px` 
+          height: `${canvasSize.height}px`,
+          // Improve rendering stability on mobile Safari
+          willChange: 'auto',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
         }}
       />
       
