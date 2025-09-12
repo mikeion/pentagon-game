@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { ComplexNumber } from '@/types/game';
-import { groupSolver } from '@/utils/group-solver';
 
 interface EducationalPanelProps {
   currentState: ComplexNumber[];
@@ -30,22 +29,22 @@ export default function EducationalPanel({
 
   // Initialize the group solver only when the panel is visible and group view is selected
   useEffect(() => {
-    const initializeAndAnalyze = async () => {
-      // Only initialize if panel is visible AND we're viewing the group tab
-      if (!isVisible || viewMode !== 'group') return;
-      
-      try {
-        await groupSolver.initializeGroup();
-        setGroupInitialized(true);
-        
-        const info = groupSolver.getStateInfo(currentState);
-        setStateInfo(info);
-      } catch (error) {
-        console.error('Group solver initialization error:', error);
-      }
-    };
-
-    initializeAndAnalyze();
+    // Disabled for performance - group solver not available
+    // const initializeAndAnalyze = async () => {
+    //   if (!isVisible || viewMode !== 'group') return;
+    //   
+    //   try {
+    //     await groupSolver.initializeGroup();
+    //     setGroupInitialized(true);
+    //     
+    //     const info = groupSolver.getStateInfo(currentState);
+    //     setStateInfo(info);
+    //   } catch (error) {
+    //     console.error('Group solver initialization error:', error);
+    //   }
+    // };
+    
+    // initializeAndAnalyze();
   }, [currentState, isVisible, viewMode]);
 
   // Convert complex numbers to Z^10 vector for display
