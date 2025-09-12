@@ -147,5 +147,5 @@ export function getHint(
   currentState: ComplexNumber[], 
   goalState: ComplexNumber[]
 ): Promise<SolverResult> {
-  return solvePuzzle(currentState, goalState, 5); // Limit depth for faster hints
+  return solvePuzzle(currentState, goalState, 8); // Increased depth for harder puzzles
 }

@@ -10,7 +10,7 @@ export default function Home() {
         {/* Compact header for mobile */}
         <header className="flex-shrink-0 text-center py-2 px-4">
           <h1 className="text-lg font-bold text-white mb-1">
-            Pentagon Complex Numbers
+            Pentagon Complex Number Firing Game
           </h1>
         </header>
         
@@ -24,7 +24,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-8">
           <header className="text-center mb-8">
             <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4">
-              Pentagon Complex Numbers
+              Pentagon Complex Number Firing Game
             </h1>
             <p className="text-lg text-slate-300 max-w-2xl mx-auto px-4">
               A mathematical puzzle game based on Dr. Alex McDonough&apos;s research into 

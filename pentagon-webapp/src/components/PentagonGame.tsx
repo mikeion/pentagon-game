@@ -95,7 +95,7 @@ export default function PentagonGame() {
     setHintResult('Calculating...');
     
     try {
-      const result = await solvePuzzle(gameState.vertices, gameState.goalVertices, 5);
+      const result = await solvePuzzle(gameState.vertices, gameState.goalVertices, 8);
       
       if (result.found && result.moves.length > 0) {
         const nextMove = result.moves[0];
@@ -104,7 +104,7 @@ export default function PentagonGame() {
       } else if (result.found && result.moves.length === 0) {
         setHintResult('Already solved! 🎉');
       } else {
-        setHintResult('No solution found in 5 moves. Try New Goal.');
+        setHintResult('No solution found in 8 moves. Try New Puzzle.');
       }
     } catch (error) {
       console.error('Hint error:', error);
