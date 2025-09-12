@@ -43,7 +43,7 @@ Key insights:
 - **Framework**: Next.js with TypeScript and React
 - **Solver**: Built-in BFS algorithm to find optimal solutions
 - **UI**: Modern design with Tailwind CSS
-- **Features**: Goal generation, BFS solver (test page), responsive design
+- **Features**: Goal generation, responsive design
 - **Deployment**: Vercel ([pentagon-game.vercel.app](https://pentagon-game.vercel.app/))
 
 ### Simple Version
@@ -100,7 +100,7 @@ pentagon-game/
 ## Future Development
 
 Planned enhancements for the Next.js version:
-- **Hint System**: UI integration for the existing getHint() solver function
+- **Solver Integration**: Add solver/hint buttons to main game UI (solver exists at `/test-solver`)
 - **Advanced Solver**: More sophisticated algorithms for complex puzzles  
 - **Move History**: Undo/redo functionality with move tracking
 - **Puzzle Library**: Curated collection of interesting configurations
