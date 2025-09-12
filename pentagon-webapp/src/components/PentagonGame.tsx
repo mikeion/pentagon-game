@@ -43,6 +43,7 @@ export default function PentagonGame() {
 
   const [hintResult, setHintResult] = useState<string>('');
   const [isGettingHint, setIsGettingHint] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const generateStartingState = useCallback(() => {
     // Start from all zeros and apply moves to create a solvable starting state
@@ -78,6 +79,7 @@ export default function PentagonGame() {
       vertices: startingVertices,
       isWon: false,
     }));
+    setIsInitialized(true);
   }, []); // No dependencies - goal only changes when explicitly called
 
   const getHint = useCallback(async () => {
@@ -132,12 +134,9 @@ export default function PentagonGame() {
   }, [gameState.currentMoveType]);
 
   const resetGame = useCallback(() => {
-    setGameState(prev => ({
-      ...prev,
-      vertices: [...zeroGoal],
-      isWon: false,
-    }));
-  }, []);
+    setIsInitialized(false);
+    generateStartingState();
+  }, [generateStartingState]);
 
   const setMoveType = useCallback((moveType: MoveType) => {
     setGameState(prev => ({
@@ -146,8 +145,10 @@ export default function PentagonGame() {
     }));
   }, []);
 
-  // Check win condition
+  // Check win condition (only after initialization)
   useEffect(() => {
+    if (!isInitialized) return;
+    
     const isWon = gameState.vertices.every((v, i) => 
       v.real === gameState.goalVertices[i].real && 
       v.imag === gameState.goalVertices[i].imag
@@ -156,7 +157,7 @@ export default function PentagonGame() {
     if (isWon !== gameState.isWon) {
       setGameState(prev => ({ ...prev, isWon }));
     }
-  }, [gameState.vertices, gameState.goalVertices, gameState.isWon]);
+  }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized]);
 
   // Generate initial starting state
   useEffect(() => {
