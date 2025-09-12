@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import GameCanvas from './GameCanvas';
 import GameControls from './GameControls';
 import { ComplexNumber, GameState, Move, MoveType } from '@/types/game';
+import { solvePuzzle } from '@/utils/solver';
 
 // Move definitions (corrected to match Alex's PDF)
 const moves: Record<MoveType, Move> = {
@@ -38,6 +39,9 @@ export default function PentagonGame() {
     selectedVertex: -1,
     isWon: false,
   });
+
+  const [hintResult, setHintResult] = useState<string>('');
+  const [isGettingHint, setIsGettingHint] = useState(false);
 
   const generateNewGoal = useCallback(() => {
     // Start from the INITIAL state and apply moves to create a goal
@@ -78,6 +82,30 @@ export default function PentagonGame() {
       isWon: false,
     }));
   }, []); // No dependencies - goal only changes when explicitly called
+
+  const getHint = useCallback(async () => {
+    setIsGettingHint(true);
+    setHintResult('Calculating...');
+    
+    try {
+      const result = await solvePuzzle(gameState.vertices, gameState.goalVertices, 5);
+      
+      if (result.found && result.moves.length > 0) {
+        const nextMove = result.moves[0];
+        const operation = nextMove.operation === 'add' ? 'Tap' : 'Long press';
+        setHintResult(`${operation} Move ${nextMove.moveType} on V${nextMove.vertex}`);
+      } else if (result.found && result.moves.length === 0) {
+        setHintResult('Already solved! 🎉');
+      } else {
+        setHintResult('No solution found in 5 moves. Try New Goal.');
+      }
+    } catch (error) {
+      console.error('Hint error:', error);
+      setHintResult('Error calculating hint.');
+    } finally {
+      setIsGettingHint(false);
+    }
+  }, [gameState.vertices, gameState.goalVertices]);
 
   const applyMove = useCallback((vertexIndex: number, operation: 'add' | 'subtract' = 'add') => {
     if (vertexIndex < 0 || vertexIndex > 4) return;
@@ -147,6 +175,9 @@ export default function PentagonGame() {
           onMoveTypeChange={setMoveType}
           onReset={resetGame}
           onNewGoal={generateNewGoal}
+          onGetHint={getHint}
+          hintResult={hintResult}
+          isGettingHint={isGettingHint}
         />
       </div>
       
@@ -196,7 +227,7 @@ export default function PentagonGame() {
                 </button>
               ))}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 mb-3">
               <button
                 onClick={resetGame}
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm"
@@ -209,7 +240,19 @@ export default function PentagonGame() {
               >
                 New Goal
               </button>
+              <button
+                onClick={getHint}
+                disabled={isGettingHint}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg text-sm disabled:opacity-50"
+              >
+                {isGettingHint ? '...' : 'Hint'}
+              </button>
             </div>
+            {hintResult && (
+              <div className="bg-slate-900/50 p-2 rounded-lg border border-slate-600">
+                <p className="text-sm text-center text-slate-300">{hintResult}</p>
+              </div>
+            )}
           </div>
         </div>
         

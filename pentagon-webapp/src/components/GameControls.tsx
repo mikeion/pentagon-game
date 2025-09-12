@@ -7,6 +7,9 @@ interface GameControlsProps {
   onMoveTypeChange: (moveType: MoveType) => void;
   onReset: () => void;
   onNewGoal: () => void;
+  onGetHint?: () => Promise<void>;
+  hintResult?: string;
+  isGettingHint?: boolean;
 }
 
 const moveDescriptions = {
@@ -20,7 +23,10 @@ export default function GameControls({
   gameState, 
   onMoveTypeChange, 
   onReset, 
-  onNewGoal 
+  onNewGoal,
+  onGetHint,
+  hintResult,
+  isGettingHint = false
 }: GameControlsProps) {
   const formatComplexNumber = (num: { real: number; imag: number }) => {
     const sign = num.imag >= 0 ? '+' : '';
@@ -91,7 +97,24 @@ export default function GameControls({
         >
           New Goal
         </button>
+        {onGetHint && (
+          <button
+            onClick={onGetHint}
+            disabled={isGettingHint}
+            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:opacity-50"
+          >
+            {isGettingHint ? 'Calculating...' : 'Get Hint'}
+          </button>
+        )}
       </div>
+      
+      {/* Hint Result */}
+      {hintResult && (
+        <div className="mt-4 p-4 bg-slate-900/50 rounded-lg border border-slate-600">
+          <h4 className="text-sm font-semibold text-green-400 mb-2">💡 Hint:</h4>
+          <p className="text-sm text-slate-300">{hintResult}</p>
+        </div>
+      )}
 
       {/* Win Status */}
       {gameState.isWon && (
