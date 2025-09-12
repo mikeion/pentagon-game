@@ -55,8 +55,8 @@ export default function PentagonGame() {
       { real: 0, imag: 0 }
     ];
     
-    // Apply 5-7 random moves to create a solvable starting state
-    const numMoves = Math.floor(Math.random() * 3) + 5; // 5-7 moves
+    // Apply 8-12 random moves to create a more challenging starting state
+    const numMoves = Math.floor(Math.random() * 5) + 8; // 8-12 moves
     const moveTypes: MoveType[] = ['A', 'B', 'C', 'D'];
     
     console.log(`Generating new puzzle: applying ${numMoves} moves from zeros`);
