@@ -37,7 +37,10 @@ export default function GameCanvas({ gameState, onVertexClick }: GameCanvasProps
     const updateSize = () => {
       const container = canvasRef.current?.parentElement;
       if (container) {
-        const size = Math.min(container.clientWidth, 600);
+        // Mobile-friendly sizing
+        const maxWidth = window.innerWidth < 768 ? window.innerWidth - 32 : 600; // 16px padding each side
+        const maxHeight = window.innerWidth < 768 ? window.innerHeight * 0.4 : 600; // 40% of viewport height on mobile
+        const size = Math.min(container.clientWidth, maxWidth, maxHeight);
         setCanvasSize({ width: size, height: size });
         setVertexPositions(calculateVertexPositions(size, size));
       }

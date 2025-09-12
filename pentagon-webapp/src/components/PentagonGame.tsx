@@ -139,15 +139,19 @@ export default function PentagonGame() {
   }, [generateNewGoal]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
-      <GameControls
-        gameState={gameState}
-        onMoveTypeChange={setMoveType}
-        onReset={resetGame}
-        onNewGoal={generateNewGoal}
-      />
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 items-center lg:items-start justify-center max-w-6xl mx-auto">
+      {/* Controls first on mobile, sidebar on desktop */}
+      <div className="w-full lg:w-80 order-1 lg:order-1">
+        <GameControls
+          gameState={gameState}
+          onMoveTypeChange={setMoveType}
+          onReset={resetGame}
+          onNewGoal={generateNewGoal}
+        />
+      </div>
       
-      <div className="flex-1 flex justify-center">
+      {/* Canvas second on mobile, main on desktop */}
+      <div className="w-full lg:flex-1 flex justify-center order-2 lg:order-2">
         <GameCanvas
           gameState={gameState}
           onVertexClick={applyMove}

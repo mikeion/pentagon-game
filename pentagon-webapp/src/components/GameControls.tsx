@@ -28,17 +28,17 @@ export default function GameControls({
   };
 
   return (
-    <div className="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-slate-700 w-full lg:w-80">
+    <div className="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-2xl border border-slate-700 w-full lg:w-80">
       {/* Move Type Selection */}
       <div className="mb-6">
         <h3 className="text-xl font-bold text-white mb-4">Select Move Type</h3>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-4 md:grid-cols-2 gap-2 md:gap-3">
           {(['A', 'B', 'C', 'D'] as MoveType[]).map(moveType => (
             <button
               key={moveType}
               onClick={() => onMoveTypeChange(moveType)}
               className={`
-                px-4 py-3 rounded-lg font-semibold text-lg transition-all duration-200
+                px-3 py-2 md:px-4 md:py-3 rounded-lg font-semibold text-base md:text-lg transition-all duration-200
                 ${gameState.currentMoveType === moveType 
                   ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/30 scale-105' 
                   : 'bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white'
@@ -50,8 +50,8 @@ export default function GameControls({
             </button>
           ))}
         </div>
-        <div className="mt-3 text-sm text-slate-400">
-          <strong>Click/Tap:</strong> Add • <strong>Right-click:</strong> Subtract
+        <div className="mt-3 text-xs md:text-sm text-slate-400">
+          <strong>Tap:</strong> Add • <strong>Long press:</strong> Subtract
         </div>
       </div>
 
@@ -62,16 +62,16 @@ export default function GameControls({
       </div>
 
       {/* Goal Configuration */}
-      <div className="mb-6">
-        <h4 className="text-lg font-semibold text-white mb-3">Goal Configuration</h4>
-        <div className="space-y-2">
+      <div className="mb-4 md:mb-6">
+        <h4 className="text-base md:text-lg font-semibold text-white mb-2 md:mb-3">Goal Configuration</h4>
+        <div className="grid grid-cols-2 md:grid-cols-1 gap-2">
           {gameState.goalVertices.map((vertex, i) => (
             <div 
               key={i} 
-              className="flex justify-between items-center py-2 px-3 bg-slate-900/50 rounded-lg"
+              className="flex justify-between items-center py-1 md:py-2 px-2 md:px-3 bg-slate-900/50 rounded-lg"
             >
-              <span className="text-pink-400 font-mono">V{i}:</span>
-              <span className="text-white font-mono">{formatComplexNumber(vertex)}</span>
+              <span className="text-pink-400 font-mono text-sm md:text-base">V{i}:</span>
+              <span className="text-white font-mono text-sm md:text-base">{formatComplexNumber(vertex)}</span>
             </div>
           ))}
         </div>
