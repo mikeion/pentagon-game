@@ -28,10 +28,6 @@ export default function GameControls({
   hintResult,
   isGettingHint = false
 }: GameControlsProps) {
-  const formatComplexNumber = (num: { real: number; imag: number }) => {
-    const sign = num.imag >= 0 ? '+' : '';
-    return `${num.real}${sign}${num.imag}i`;
-  };
 
   return (
     <div className="bg-slate-800/95 backdrop-blur-none md:backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-2xl border border-slate-700 w-full lg:w-80">
@@ -69,17 +65,11 @@ export default function GameControls({
 
       {/* Goal Configuration */}
       <div className="mb-4 md:mb-6">
-        <h4 className="text-base md:text-lg font-semibold text-white mb-2 md:mb-3">Goal Configuration</h4>
-        <div className="grid grid-cols-2 md:grid-cols-1 gap-2">
-          {gameState.goalVertices.map((vertex, i) => (
-            <div 
-              key={i} 
-              className="flex justify-between items-center py-1 md:py-2 px-2 md:px-3 bg-slate-900/50 rounded-lg"
-            >
-              <span className="text-pink-400 font-mono text-sm md:text-base">V{i}:</span>
-              <span className="text-white font-mono text-sm md:text-base">{formatComplexNumber(vertex)}</span>
-            </div>
-          ))}
+        <h4 className="text-base md:text-lg font-semibold text-white mb-2 md:mb-3">Goal: Get All Zeros</h4>
+        <div className="p-3 bg-slate-900/50 rounded-lg border border-green-500/30">
+          <div className="text-center text-green-400 font-mono text-sm md:text-base">
+            V0: 0+0i • V1: 0+0i • V2: 0+0i • V3: 0+0i • V4: 0+0i
+          </div>
         </div>
       </div>
 
@@ -95,7 +85,7 @@ export default function GameControls({
           onClick={onNewGoal}
           className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
         >
-          New Goal
+          New Puzzle
         </button>
         {onGetHint && (
           <button

@@ -23,18 +23,19 @@ const adjacency: Record<number, number[]> = {
   4: [3, 0],
 };
 
-const initialVertices: ComplexNumber[] = [
-  { real: 2, imag: 4 }, // vertex 0
-  { real: 2, imag: 0 }, // vertex 1
-  { real: 2, imag: 2 }, // vertex 2
-  { real: 3, imag: 4 }, // vertex 3
-  { real: 1, imag: 3 }, // vertex 4
+// Goal is always all zeros
+const zeroGoal: ComplexNumber[] = [
+  { real: 0, imag: 0 }, // vertex 0
+  { real: 0, imag: 0 }, // vertex 1
+  { real: 0, imag: 0 }, // vertex 2
+  { real: 0, imag: 0 }, // vertex 3
+  { real: 0, imag: 0 }, // vertex 4
 ];
 
 export default function PentagonGame() {
   const [gameState, setGameState] = useState<GameState>({
-    vertices: [...initialVertices],
-    goalVertices: [...initialVertices],
+    vertices: [...zeroGoal], // Will be updated by generateStartingState
+    goalVertices: [...zeroGoal], // Always all zeros
     currentMoveType: 'A',
     selectedVertex: -1,
     isWon: false,
@@ -43,19 +44,15 @@ export default function PentagonGame() {
   const [hintResult, setHintResult] = useState<string>('');
   const [isGettingHint, setIsGettingHint] = useState(false);
 
-  const generateNewGoal = useCallback(() => {
-    // Start from the INITIAL state and apply moves to create a goal
-    const initialVertices = [
-      { real: 2, imag: 4 }, { real: 2, imag: 0 }, { real: 2, imag: 2 }, 
-      { real: 3, imag: 4 }, { real: 1, imag: 3 }
-    ];
-    const goalVertices = initialVertices.map(v => ({ ...v }));
+  const generateStartingState = useCallback(() => {
+    // Start from all zeros and apply moves to create a solvable starting state
+    const startingVertices = [...zeroGoal];
     
-    // Apply 3-7 random moves to create a solvable goal
+    // Apply 3-7 random moves to create a solvable starting state
     const numMoves = Math.floor(Math.random() * 5) + 3;
     const moveTypes: MoveType[] = ['A', 'B', 'C', 'D'];
     
-    console.log(`Generating goal by applying ${numMoves} moves from current state`);
+    console.log(`Generating starting state by applying ${numMoves} moves from zeros`);
     
     for (let i = 0; i < numMoves; i++) {
       const moveType = moveTypes[Math.floor(Math.random() * 4)];
@@ -65,12 +62,12 @@ export default function PentagonGame() {
       const move = moves[moveType];
       const multiplier = operation === 'subtract' ? -1 : 1;
       
-      goalVertices[vertexIdx].real += move.vertex.real * multiplier;
-      goalVertices[vertexIdx].imag += move.vertex.imag * multiplier;
+      startingVertices[vertexIdx].real += move.vertex.real * multiplier;
+      startingVertices[vertexIdx].imag += move.vertex.imag * multiplier;
       
       for (const adj of adjacency[vertexIdx]) {
-        goalVertices[adj].real += move.adjacent.real * multiplier;
-        goalVertices[adj].imag += move.adjacent.imag * multiplier;
+        startingVertices[adj].real += move.adjacent.real * multiplier;
+        startingVertices[adj].imag += move.adjacent.imag * multiplier;
       }
       
       console.log(`Applied ${moveType} ${operation} to vertex ${vertexIdx}`);
@@ -78,7 +75,7 @@ export default function PentagonGame() {
     
     setGameState(prev => ({
       ...prev,
-      goalVertices,
+      vertices: startingVertices,
       isWon: false,
     }));
   }, []); // No dependencies - goal only changes when explicitly called
@@ -137,7 +134,7 @@ export default function PentagonGame() {
   const resetGame = useCallback(() => {
     setGameState(prev => ({
       ...prev,
-      vertices: [...initialVertices],
+      vertices: [...zeroGoal],
       isWon: false,
     }));
   }, []);
@@ -161,10 +158,10 @@ export default function PentagonGame() {
     }
   }, [gameState.vertices, gameState.goalVertices, gameState.isWon]);
 
-  // Generate initial goal
+  // Generate initial starting state
   useEffect(() => {
-    generateNewGoal();
-  }, [generateNewGoal]);
+    generateStartingState();
+  }, [generateStartingState]);
 
   return (
     <div className="h-screen flex flex-col lg:flex-row lg:gap-8 lg:items-start lg:justify-center lg:max-w-6xl lg:mx-auto">
@@ -174,7 +171,7 @@ export default function PentagonGame() {
           gameState={gameState}
           onMoveTypeChange={setMoveType}
           onReset={resetGame}
-          onNewGoal={generateNewGoal}
+          onNewGoal={generateStartingState}
           onGetHint={getHint}
           hintResult={hintResult}
           isGettingHint={isGettingHint}
@@ -186,16 +183,11 @@ export default function PentagonGame() {
         {/* Mobile-first layout */}
         <div className="lg:hidden h-full flex flex-col">
           {/* Compact goal at top */}
-          <div className="flex-shrink-0 bg-slate-800/95 mx-4 mt-4 p-3 rounded-xl border border-slate-700">
+          <div className="flex-shrink-0 bg-slate-800/95 mx-4 mt-4 p-3 rounded-xl border border-green-500/30">
             <div className="text-center">
-              <h4 className="text-sm font-semibold text-white mb-2">Goal</h4>
-              <div className="grid grid-cols-5 gap-1 text-xs">
-                {gameState.goalVertices.map((vertex, i) => (
-                  <div key={i} className="text-center">
-                    <div className="text-pink-400 font-mono">V{i}</div>
-                    <div className="text-white font-mono">{vertex.real}{vertex.imag >= 0 ? '+' : ''}{vertex.imag}i</div>
-                  </div>
-                ))}
+              <h4 className="text-sm font-semibold text-white mb-2">Goal: Get All Zeros</h4>
+              <div className="text-green-400 font-mono text-xs">
+                V0: 0+0i • V1: 0+0i • V2: 0+0i • V3: 0+0i • V4: 0+0i
               </div>
             </div>
           </div>
@@ -235,10 +227,10 @@ export default function PentagonGame() {
                 Reset
               </button>
               <button
-                onClick={generateNewGoal}
+                onClick={generateStartingState}
                 className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm"
               >
-                New Goal
+                New Puzzle
               </button>
               <button
                 onClick={getHint}
