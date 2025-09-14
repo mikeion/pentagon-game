@@ -5,7 +5,7 @@ import GameCanvas from './GameCanvas';
 import GameControls from './GameControls';
 // import EducationalPanel from './EducationalPanel';
 import { ComplexNumber, GameState, Move, MoveType } from '@/types/game';
-import { getHint as getBoundedHint } from '@/utils/bounded-solver';
+import { solveWithMatrix } from '@/utils/matrix-solver-mathjs';
 
 // Move definitions (corrected to match Alex's PDF)
 const moves: Record<MoveType, Move> = {
@@ -88,17 +88,28 @@ export default function PentagonGame() {
   const getHint = useCallback(async () => {
     setIsGettingHint(true);
     setHintResult('Calculating hint...');
-    
+
     try {
-      const result = await getBoundedHint(gameState.vertices, gameState.goalVertices);
-      setHintResult(result.hint);
+      console.log('Getting hint for state:', gameState.vertices);
+      const solution = await solveWithMatrix(gameState);
+      console.log('Matrix solver returned:', solution);
+
+      if (solution && solution.moves.length > 0) {
+        const firstMove = solution.moves[0];
+        console.log('First move:', firstMove);
+        const moveType = firstMove[0];
+        const vertex = firstMove[1];
+        setHintResult(`Suggested move: ${moveType} at vertex ${vertex}`);
+      } else {
+        setHintResult('No solution found');
+      }
     } catch (error) {
-      console.error('Hint error:', error);
+      console.error('Matrix solver error:', error);
       setHintResult('Error calculating hint');
     } finally {
       setIsGettingHint(false);
     }
-  }, [gameState.vertices, gameState.goalVertices]);
+  }, [gameState]);
 
   const applyMove = useCallback((vertexIndex: number, operation: 'add' | 'subtract' = 'add') => {
     if (vertexIndex < 0 || vertexIndex > 4) return;
@@ -225,26 +236,32 @@ export default function PentagonGame() {
                 </button>
               ))}
             </div>
-            <div className="flex gap-2 mb-3">
+            <div className="grid grid-cols-2 gap-2 mb-3">
               <button
                 onClick={resetGame}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm"
               >
                 Reset
               </button>
               <button
                 onClick={generateStartingState}
-                className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm"
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm"
               >
                 New Puzzle
               </button>
               <button
                 onClick={getHint}
                 disabled={isGettingHint}
-                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg text-sm disabled:opacity-50"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm disabled:opacity-50"
               >
                 {isGettingHint ? '...' : 'Hint'}
               </button>
+              <a
+                href="/matrix-solver"
+                className="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm text-center hover:bg-orange-500 transition-colors"
+              >
+                Matrix Solver
+              </a>
             </div>
             {hintResult && (
               <div className="bg-slate-900/50 p-2 rounded-lg border border-slate-600">
