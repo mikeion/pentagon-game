@@ -258,7 +258,7 @@ export default function MatrixSolverPage() {
       { real: 0, imag: 0 }
     ],
     currentMoveType: 'A',
-    selectedVertex: null,
+    selectedVertex: -1,
     isWon: false
   });
 
