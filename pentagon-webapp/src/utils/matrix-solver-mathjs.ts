@@ -203,7 +203,7 @@ export async function getFullSolution(
   initialState: GameState
 ): Promise<string[]> {
   const moves: string[] = [];
-  let currentState: GameState = {
+  const currentState: GameState = {
     vertices: initialState.vertices.map(v => ({ ...v })),
     goalVertices: initialState.goalVertices.map(v => ({ ...v })),
     currentMoveType: initialState.currentMoveType,

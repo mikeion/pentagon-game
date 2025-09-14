@@ -19,13 +19,13 @@ export default function EducationalPanel({
 }: EducationalPanelProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('pentagon');
   const [explanationLevel, setExplanationLevel] = useState<ExplanationLevel>('intuitive');
-  const [stateInfo, setStateInfo] = useState<{
+  const [stateInfo] = useState<{
     vectorRepresentation: number[];
     generationFromZero: number;
     totalStatesInGroup: number;
     isValidGroupElement: boolean;
   } | null>(null);
-  const [groupInitialized, setGroupInitialized] = useState(false);
+  const [groupInitialized] = useState(false);
 
   // Initialize the group solver only when the panel is visible and group view is selected
   useEffect(() => {

@@ -242,7 +242,7 @@ function PentagonVisualization({ state, title }: { state: ComplexNumber[]; title
 
 export default function MatrixSolverPage() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [gameState, setGameState] = useState<GameState>({
+  const [gameState] = useState<GameState>({
     vertices: [
       { real: -4, imag: -1 },  // V0
       { real: 4, imag: 1 },    // V1
