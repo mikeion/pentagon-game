@@ -5,7 +5,7 @@ import GameCanvas from './GameCanvas';
 import GameControls from './GameControls';
 // import EducationalPanel from './EducationalPanel';
 import { ComplexNumber, GameState, Move, MoveType } from '@/types/game';
-import { solveWithMatrix } from '@/utils/matrix-solver-mathjs';
+import { solveWithMatrix, getFullSolution } from '@/utils/matrix-solver-mathjs';
 
 // Move definitions (corrected to match Alex's PDF)
 const moves: Record<MoveType, Move> = {
@@ -44,6 +44,9 @@ export default function PentagonGame() {
 
   const [hintResult, setHintResult] = useState<string>('');
   const [isGettingHint, setIsGettingHint] = useState(false);
+  const [fullSolution, setFullSolution] = useState<string[]>([]);
+  const [isGettingSolution, setIsGettingSolution] = useState(false);
+  const [showFullSolution, setShowFullSolution] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   // const [showEducationalPanel, setShowEducationalPanel] = useState(false);
 
@@ -108,6 +111,25 @@ export default function PentagonGame() {
       setHintResult('Error calculating hint');
     } finally {
       setIsGettingHint(false);
+    }
+  }, [gameState]);
+
+  const getFullSolutionMoves = useCallback(async () => {
+    setIsGettingSolution(true);
+    setShowFullSolution(false);
+
+    try {
+      console.log('Getting full solution for state:', gameState.vertices);
+      const moves = await getFullSolution(gameState);
+      console.log('Full solution moves:', moves);
+
+      setFullSolution(moves);
+      setShowFullSolution(true);
+    } catch (error) {
+      console.error('Full solution error:', error);
+      setFullSolution([]);
+    } finally {
+      setIsGettingSolution(false);
     }
   }, [gameState]);
 
@@ -195,6 +217,11 @@ export default function PentagonGame() {
           onGetHint={getHint}
           hintResult={hintResult}
           isGettingHint={isGettingHint}
+          onGetFullSolution={getFullSolutionMoves}
+          fullSolution={fullSolution}
+          isGettingSolution={isGettingSolution}
+          showFullSolution={showFullSolution}
+          onHideFullSolution={() => setShowFullSolution(false)}
         />
       </div>
       
@@ -236,29 +263,45 @@ export default function PentagonGame() {
                 </button>
               ))}
             </div>
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              <button
-                onClick={resetGame}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm"
-              >
-                Reset
-              </button>
-              <button
-                onClick={generateStartingState}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm"
-              >
-                New Puzzle
-              </button>
-              <button
-                onClick={getHint}
-                disabled={isGettingHint}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm disabled:opacity-50"
-              >
-                {isGettingHint ? '...' : 'Hint'}
-              </button>
+            <div className="space-y-2 mb-3">
+              {/* Row 1: Reset and New Puzzle */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={resetGame}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm"
+                >
+                  Reset
+                </button>
+                <button
+                  onClick={generateStartingState}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm"
+                >
+                  New Puzzle
+                </button>
+              </div>
+
+              {/* Row 2: Hint and Full Solution */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={getHint}
+                  disabled={isGettingHint}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm disabled:opacity-50"
+                >
+                  {isGettingHint ? '...' : 'Hint'}
+                </button>
+                <button
+                  onClick={getFullSolutionMoves}
+                  disabled={isGettingSolution}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm disabled:opacity-50"
+                >
+                  {isGettingSolution ? '...' : 'Full Solution'}
+                </button>
+              </div>
+
+              {/* Row 3: Matrix Solver */}
               <a
                 href="/matrix-solver"
-                className="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm text-center hover:bg-orange-500 transition-colors"
+                className="block px-4 py-2 bg-orange-600 text-white rounded-lg text-sm text-center hover:bg-orange-500 transition-colors"
               >
                 Matrix Solver
               </a>
@@ -266,6 +309,29 @@ export default function PentagonGame() {
             {hintResult && (
               <div className="bg-slate-900/50 p-2 rounded-lg border border-slate-600">
                 <p className="text-sm text-center text-slate-300">{hintResult}</p>
+              </div>
+            )}
+            {showFullSolution && fullSolution.length > 0 && (
+              <div className="bg-indigo-900/50 p-3 rounded-lg border border-indigo-600">
+                <h4 className="text-sm font-bold text-indigo-400 mb-2 text-center">
+                  🎯 Full Solution ({fullSolution.length} moves):
+                </h4>
+                <div className="flex flex-wrap gap-1 justify-center">
+                  {fullSolution.map((move, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-1 bg-indigo-600 text-white rounded text-xs font-mono"
+                    >
+                      {index + 1}. {move}
+                    </span>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setShowFullSolution(false)}
+                  className="mt-2 w-full px-2 py-1 bg-slate-600 text-white rounded text-xs hover:bg-slate-500"
+                >
+                  Hide Solution
+                </button>
               </div>
             )}
           </div>

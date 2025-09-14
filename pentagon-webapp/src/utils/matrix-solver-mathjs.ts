@@ -198,6 +198,63 @@ export async function getMatrixHint(
   return [];
 }
 
+// Get full solution sequence using iterative approach
+export async function getFullSolution(
+  initialState: GameState
+): Promise<string[]> {
+  const moves: string[] = [];
+  let state = initialState.vertices.map(v => ({ ...v }));
+  const maxIterations = 15; // Reasonable limit for full solutions
+
+  for (let iteration = 0; iteration < maxIterations; iteration++) {
+    // Check if we're already at the goal
+    const currentDistance = state.reduce((sum, v) => sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0);
+    if (currentDistance < 0.01) {
+      console.log(`Full solution found in ${iteration} moves!`);
+      break;
+    }
+
+    console.log(`\nFull solution iteration ${iteration + 1}, current distance: ${currentDistance.toFixed(3)}`);
+
+    // Find the best move for the current state
+    let bestMove: { vertex: number; type: MoveType; operation: 'add' | 'subtract' } | null = null;
+    let bestDistance = Infinity;
+
+    // Test all possible moves at all vertices
+    for (let vertex = 0; vertex < 5; vertex++) {
+      for (const moveType of ['A', 'B', 'C', 'D'] as MoveType[]) {
+        for (const operation of ['add', 'subtract'] as const) {
+          const newState = simulateMove(state, vertex, moveType, operation);
+          const distance = newState.reduce((sum, v) =>
+            sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0
+          );
+
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            bestMove = { vertex, type: moveType, operation };
+          }
+        }
+      }
+    }
+
+    if (bestMove && bestDistance < currentDistance) {
+      const moveStr = bestMove.operation === 'subtract' ?
+        `${bestMove.type}${bestMove.vertex} (long press)` :
+        `${bestMove.type}${bestMove.vertex}`;
+
+      moves.push(moveStr);
+      state = simulateMove(state, bestMove.vertex, bestMove.type, bestMove.operation);
+
+      console.log(`Applied ${moveStr}, new distance: ${bestDistance.toFixed(3)}`);
+    } else {
+      console.log('No improving move found, stopping full solution search');
+      break;
+    }
+  }
+
+  return moves;
+}
+
 // Debug function to show solution vector
 export function debugSolutionVector(state: GameState): void {
   const differenceVector = calculateDifferenceVector(state);

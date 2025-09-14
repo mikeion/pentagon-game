@@ -1,3 +1,4 @@
 scripts/
+tests/
 test-*.js
 *.test.js

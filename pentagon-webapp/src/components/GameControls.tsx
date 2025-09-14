@@ -10,6 +10,11 @@ interface GameControlsProps {
   onGetHint?: () => Promise<void>;
   hintResult?: string;
   isGettingHint?: boolean;
+  onGetFullSolution?: () => Promise<void>;
+  fullSolution?: string[];
+  isGettingSolution?: boolean;
+  showFullSolution?: boolean;
+  onHideFullSolution?: () => void;
 }
 
 const moveDescriptions = {
@@ -26,7 +31,12 @@ export default function GameControls({
   onNewGoal,
   onGetHint,
   hintResult,
-  isGettingHint = false
+  isGettingHint = false,
+  onGetFullSolution,
+  fullSolution,
+  isGettingSolution = false,
+  showFullSolution = false,
+  onHideFullSolution
 }: GameControlsProps) {
 
   return (
@@ -96,6 +106,15 @@ export default function GameControls({
             {isGettingHint ? 'Calculating...' : 'Get Hint'}
           </button>
         )}
+        {onGetFullSolution && (
+          <button
+            onClick={onGetFullSolution}
+            disabled={isGettingSolution}
+            className="w-full px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 disabled:opacity-50 text-sm"
+          >
+            {isGettingSolution ? 'Solving...' : 'Full Solution'}
+          </button>
+        )}
       </div>
       
       {/* Hint Result */}
@@ -103,6 +122,33 @@ export default function GameControls({
         <div className="mt-3 p-3 bg-slate-900/50 rounded-lg border border-slate-600">
           <h4 className="text-xs font-semibold text-green-400 mb-1">💡 Hint:</h4>
           <p className="text-xs text-slate-300">{hintResult}</p>
+        </div>
+      )}
+
+      {/* Full Solution Display */}
+      {showFullSolution && fullSolution && fullSolution.length > 0 && (
+        <div className="mt-3 p-3 bg-indigo-900/50 rounded-lg border border-indigo-600">
+          <h4 className="text-xs font-semibold text-indigo-400 mb-2">
+            🎯 Full Solution ({fullSolution.length} moves):
+          </h4>
+          <div className="flex flex-wrap gap-1 mb-2">
+            {fullSolution.map((move, index) => (
+              <span
+                key={index}
+                className="px-2 py-1 bg-indigo-600 text-white rounded text-xs font-mono"
+              >
+                {index + 1}. {move}
+              </span>
+            ))}
+          </div>
+          {onHideFullSolution && (
+            <button
+              onClick={onHideFullSolution}
+              className="w-full px-2 py-1 bg-slate-600 text-white rounded text-xs hover:bg-slate-500 transition-colors"
+            >
+              Hide Solution
+            </button>
+          )}
         </div>
       )}
 
