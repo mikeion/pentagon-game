@@ -1,0 +1,1141 @@
+{
+  "generated": "2025-09-12T03:55:01.279Z",
+  "count": 18,
+  "puzzles": [
+    {
+      "id": "easy_1",
+      "startState": [
+        {
+          "real": 5,
+          "imag": 1
+        },
+        {
+          "real": -3,
+          "imag": 2
+        },
+        {
+          "real": 0,
+          "imag": 2
+        },
+        {
+          "real": 0,
+          "imag": 2
+        },
+        {
+          "real": -3,
+          "imag": 2
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "easy",
+      "generationMoves": 5,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "add"
+        },
+        {
+          "moveType": "B",
+          "operation": "add"
+        }
+      ],
+      "solutionLength": 5
+    },
+    {
+      "id": "easy_2",
+      "startState": [
+        {
+          "real": 1,
+          "imag": -1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "easy",
+      "generationMoves": 5,
+      "solution": [
+        {
+          "moveType": "B",
+          "operation": "add"
+        }
+      ],
+      "solutionLength": 1
+    },
+    {
+      "id": "easy_3",
+      "startState": [
+        {
+          "real": 1,
+          "imag": -1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "easy",
+      "generationMoves": 5,
+      "solution": [
+        {
+          "moveType": "B",
+          "operation": "add"
+        }
+      ],
+      "solutionLength": 1
+    },
+    {
+      "id": "easy_4",
+      "startState": [
+        {
+          "real": 3,
+          "imag": 3
+        },
+        {
+          "real": -3,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": -3,
+          "imag": 0
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "easy",
+      "generationMoves": 5,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        }
+      ],
+      "solutionLength": 3
+    },
+    {
+      "id": "easy_5",
+      "startState": [
+        {
+          "real": -1,
+          "imag": 3
+        },
+        {
+          "real": -1,
+          "imag": -2
+        },
+        {
+          "real": 0,
+          "imag": -2
+        },
+        {
+          "real": 0,
+          "imag": -2
+        },
+        {
+          "real": -1,
+          "imag": -2
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "easy",
+      "generationMoves": 5,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        }
+      ],
+      "solutionLength": 3
+    },
+    {
+      "id": "easy_6",
+      "startState": [
+        {
+          "real": -1,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": -1
+        },
+        {
+          "real": 0,
+          "imag": -1
+        },
+        {
+          "real": 0,
+          "imag": -1
+        },
+        {
+          "real": 0,
+          "imag": -1
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "easy",
+      "generationMoves": 5,
+      "solution": [
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        }
+      ],
+      "solutionLength": 1
+    },
+    {
+      "id": "medium_1",
+      "startState": [
+        {
+          "real": 0,
+          "imag": 2
+        },
+        {
+          "real": -1,
+          "imag": -1
+        },
+        {
+          "real": 0,
+          "imag": -1
+        },
+        {
+          "real": 0,
+          "imag": -1
+        },
+        {
+          "real": -1,
+          "imag": -1
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "medium",
+      "generationMoves": 8,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        }
+      ],
+      "solutionLength": 2
+    },
+    {
+      "id": "medium_2",
+      "startState": [
+        {
+          "real": 4,
+          "imag": 4
+        },
+        {
+          "real": -4,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": -4,
+          "imag": 0
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "medium",
+      "generationMoves": 8,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        }
+      ],
+      "solutionLength": 4
+    },
+    {
+      "id": "medium_3",
+      "startState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "medium",
+      "generationMoves": 8,
+      "solution": [],
+      "solutionLength": 0
+    },
+    {
+      "id": "medium_4",
+      "startState": [
+        {
+          "real": 0,
+          "imag": 4
+        },
+        {
+          "real": -2,
+          "imag": -2
+        },
+        {
+          "real": 0,
+          "imag": -2
+        },
+        {
+          "real": 0,
+          "imag": -2
+        },
+        {
+          "real": -2,
+          "imag": -2
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "medium",
+      "generationMoves": 8,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        }
+      ],
+      "solutionLength": 4
+    },
+    {
+      "id": "medium_5",
+      "startState": [
+        {
+          "real": -2,
+          "imag": 0
+        },
+        {
+          "real": 1,
+          "imag": -1
+        },
+        {
+          "real": 0,
+          "imag": -1
+        },
+        {
+          "real": 0,
+          "imag": -1
+        },
+        {
+          "real": 1,
+          "imag": -1
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "medium",
+      "generationMoves": 8,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "add"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        }
+      ],
+      "solutionLength": 2
+    },
+    {
+      "id": "medium_6",
+      "startState": [
+        {
+          "real": 2,
+          "imag": 4
+        },
+        {
+          "real": -3,
+          "imag": -1
+        },
+        {
+          "real": 0,
+          "imag": -1
+        },
+        {
+          "real": 0,
+          "imag": -1
+        },
+        {
+          "real": -3,
+          "imag": -1
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "medium",
+      "generationMoves": 8,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        }
+      ],
+      "solutionLength": 4
+    },
+    {
+      "id": "hard_1",
+      "startState": [
+        {
+          "real": 4,
+          "imag": 2
+        },
+        {
+          "real": -3,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": -3,
+          "imag": 1
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "hard",
+      "generationMoves": 12,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "add"
+        }
+      ],
+      "solutionLength": 4
+    },
+    {
+      "id": "hard_2",
+      "startState": [
+        {
+          "real": -2,
+          "imag": -4
+        },
+        {
+          "real": 3,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": 3,
+          "imag": 1
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "hard",
+      "generationMoves": 12,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "add"
+        },
+        {
+          "moveType": "A",
+          "operation": "add"
+        },
+        {
+          "moveType": "A",
+          "operation": "add"
+        },
+        {
+          "moveType": "B",
+          "operation": "add"
+        }
+      ],
+      "solutionLength": 4
+    },
+    {
+      "id": "hard_3",
+      "startState": [
+        {
+          "real": 2,
+          "imag": -2
+        },
+        {
+          "real": 0,
+          "imag": 2
+        },
+        {
+          "real": 0,
+          "imag": 2
+        },
+        {
+          "real": 0,
+          "imag": 2
+        },
+        {
+          "real": 0,
+          "imag": 2
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "hard",
+      "generationMoves": 12,
+      "solution": [
+        {
+          "moveType": "B",
+          "operation": "add"
+        },
+        {
+          "moveType": "B",
+          "operation": "add"
+        }
+      ],
+      "solutionLength": 2
+    },
+    {
+      "id": "hard_4",
+      "startState": [
+        {
+          "real": 0,
+          "imag": -2
+        },
+        {
+          "real": 1,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": 0,
+          "imag": 1
+        },
+        {
+          "real": 1,
+          "imag": 1
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "hard",
+      "generationMoves": 12,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "add"
+        },
+        {
+          "moveType": "B",
+          "operation": "add"
+        }
+      ],
+      "solutionLength": 2
+    },
+    {
+      "id": "hard_5",
+      "startState": [
+        {
+          "real": -4,
+          "imag": 2
+        },
+        {
+          "real": 1,
+          "imag": -3
+        },
+        {
+          "real": 0,
+          "imag": -3
+        },
+        {
+          "real": 0,
+          "imag": -3
+        },
+        {
+          "real": 1,
+          "imag": -3
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "hard",
+      "generationMoves": 12,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "add"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        }
+      ],
+      "solutionLength": 4
+    },
+    {
+      "id": "hard_6",
+      "startState": [
+        {
+          "real": 0,
+          "imag": 4
+        },
+        {
+          "real": -2,
+          "imag": -2
+        },
+        {
+          "real": 0,
+          "imag": -2
+        },
+        {
+          "real": 0,
+          "imag": -2
+        },
+        {
+          "real": -2,
+          "imag": -2
+        }
+      ],
+      "goalState": [
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        },
+        {
+          "real": 0,
+          "imag": 0
+        }
+      ],
+      "difficulty": "hard",
+      "generationMoves": 12,
+      "solution": [
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "A",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        },
+        {
+          "moveType": "B",
+          "operation": "subtract"
+        }
+      ],
+      "solutionLength": 4
+    }
+  ]
+}

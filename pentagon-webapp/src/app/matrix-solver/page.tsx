@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ComplexNumber, GameState } from '@/types/game';
-import { solveWithMatrix, debugSolutionVector } from '@/utils/matrix-solver-mathjs';
 
 // Original 10x10 Matrix from Alex's LaTeX document
 const ORIGINAL_10x10_MATRIX = [
@@ -273,7 +272,7 @@ export default function MatrixSolverPage() {
     // Apply matrix multiplication manually for each step
     const solutionVector: ComplexNumber[] = [];
     for (let i = 0; i < 5; i++) {
-      let sum = { real: 0, imag: 0 };
+      const sum = { real: 0, imag: 0 };
       for (let j = 0; j < 5; j++) {
         const product = {
           real: MATRIX_INVERSE[i][j].real * differenceVector[j].real - MATRIX_INVERSE[i][j].imag * differenceVector[j].imag,

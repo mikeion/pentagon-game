@@ -40,15 +40,16 @@ function toMathComplex(c: ComplexNumber) {
 }
 
 // Convert math.js complex to ComplexNumber
-function fromMathComplex(c: any): ComplexNumber {
+function fromMathComplex(c: unknown): ComplexNumber {
+  const complex = c as { re?: number; real?: number; im?: number; imag?: number };
   return {
-    real: c.re || c.real || 0,
-    imag: c.im || c.imag || 0
+    real: complex.re || complex.real || 0,
+    imag: complex.im || complex.imag || 0
   };
 }
 
 // Calculate the difference vector from current state to goal (0+0i)
-function calculateDifferenceVector(current: GameState) {
+function calculateDifferenceVector(current: GameState): unknown {
   // Since goal is always [0+0i, 0+0i, 0+0i, 0+0i, 0+0i]
   // The difference is simply -current
   const currentVector = math.matrix(current.vertices.map(toMathComplex));
@@ -56,9 +57,9 @@ function calculateDifferenceVector(current: GameState) {
 }
 
 // Apply the inverse matrix to get the solution vector
-function applySolutionMatrix(differenceVector: any) {
+function applySolutionMatrix(differenceVector: unknown): unknown {
   // Matrix multiplication: M̄⁻¹ × difference
-  return math.multiply(SCALED_MATRIX_INVERSE, differenceVector);
+  return math.multiply(SCALED_MATRIX_INVERSE, differenceVector as Parameters<typeof math.multiply>[1]);
 }
 
 // Simulate applying a move to a state
@@ -83,19 +84,13 @@ function simulateMove(state: ComplexNumber[], vertex: number, moveType: MoveType
   return newState;
 }
 
-// Check if state is close to zero
-function isNearZero(state: ComplexNumber[], epsilon: number = 0.01): boolean {
-  return state.every(v =>
-    Math.abs(v.real) < epsilon && Math.abs(v.imag) < epsilon
-  );
-}
 
 // Convert solution vector to move sequence by testing actual moves
-function solutionToMoves(solution: any, currentState: ComplexNumber[]): string[] {
+function solutionToMoves(solution: unknown, currentState: ComplexNumber[]): string[] {
   // Convert math.js solution back to array of ComplexNumbers for analysis
   const solutionArray = [];
   for (let i = 0; i < 5; i++) {
-    const complexVal = math.subset(solution, math.index(i));
+    const complexVal = math.subset(solution as Parameters<typeof math.subset>[0], math.index(i));
     solutionArray.push(fromMathComplex(complexVal));
   }
   console.log('Math.js solution vector:', solutionArray);
@@ -174,7 +169,7 @@ export async function solveWithMatrix(
     // Convert solution back to ComplexNumber array for return
     const solutionArray = [];
     for (let i = 0; i < 5; i++) {
-      const complexVal = math.subset(solutionVector, math.index(i));
+      const complexVal = math.subset(solutionVector as Parameters<typeof math.subset>[0], math.index(i));
       solutionArray.push(fromMathComplex(complexVal));
     }
 
@@ -214,7 +209,7 @@ export function debugSolutionVector(state: GameState): void {
 
   // Convert and display each solution component
   for (let i = 0; i < 5; i++) {
-    const complexVal = math.subset(solutionVector, math.index(i));
+    const complexVal = math.subset(solutionVector as Parameters<typeof math.subset>[0], math.index(i));
     const v = fromMathComplex(complexVal);
     const magnitude = Math.sqrt(v.real * v.real + v.imag * v.imag);
     const angle = Math.atan2(v.imag, v.real) * 180 / Math.PI;
