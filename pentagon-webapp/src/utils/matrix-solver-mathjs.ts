@@ -198,60 +198,74 @@ export async function getMatrixHint(
   return [];
 }
 
-// Get full solution sequence using iterative approach
+// Get full solution sequence using iterative matrix solver approach
 export async function getFullSolution(
   initialState: GameState
 ): Promise<string[]> {
   const moves: string[] = [];
-  let state = initialState.vertices.map(v => ({ ...v }));
+  let currentState: GameState = {
+    vertices: initialState.vertices.map(v => ({ ...v })),
+    goalVertices: initialState.goalVertices.map(v => ({ ...v })),
+    currentMoveType: initialState.currentMoveType,
+    selectedVertex: initialState.selectedVertex,
+    isWon: false
+  };
   const maxIterations = 15; // Reasonable limit for full solutions
+
+  console.log('Starting full solution with matrix solver approach');
 
   for (let iteration = 0; iteration < maxIterations; iteration++) {
     // Check if we're already at the goal
-    const currentDistance = state.reduce((sum, v) => sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0);
+    const currentDistance = currentState.vertices.reduce((sum, v) => sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0);
     if (currentDistance < 0.01) {
       console.log(`Full solution found in ${iteration} moves!`);
       break;
     }
 
-    console.log(`\nFull solution iteration ${iteration + 1}, current distance: ${currentDistance.toFixed(3)}`);
+    console.log(`Full solution iteration ${iteration + 1}, current distance: ${currentDistance.toFixed(3)}`);
 
-    // Find the best move for the current state
-    let bestMove: { vertex: number; type: MoveType; operation: 'add' | 'subtract' } | null = null;
-    let bestDistance = Infinity;
+    // Use the same matrix solver as the hint system
+    const solution = await solveWithMatrix(currentState);
 
-    // Test all possible moves at all vertices
-    for (let vertex = 0; vertex < 5; vertex++) {
-      for (const moveType of ['A', 'B', 'C', 'D'] as MoveType[]) {
-        for (const operation of ['add', 'subtract'] as const) {
-          const newState = simulateMove(state, vertex, moveType, operation);
-          const distance = newState.reduce((sum, v) =>
-            sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0
-          );
-
-          if (distance < bestDistance) {
-            bestDistance = distance;
-            bestMove = { vertex, type: moveType, operation };
-          }
-        }
-      }
-    }
-
-    if (bestMove && bestDistance < currentDistance) {
-      const moveStr = bestMove.operation === 'subtract' ?
-        `${bestMove.type}${bestMove.vertex} (long press)` :
-        `${bestMove.type}${bestMove.vertex}`;
-
-      moves.push(moveStr);
-      state = simulateMove(state, bestMove.vertex, bestMove.type, bestMove.operation);
-
-      console.log(`Applied ${moveStr}, new distance: ${bestDistance.toFixed(3)}`);
-    } else {
-      console.log('No improving move found, stopping full solution search');
+    if (!solution || solution.moves.length === 0) {
+      console.log('Matrix solver found no moves, stopping full solution search');
       break;
     }
+
+    const nextMove = solution.moves[0];
+    console.log(`Matrix solver suggests: ${nextMove}`);
+
+    // Parse the move string to extract vertex, move type, and operation
+    let vertex: number;
+    let moveType: MoveType;
+    let operation: 'add' | 'subtract' = 'add';
+
+    if (nextMove.includes('(long press)')) {
+      operation = 'subtract';
+      const cleanMove = nextMove.replace(' (long press)', '');
+      vertex = parseInt(cleanMove.slice(-1));
+      moveType = cleanMove.slice(0, -1) as MoveType;
+    } else {
+      vertex = parseInt(nextMove.slice(-1));
+      moveType = nextMove.slice(0, -1) as MoveType;
+    }
+
+    // Apply the move to get the new state
+    const newVertices = simulateMove(currentState.vertices, vertex, moveType, operation);
+    const newDistance = newVertices.reduce((sum, v) => sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0);
+
+    if (newDistance >= currentDistance) {
+      console.log(`Move ${nextMove} doesn't improve distance (${newDistance.toFixed(3)} >= ${currentDistance.toFixed(3)}), stopping`);
+      break;
+    }
+
+    moves.push(nextMove);
+    currentState.vertices = newVertices;
+
+    console.log(`Applied ${nextMove}, new distance: ${newDistance.toFixed(3)}`);
   }
 
+  console.log(`Full solution complete: ${moves.length} moves`);
   return moves;
 }
 
