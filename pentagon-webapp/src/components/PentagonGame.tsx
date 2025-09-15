@@ -298,13 +298,13 @@ export default function PentagonGame() {
                 </button>
               </div>
 
-              {/* Row 3: Matrix Solver */}
-              <a
+              {/* Row 3: Matrix Solver - Temporarily disabled until tutorial page is ready */}
+              {/* <a
                 href="/matrix-solver"
                 className="block px-4 py-2 bg-orange-600 text-white rounded-lg text-sm text-center hover:bg-orange-500 transition-colors"
               >
                 Matrix Solver
-              </a>
+              </a> */}
             </div>
             {hintResult && (
               <div className="bg-slate-900/50 p-2 rounded-lg border border-slate-600">
