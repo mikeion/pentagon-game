@@ -206,7 +206,7 @@ export default function PentagonGame() {
         onToggle={() => setShowEducationalPanel(!showEducationalPanel)}
       /> */}
       
-    <div className="h-full flex flex-col lg:flex-row lg:gap-6 lg:items-center lg:justify-center lg:max-w-7xl lg:mx-auto lg:px-4">
+    <div className="min-h-screen lg:h-full flex flex-col lg:flex-row lg:gap-6 lg:items-center lg:justify-center lg:max-w-7xl lg:mx-auto lg:px-4">
       {/* Desktop layout - sidebar controls */}
       <div className="hidden lg:block lg:w-80">
         <GameControls
@@ -226,9 +226,9 @@ export default function PentagonGame() {
       </div>
       
       {/* Mobile/Desktop game area */}
-      <div className="flex-1 lg:flex lg:justify-center">
+      <div className="w-full lg:flex-1 lg:flex lg:justify-center">
         {/* Mobile-first layout */}
-        <div className="lg:hidden h-full flex flex-col">
+        <div className="lg:hidden min-h-screen flex flex-col overflow-y-auto">
           {/* Compact goal at top */}
           <div className="flex-shrink-0 bg-gradient-to-r from-green-600/20 to-emerald-600/20 mx-4 mt-4 p-3 rounded-xl border border-green-500/30">
             <div className="text-center">
