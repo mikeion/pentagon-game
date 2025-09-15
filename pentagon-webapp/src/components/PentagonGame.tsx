@@ -206,7 +206,7 @@ export default function PentagonGame() {
         onToggle={() => setShowEducationalPanel(!showEducationalPanel)}
       /> */}
       
-    <div className="min-h-screen lg:h-full flex flex-col lg:flex-row lg:gap-6 lg:items-center lg:justify-center lg:max-w-7xl lg:mx-auto lg:px-4">
+    <div className="h-full overflow-y-auto lg:overflow-visible flex flex-col lg:flex-row lg:gap-6 lg:items-center lg:justify-center lg:max-w-7xl lg:mx-auto lg:px-4">
       {/* Desktop layout - sidebar controls */}
       <div className="hidden lg:block lg:w-80">
         <GameControls
@@ -228,22 +228,22 @@ export default function PentagonGame() {
       {/* Mobile/Desktop game area */}
       <div className="w-full lg:flex-1 lg:flex lg:justify-center">
         {/* Mobile-first layout */}
-        <div className="lg:hidden min-h-screen flex flex-col overflow-y-auto">
+        <div className="lg:hidden flex flex-col">
           {/* Compact goal at top */}
           <div className="flex-shrink-0 bg-gradient-to-r from-green-600/20 to-emerald-600/20 mx-4 mt-4 p-3 rounded-xl border border-green-500/30">
             <div className="text-center">
               <h4 className="text-sm font-bold text-green-400">🎯 Goal: Get all vertices to 0+0i</h4>
             </div>
           </div>
-          
+
           {/* Pentagon in middle */}
-          <div className="flex-1 flex items-center justify-center px-4">
+          <div className="flex items-center justify-center px-4 py-4">
             <GameCanvas
               gameState={gameState}
               onVertexClick={applyMove}
             />
           </div>
-          
+
           {/* Move controls at bottom */}
           <div className="flex-shrink-0 bg-slate-800/95 mx-4 mb-4 p-4 rounded-xl border border-slate-700">
             <div className="grid grid-cols-4 gap-3 mb-3">
