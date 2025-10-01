@@ -240,19 +240,19 @@ export default function PentagonGame() {
   }, []);
 
   const toggleMoveType = useCallback(() => {
-    // Cycle through: A -> -A -> B -> -B -> A
-    // Internal types: A -> C -> B -> D -> A
+    // Cycle through: A -> B -> -A -> -B -> A
+    // Internal types: A -> B -> C -> D -> A
     const currentInternal = gameState.currentMoveType;
     let nextMoveType: UIMoveType;
     let nextInternal: MoveType;
 
     if (currentInternal === 'A') {
-      nextMoveType = 'A';
-      nextInternal = 'C'; // -A
-    } else if (currentInternal === 'C') {
       nextMoveType = 'B';
       nextInternal = 'B';
     } else if (currentInternal === 'B') {
+      nextMoveType = 'A';
+      nextInternal = 'C'; // -A
+    } else if (currentInternal === 'C') {
       nextMoveType = 'B';
       nextInternal = 'D'; // -B
     } else { // D
