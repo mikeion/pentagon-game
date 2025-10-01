@@ -4,14 +4,15 @@ import { ComplexNumber, GameState, MoveType } from '../types/game';
 // Create math.js instance with complex number support
 const math = create(all);
 
-// M̄⁻¹ matrix from Alex's LaTeX document: (1/6) * complex coefficient matrix
+// K̄⁻¹ matrix computed from K̄ = I₅ - Di (paper line 208)
+// CORRECTED: Fixed imaginary part signs to match actual inverse
 // This is the true 5×5 complex matrix that solves the pentagon game
 const MATRIX_INVERSE = math.matrix([
-  [math.complex(3, 1), math.complex(1, -1), math.complex(-1, -1), math.complex(-1, -1), math.complex(1, -1)],
-  [math.complex(1, -1), math.complex(3, 1), math.complex(1, -1), math.complex(-1, -1), math.complex(-1, -1)],
-  [math.complex(-1, -1), math.complex(1, -1), math.complex(3, 1), math.complex(1, -1), math.complex(-1, -1)],
-  [math.complex(-1, -1), math.complex(-1, -1), math.complex(1, -1), math.complex(3, 1), math.complex(1, -1)],
-  [math.complex(1, -1), math.complex(-1, -1), math.complex(-1, -1), math.complex(1, -1), math.complex(3, 1)]
+  [math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1), math.complex(1, 1)],
+  [math.complex(1, 1), math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1)],
+  [math.complex(-1, 1), math.complex(1, 1), math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1)],
+  [math.complex(-1, 1), math.complex(-1, 1), math.complex(1, 1), math.complex(3, -1), math.complex(1, 1)],
+  [math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1), math.complex(1, 1), math.complex(3, -1)]
 ]);
 
 // Scale by 1/6 as specified in LaTeX
