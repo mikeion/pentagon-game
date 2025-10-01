@@ -104,18 +104,34 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     ctx.fill();
     ctx.stroke();
 
-    // Display current move in center (show UI move types A/B only)
+    // Display current move in center with negative sign if C or D
     ctx.fillStyle = '#FFFFFF';
     ctx.font = 'bold 20px monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    const moveText = uiMoveType === 'A' ? '1+i' : '-1+i';
+
+    // Show move text with negative sign for C and D
+    let moveText = '';
+    let neighborText = '';
+    if (gameState.currentMoveType === 'A') {
+      moveText = '1+i';
+      neighborText = '(-1 to adj)';
+    } else if (gameState.currentMoveType === 'C') {
+      moveText = '-1-i'; // -A
+      neighborText = '(+1 to adj)';
+    } else if (gameState.currentMoveType === 'B') {
+      moveText = '-1+i';
+      neighborText = '(-i to adj)';
+    } else { // D
+      moveText = '1-i'; // -B
+      neighborText = '(+i to adj)';
+    }
+
     ctx.fillText(moveText, centerX, centerY - 10);
 
     // Show what happens to neighbors (smaller text)
     ctx.font = '14px monospace';
     ctx.fillStyle = '#94A3B8';
-    const neighborText = uiMoveType === 'A' ? '(-1 to adj)' : '(-i to adj)';
     ctx.fillText(neighborText, centerX, centerY + 15);
 
     // Draw vertices with color coding
@@ -140,16 +156,9 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
         ctx.fill();
       }
 
-      // Draw vertex circle with color coding
+      // Draw vertex circle
       ctx.fillStyle = '#1E293B';
-      // Color code the border: Blue for pure real, Purple for complex, Green for zero
-      if (isZero) {
-        ctx.strokeStyle = '#10B981'; // Green for goal
-      } else if (isPureReal) {
-        ctx.strokeStyle = '#3B82F6'; // Blue for pure real
-      } else {
-        ctx.strokeStyle = '#A855F7'; // Purple for complex
-      }
+      ctx.strokeStyle = '#8B5CF6';
       ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.arc(pos.x, pos.y, 45, 0, 2 * Math.PI);
@@ -163,21 +172,33 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       ctx.textBaseline = 'middle';
       ctx.fillText(`V${i}`, pos.x - 55, pos.y - 55);
 
-      // Draw complex number with color-coded parts
+      // Draw complex number with separate colors for real and imaginary parts
       ctx.font = 'bold 18px monospace';
-      ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
       if (isZero) {
-        ctx.fillStyle = '#10B981';
+        ctx.fillStyle = '#10B981'; // Green for zero
+        ctx.textAlign = 'center';
         ctx.fillText('0', pos.x, pos.y);
+      } else if (isPureReal) {
+        // Just real part - blue color
+        ctx.fillStyle = '#60A5FA';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${vertex.real}`, pos.x, pos.y);
       } else {
+        // Both parts - draw separately with different colors
         const sign = vertex.imag >= 0 ? '+' : '';
-        const text = isPureReal ? `${vertex.real}` : `${vertex.real}${sign}${vertex.imag}i`;
+        const realText = `${vertex.real}`;
+        const imagText = `${sign}${vertex.imag}i`;
 
-        // Color based on type
-        ctx.fillStyle = isPureReal ? '#60A5FA' : '#C084FC';
-        ctx.fillText(text, pos.x, pos.y);
+        // Measure text to position correctly
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#60A5FA'; // Blue for real part
+        ctx.fillText(realText, pos.x - 2, pos.y);
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#C084FC'; // Purple for imaginary part
+        ctx.fillText(imagText, pos.x + 2, pos.y);
       }
     });
   }, [canvasSize, vertexPositions, gameState.vertices, gameState.selectedVertex, gameState.currentMoveType, hintVertex]);

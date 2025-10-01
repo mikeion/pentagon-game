@@ -201,9 +201,32 @@ export default function PentagonGame() {
   }, []);
 
   const toggleMoveType = useCallback(() => {
-    const newMoveType: UIMoveType = currentUIMoveType === 'A' ? 'B' : 'A';
-    setMoveType(newMoveType);
-  }, [currentUIMoveType, setMoveType]);
+    // Cycle through: A -> -A -> B -> -B -> A
+    // Internal types: A -> C -> B -> D -> A
+    const currentInternal = gameState.currentMoveType;
+    let nextMoveType: UIMoveType;
+    let nextInternal: MoveType;
+
+    if (currentInternal === 'A') {
+      nextMoveType = 'A';
+      nextInternal = 'C'; // -A
+    } else if (currentInternal === 'C') {
+      nextMoveType = 'B';
+      nextInternal = 'B';
+    } else if (currentInternal === 'B') {
+      nextMoveType = 'B';
+      nextInternal = 'D'; // -B
+    } else { // D
+      nextMoveType = 'A';
+      nextInternal = 'A';
+    }
+
+    setCurrentUIMoveType(nextMoveType);
+    setGameState(prev => ({
+      ...prev,
+      currentMoveType: nextInternal,
+    }));
+  }, [gameState.currentMoveType]);
 
   // Check win condition (only after initialization)
   useEffect(() => {
