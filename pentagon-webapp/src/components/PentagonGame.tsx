@@ -191,29 +191,32 @@ export default function PentagonGame() {
   const applyMove = useCallback((vertexIndex: number, operation: 'add' | 'subtract' = 'add') => {
     if (vertexIndex < 0 || vertexIndex > 4) return;
 
-    // Convert UI move type + operation to internal move type
-    // A with subtract = C (negative of A), B with subtract = D (negative of B)
-    let actualMoveType = currentUIMoveType as 'A' | 'B' | 'C' | 'D';
+    // Use the current internal move type directly from gameState
+    // If right-click/long-press, apply the negative (A->C, B->D, C->A, D->B)
+    let actualMoveType = gameState.currentMoveType;
     if (operation === 'subtract') {
-      actualMoveType = currentUIMoveType === 'A' ? 'C' : 'D';
+      // Apply the negative of the current move
+      if (actualMoveType === 'A') actualMoveType = 'C';
+      else if (actualMoveType === 'C') actualMoveType = 'A';
+      else if (actualMoveType === 'B') actualMoveType = 'D';
+      else actualMoveType = 'B'; // D -> B
     }
 
     const move = moves[actualMoveType];
-    const multiplier = 1; // Already handled by move type selection
-    
+
     setGameState(prev => {
       const newVertices = prev.vertices.map(v => ({ ...v }));
-      
+
       // Apply to selected vertex
-      newVertices[vertexIndex].real += move.vertex.real * multiplier;
-      newVertices[vertexIndex].imag += move.vertex.imag * multiplier;
-      
+      newVertices[vertexIndex].real += move.vertex.real;
+      newVertices[vertexIndex].imag += move.vertex.imag;
+
       // Apply to adjacent vertices
       for (const adj of adjacency[vertexIndex]) {
-        newVertices[adj].real += move.adjacent.real * multiplier;
-        newVertices[adj].imag += move.adjacent.imag * multiplier;
+        newVertices[adj].real += move.adjacent.real;
+        newVertices[adj].imag += move.adjacent.imag;
       }
-      
+
       return {
         ...prev,
         vertices: newVertices,
@@ -221,7 +224,7 @@ export default function PentagonGame() {
         currentMoveType: actualMoveType,
       };
     });
-  }, [currentUIMoveType]);
+  }, [gameState.currentMoveType]);
 
   const resetGame = useCallback(() => {
     setIsInitialized(false);
