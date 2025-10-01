@@ -97,48 +97,38 @@ function solutionToMoves(solution: unknown, currentState: ComplexNumber[]): stri
   }
   console.log('Math.js solution vector:', solutionArray);
 
-  // Find the vertex with the largest magnitude solution coefficient
-  let maxMagnitude = 0;
-  let bestVertex = 0;
-  for (let i = 0; i < 5; i++) {
-    const magnitude = Math.sqrt(solutionArray[i].real * solutionArray[i].real + solutionArray[i].imag * solutionArray[i].imag);
-    if (magnitude > maxMagnitude) {
-      maxMagnitude = magnitude;
-      bestVertex = i;
-    }
-  }
+  console.log('Solution vector coefficients:', solutionArray.map((v, i) =>
+    `V${i}: ${v.real.toFixed(3)}${v.imag >= 0 ? '+' : ''}${v.imag.toFixed(3)}i`
+  ).join(', '));
 
-  if (maxMagnitude < 0.1) {
-    console.log('Solution magnitude too small, no clear move suggested');
-    return [];
-  }
-
-  console.log(`Largest solution coefficient at vertex ${bestVertex}: ${solutionArray[bestVertex].real.toFixed(3)} + ${solutionArray[bestVertex].imag.toFixed(3)}i`);
-
-  // Test all four move types at the best vertex to find which one gets closest to zero
+  // Test ALL possible moves at ALL vertices to find the one that gets closest to zero
   let bestMove: { vertex: number; type: MoveType } | null = null;
   let bestDistance = Infinity;
+  const currentDistance = currentState.reduce((sum, v) =>
+    sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0
+  );
 
-  for (const moveType of ['A', 'B', 'C', 'D'] as MoveType[]) {
-    const newState = simulateMove(currentState, bestVertex, moveType, 'add');
-    const distance = newState.reduce((sum, v) =>
-      sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0
-    );
+  for (let vertex = 0; vertex < 5; vertex++) {
+    for (const moveType of ['A', 'B', 'C', 'D'] as MoveType[]) {
+      const newState = simulateMove(currentState, vertex, moveType, 'add');
+      const distance = newState.reduce((sum, v) =>
+        sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0
+      );
 
-    console.log(`Testing ${moveType}${bestVertex}: distance = ${distance.toFixed(3)}`);
-
-    if (distance < bestDistance) {
-      bestDistance = distance;
-      bestMove = { vertex: bestVertex, type: moveType };
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestMove = { vertex, type: moveType };
+      }
     }
   }
 
-  if (bestMove) {
+  if (bestMove && bestDistance < currentDistance) {
     const moveStr = `${bestMove.type}${bestMove.vertex}`;
-    console.log(`Best move found: ${moveStr} with distance ${bestDistance.toFixed(3)}`);
+    console.log(`Best move: ${moveStr} reduces distance from ${currentDistance.toFixed(3)} to ${bestDistance.toFixed(3)}`);
     return [moveStr];
   }
 
+  console.log('No improving move found');
   return [];
 }
 
