@@ -122,13 +122,18 @@ function solutionToMoves(solution: unknown, currentState: ComplexNumber[]): stri
     }
   }
 
-  if (bestMove && bestDistance < currentDistance) {
+  if (bestMove) {
     const moveStr = `${bestMove.type}${bestMove.vertex}`;
-    console.log(`Best move: ${moveStr} reduces distance from ${currentDistance.toFixed(3)} to ${bestDistance.toFixed(3)}`);
+    const improvement = currentDistance - bestDistance;
+    if (improvement > 0) {
+      console.log(`Best move: ${moveStr} reduces distance from ${currentDistance.toFixed(3)} to ${bestDistance.toFixed(3)}`);
+    } else {
+      console.log(`Best move: ${moveStr} (no immediate improvement, but best available)`);
+    }
     return [moveStr];
   }
 
-  console.log('No improving move found');
+  console.log('No moves available');
   return [];
 }
 
