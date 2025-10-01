@@ -122,9 +122,42 @@ export default function PentagonGame() {
       if (solution && solution.moves.length > 0) {
         const firstMove = solution.moves[0];
         console.log('First move:', firstMove);
-        // Parse vertex from string format "A0" -> 0
-        const vertexNum = parseInt(firstMove[1]);
+
+        // Parse move: "A0 (long press)" or "B1" -> {moveType, vertex, operation}
+        const cleanMove = firstMove.replace(' (long press)', '');
+        const moveType = cleanMove[0] as MoveType; // A, B, C, or D
+        const vertexNum = parseInt(cleanMove[1]);
+
+        // Set the hint vertex
         setHintVertex(vertexNum);
+
+        // Switch to the correct move type if needed
+        // Map internal move types to UI move types and operations
+        let targetUIMoveType: UIMoveType;
+        let targetInternalMoveType: MoveType;
+
+        if (moveType === 'A') {
+          targetUIMoveType = 'A';
+          targetInternalMoveType = 'A';
+        } else if (moveType === 'C') {
+          targetUIMoveType = 'A';
+          targetInternalMoveType = 'C'; // -A
+        } else if (moveType === 'B') {
+          targetUIMoveType = 'B';
+          targetInternalMoveType = 'B';
+        } else { // D
+          targetUIMoveType = 'B';
+          targetInternalMoveType = 'D'; // -B
+        }
+
+        // Update move type to match hint
+        setCurrentUIMoveType(targetUIMoveType);
+        setGameState(prev => ({
+          ...prev,
+          currentMoveType: targetInternalMoveType,
+        }));
+
+        console.log(`Hint: Click vertex ${vertexNum} with move ${targetInternalMoveType} (UI: ${targetUIMoveType})`);
 
         // Clear hint after 3 seconds
         setTimeout(() => setHintVertex(undefined), 3000);
@@ -323,14 +356,27 @@ export default function PentagonGame() {
             🎯 Solution ({fullSolution.length} moves):
           </h4>
           <div className="flex flex-wrap gap-1 mb-2 max-h-40 overflow-y-auto">
-            {fullSolution.map((move, index) => (
-              <span
-                key={index}
-                className="px-2 py-1 bg-indigo-600 text-white rounded text-xs font-mono"
-              >
-                {index + 1}. {move}
-              </span>
-            ))}
+            {fullSolution.map((move, index) => {
+              // Format move: "A0 (long press)" -> "-A, V0" or "B1" -> "B, V1"
+              const cleanMove = move.replace(' (long press)', '');
+              const moveType = cleanMove[0]; // A, B, C, or D
+              const vertex = cleanMove[1];
+
+              let displayMove = '';
+              if (moveType === 'A') displayMove = 'A';
+              else if (moveType === 'C') displayMove = '-A';
+              else if (moveType === 'B') displayMove = 'B';
+              else displayMove = '-B'; // D
+
+              return (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-indigo-600 text-white rounded text-xs font-mono"
+                >
+                  {index + 1}. {displayMove}, V{vertex}
+                </span>
+              );
+            })}
           </div>
           <button
             onClick={() => setShowFullSolution(false)}

@@ -104,35 +104,35 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     ctx.fill();
     ctx.stroke();
 
-    // Display current move in center with negative sign if C or D
+    // Display current move in center - show as A/-A or B/-B
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 20px monospace';
+    ctx.font = 'bold 28px monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // Show move text with negative sign for C and D
-    let moveText = '';
-    let neighborText = '';
+    // Show move letter with negative sign for C and D
+    let moveLabel = '';
+    let complexText = '';
     if (gameState.currentMoveType === 'A') {
-      moveText = '1+i';
-      neighborText = '(-1 to adj)';
+      moveLabel = 'A';
+      complexText = '(1+i to vertex, -i to adj)';
     } else if (gameState.currentMoveType === 'C') {
-      moveText = '-1-i'; // -A
-      neighborText = '(+1 to adj)';
+      moveLabel = '-A';
+      complexText = '(-1-i to vertex, +i to adj)';
     } else if (gameState.currentMoveType === 'B') {
-      moveText = '-1+i';
-      neighborText = '(-i to adj)';
+      moveLabel = 'B';
+      complexText = '(-1+i to vertex, +1 to adj)';
     } else { // D
-      moveText = '1-i'; // -B
-      neighborText = '(+i to adj)';
+      moveLabel = '-B';
+      complexText = '(1-i to vertex, -1 to adj)';
     }
 
-    ctx.fillText(moveText, centerX, centerY - 10);
+    ctx.fillText(moveLabel, centerX, centerY - 5);
 
-    // Show what happens to neighbors (smaller text)
-    ctx.font = '14px monospace';
+    // Show complex number details (smaller text)
+    ctx.font = '11px monospace';
     ctx.fillStyle = '#94A3B8';
-    ctx.fillText(neighborText, centerX, centerY + 15);
+    ctx.fillText(complexText, centerX, centerY + 20);
 
     // Draw vertices with color coding
     gameState.vertices.forEach((vertex, i) => {
