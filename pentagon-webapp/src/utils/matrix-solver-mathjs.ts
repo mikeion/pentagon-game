@@ -17,12 +17,13 @@ const MATRIX_INVERSE = math.matrix([
 // Scale by 1/6 as specified in LaTeX
 const SCALED_MATRIX_INVERSE = math.multiply(MATRIX_INVERSE, 1/6);
 
-// Move definitions mapping complex numbers to move types (must match PentagonGame.tsx)
+// Move definitions mapping complex numbers to move types (CORRECTED to match Alex's paper)
+// Must match PentagonGame.tsx exactly
 const MOVE_MAPPINGS = {
-  'A': { vertex: math.complex(1, 1), adjacent: math.complex(-1, 0) },
-  'B': { vertex: math.complex(-1, 1), adjacent: math.complex(0, -1) },
-  'C': { vertex: math.complex(-1, -1), adjacent: math.complex(1, 0) },
-  'D': { vertex: math.complex(1, -1), adjacent: math.complex(0, 1) },
+  'A': { vertex: math.complex(1, 1), adjacent: math.complex(0, -1) },
+  'B': { vertex: math.complex(-1, 1), adjacent: math.complex(1, 0) },
+  'C': { vertex: math.complex(-1, -1), adjacent: math.complex(0, 1) },
+  'D': { vertex: math.complex(1, -1), adjacent: math.complex(-1, 0) },
 };
 
 // Pentagon adjacency

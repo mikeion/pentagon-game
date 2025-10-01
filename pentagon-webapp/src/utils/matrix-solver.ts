@@ -10,12 +10,13 @@ const MATRIX_INVERSE = [
   [{ real: 1/6, imag: -1/6 }, { real: -1/6, imag: -1/6 }, { real: -1/6, imag: -1/6 }, { real: 1/6, imag: -1/6 }, { real: 3/6, imag: 1/6 }]
 ];
 
-// Move definitions mapping complex numbers to move types (must match PentagonGame.tsx)
+// Move definitions mapping complex numbers to move types (CORRECTED to match Alex's paper)
+// Must match PentagonGame.tsx exactly
 const MOVE_MAPPINGS = {
-  'A': { vertex: { real: 1, imag: 1 }, adjacent: { real: -1, imag: 0 } },
-  'B': { vertex: { real: -1, imag: 1 }, adjacent: { real: 0, imag: -1 } },
-  'C': { vertex: { real: -1, imag: -1 }, adjacent: { real: 1, imag: 0 } },
-  'D': { vertex: { real: 1, imag: -1 }, adjacent: { real: 0, imag: 1 } },
+  'A': { vertex: { real: 1, imag: 1 }, adjacent: { real: 0, imag: -1 } },
+  'B': { vertex: { real: -1, imag: 1 }, adjacent: { real: 1, imag: 0 } },
+  'C': { vertex: { real: -1, imag: -1 }, adjacent: { real: 0, imag: 1 } },
+  'D': { vertex: { real: 1, imag: -1 }, adjacent: { real: -1, imag: 0 } },
 };
 
 // Pentagon adjacency

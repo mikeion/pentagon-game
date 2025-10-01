@@ -1,0 +1,443 @@
+\documentclass[12p]{amsart}
+\usepackage[margin=1in]{geometry}
+\renewcommand{\baselinestretch}{1}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[mathscr]{eucal}
+\usepackage{enumerate}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage{url}
+\usepackage{arydshln}
+\usepackage{pgfplots}
+
+\usepackage{pgf,tikz}
+\usetikzlibrary{arrows,matrix}
+\usetikzlibrary{arrows.meta,math}
+
+\numberwithin{equation}{section}
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{alg}[thm]{Algorithm}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{claim}[thm]{Claim} 
+\newtheorem{fact}[thm]{Fact}
+\newtheorem{open}[thm]{Question}
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{ex}[thm]{Example}
+\newtheorem{notation}[thm]{Notation}
+\newtheorem{conject}[thm]{Conjecture}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{example}[thm]{Example}
+
+\newcommand{\Or}{\mathcal{O}}
+\newcommand{\Z}{\mathbb {Z}}
+
+\newcommand{\mbf}{\mathbf}
+
+\DeclareMathOperator{\im}{im}
+\DeclareMathOperator{\coker}{coker}
+
+% Feel free to make a version of this command for other notes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\TODO}[1]{\textcolor{red}{TODO: #1}}
+
+\newcommand{\anote}[1]{\par 
+  \framebox{\begin{minipage}[c]{0.95 \textwidth}\color{blue} ALEX'S NOTE:
+      #1 \color{black}\end{minipage}}\par}
+
+\newcommand{\mnote}[1]{\par 
+  \framebox{\begin{minipage}[c]{0.95 \textwidth}\color{orange} MIKE'S NOTE:
+      #1 \color{black}\end{minipage}}\par}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{Chip-Firing and the Sandpile Group of the $R_{10}$ Matroid}
+\author{Alex McDonough}
+\address{Department of Mathematics, University of Oregon\\
+Eugene, Oregon 97403, USA}
+\email{alexmcd@uoregon.edu}
+
+\author{Michael Ion} 
+\address{}
+\email{mikeion@umich.edu}
+\date{}
+
+\begin{document}
+
+\begin{abstract}A celebrated result of Seymour is that all \emph{regular matroids} are built up from \emph{graphic matroids}, \emph{cographic matroids}, and a specific 10 element rank 5 matroid called $R_{10}$. In this article, we give a simple description of chip-firing on $R_{10}$ using complex numbers on a pentagon, and link to an app where readers can play around with the combinatorial dynamics of the system. We also provide an easy to describe set of representatives for each of the 162 equivalence classes that make up the \emph{sandpile group} of $R_{10}$. \end{abstract}
+
+\maketitle
+\anote{We still need to link the app.}
+%\mnote{And here's a note from you! Feel free to change the color of your notes from orange to something else.} 
+\section{Introduction}
+
+Several foundational results in \emph{chip-firing}, most notably the \emph{matrix-tree theorem}, have been shown to generalize naturally from graphs to \emph{regular matroids}~\cite{Merino}. This is possible through the perspective of \emph{circuit} and \emph{cocircuit} lattices. However, even in articles where the results generalize to regular matroids, most, if not all, of the worked-out examples tend to be of \emph{graphic matroids}. 
+
+In 1980, Seymour showed that every regular matroid can be formed from \emph{1-sums}, \emph{2-sums}, and \emph{3-sums} of graphic matroids, co-graphic matroids, and a specific matroid called $R_{10}$~\cite{Seymour}. For this reason, we suspect that understanding chip-firing on $R_{10}$ could be the key to understanding nuances of chip-firing on regular matroids in general. 
+
+The term \emph{chip-firing} can mean different things to different authors, but it generally refers to a discrete dynamical system that can be described in terms of a \emph{configuration} of objects (often visualized as poker chips) which can be rearranged through operations called \emph{firing moves}. See~\cite{Klivans} for many more details about the history and applications of chip-firing.
+
+For this article, we use chip-firing to understand equivalence classes of the \emph{sandpile group} of $R_{10}$. The \emph{sandpile group} of a graph, (which also goes by many other names, such as the \emph{critical group}, or \emph{Jacobian}) is a finite abelian group whose cardinality is equal to the number of spanning trees~\cite{Biggs99}. The sandpile group of a \emph{regular matroid} is a finite abelian group whose cardinality is equal to the number of \emph{bases}~\cite{Merino}. To compute the sandpile group of a regular matroid, we quotient the free abelian group on the ground set by an equivalence relation given by a specific collection of firing moves. 
+
+Using linear algebra, one can show that the sandpile group of $R_{10}$ is equal to $(\Z/3\Z)^3 \oplus (\Z/6\Z)$, a finite abelian group of order 162, which contains exactly one element of order 2. Furthermore, the matroid $R_{10}$ is equipped with certain symmetries that allow for an elegant chip-firing description using the \emph{Gaussian integers} $\Z[i]$. Using this description, we give a set of representatives for all of the equivalence classes of $S(R_{10})$, as well as an algorithm from an arbitrary configuration to one of these representatives. 
+
+\section{Background} 
+
+For this article, we do not need the full generality of matroid theory. Instead, we can restrict to \emph{regular matroids}, which can be described in terms of a matrix.
+
+Let $A$ be a matrix, $n$ be the number of columns of $A$, and $F$ be a field. The \emph{ground set} $E$ is a set whose elements correspond to the columns of $A$. If a subset of $E$ corresponds to columns which are linearly independent over $F$, then it is called an \emph{independent} set. The maximal independent sets are called \emph{bases}, and the collection of bases is called $\mathbf B$.
+
+A matroid is \emph{representable} if it can be represented by some matrix over some field. The classical definition of a \emph{regular matroid} is a matroid that is representable over \emph{any} field. We will use the following definition, which was proven equivalent by Tutte~\cite{Tutte}. 
+\begin{defn}
+    A \emph{regular matroid} is a matroid that is representable over $\mathbb R$ by a \emph{totally unimodular} matrix $A$, where a \emph{totally unimodular} matrix is an integer matrix such that every minor is in the set $\{0, 1,-1\}$. 
+\end{defn}
+
+It is well known that any graph $G$ corresponds to a regular matroid $M(G)$, whose ground set corresponds to the edges of $G$, and whose bases correspond to \emph{spanning trees} of $G$~\cite[Section 5.1]{Oxley}. However, the other direction does not hold: there exist regular matroids whose bases do not correspond to the spanning trees of a graph. One such matroid is $R_{10}$, which will be the main focus of Section~\ref{sec:R10}. 
+
+Let $M = (E,\mbf B)$ be a regular matroid represented by a totally unimodular matrix $A$ over $\mathbb R$. Suppose that we assign an integer number of \emph{chips} to each element of the ground set of $E$.  We call such an assignment a \emph{chip configuration}, and represent it as an element of the lattice $\Z^E$.
+
+Let $\im_{\Z} A$ be the sublattice of $\Z^E$ made up of integer linear combinations of rows of $A$. Let $\ker_{\Z} A$ be the sublattice of $\Z^E$ made up of vectors mapped to the all zeros vector by $A$. 
+
+\begin{defn}\label{def:sandpile}
+    Suppose that $M$ is a matroid represented by a totally unimodular matrix $A$ over $\mathbb R$. The \emph{sandpile group} of $M$ is given by:
+    \[S(M) := \frac{\Z^E}{\im_ {\Z} A\oplus \ker_ {\Z} A}\]
+\end{defn}
+
+Note that Definition~\ref{def:sandpile} does not meaningfully depend on the choice of totally unimodular matrix $A$ representing $M$, beyond reordering or reversing the orientation of the elements of the ground set. For further discussion, see~\cite[Section 2.1]{BBY} and~\cite{SuWagner}. 
+
+\begin{remark}\label{rem:names}
+    There are a lot of different names for the group given in Definition~\ref{def:sandpile}, and these names are not always used completely interchangeably. For example, the main group considered in~\cite{BBY} is called the \emph{Jacobian group}, which is defined as the \emph{determinant group} of $\im_ {\Z} A$. Nevertheless, this group is shown to be isomorphic to the group in Definition~\ref{def:sandpile}. In~\cite{CutsFlows}, the authors generalize to work with \emph{representable matroids} which may not be regular. In this context, Definition~\ref{def:sandpile} is called the \emph{cutflow group}, while the determinant of $\im_{\Z} A$ is called the \emph{critical group}. Without the assumption of regularity, these groups are related, but distinct. 
+\end{remark}
+
+It can be a bit cumbersome to work with both the image and the kernel of a matrix, but there is a trick to rewrite $\im_ {\Z} A\oplus \ker_ {\Z} A$ as the image of a larger matrix. Throughout this article, we use $n$ for the size of the ground set of a regular matroid $M$, and $r$ for the \emph{rank} of $M$, which is equal to the minimal number of rows of a matroid representing $M$.
+
+Suppose that an $r \times n$ totally unimodular matrix $A$ is of the form \begin{equation}\label{eq:stand_form} A = \begin{bmatrix} I_r & D\end{bmatrix},\end{equation}
+where $I_r$ is the $r\times r$ identity matrix and $D$ is an $r \times (n-r)$ integer matrix. Note that $A$ can always be put in this form by choosing a basis for the first $r$ columns, and that applying row operations. Then, we define \begin{equation}\label{eq:dual_form}A^* = \begin{bmatrix} -D^t & I_{n-r}\end{bmatrix},\end{equation} where $D^t$ is the transpose of $D$ and $I_{n-r}$ is again the identity matrix. Additionally, we define \begin{equation}\label{eq:combo_form}K = \begin{bmatrix} A \\ A^* \end{bmatrix} = \begin{bmatrix}I_r & D \\-D^t & I_{n-r}\end{bmatrix},\end{equation}
+
+It is well-known and straightforward to verify that $\ker_{\Z}  A = \im_{\Z} A^*$~\cite[Corollary 4.6.6]{MCDthesis}. In particular, this means that if $A$ represents a regular matroid $M$, then 
+\begin{equation}\label{eq:sandpile_def}S(M) = \frac{\Z^E}{\im_ {\Z} A\oplus \ker_ {\Z} A} = \frac{\Z^E}{\im_ {\Z} A\oplus \im_ {\Z} A^*} = \frac{\Z^E}{\im_{\Z}K}\hspace{.2 cm}\text{, where } K = \begin{bmatrix} I_r & D \\ -D^t & I_{n-r}\end{bmatrix}.\end{equation}
+
+This quotient group $\Z^E/\im_{\Z}K$ is called the \emph{cokernel} of $K$ over $\mathbb Z$, and is written $\coker_\Z K$. The following proposition gives a summary of our observations after Remark~\ref{rem:names}. 
+
+\begin{prop}
+     Let $M$ be a regular matroid that is represented over $\mathbb R$ by a totally unimodular matrix $A = \begin{bmatrix} I_r & D\end{bmatrix}$. Furthermore, define $A^*= \begin{bmatrix} -D^t & I_{n-r}\end{bmatrix}$ and $K = \begin{bmatrix} A \\ A^*\end{bmatrix} = \begin{bmatrix} I_r & D \\ -D^t & I_{n-r}\end{bmatrix}$. Then, the \emph{sandpile group} $S(M)$ is equal to $\coker_{\mathbb Z} K$. 
+\end{prop}
+
+One way to think of the sandpile group of $M$ is in terms of \emph{chip configurations} and \emph{firings moves}. Begin by thinking of an element $C \in \Z^E$ as an assignment of an integer number of \emph{chips} assigned to each element of $E$. If we add or subtract a row of $K$, this redistributes the chips to give a new chip configuration $C'$ such that $C$ and $C'$ are equivalent as elements of $S(M)$. We say that adding or subtracting a row of $K$ is a \emph{firing move} on the chip configuration, and we say that two chip configurations are \emph{firing equivalent} if one can be reached from the other by a sequence of firing moves. Algebraically speaking, chip configurations $C$ and $C'$ are firing equivalent if and only if $C - C' \in \im_{\Z} K$. Equivalently, this holds precisely when $K^{-1}(C-C')$ is an integer vector. 
+
+\begin{remark}
+    Typically, \emph{chip configurations} refer to a collection of chips on the vertices of a graph, instead of on the ground set of a regular matroid. In this context, a \emph{firing move} removes $\deg(v)$ chips from a vertex $v$, and sends one to each neighbor of $v$. In this context, it is common to disallow firings which result in a negative number of chips on the firing vertex. For more information about this more traditional perspective, see~\cite{Klivans}. 
+    
+    In our construction, firings are more abstract, and the total number of chips is not necessarily preserved. Furthermore, we place no restrictions on when a firing is allowed, and it is not a problem for elements of $E$ to have negative chips. 
+\end{remark}
+
+Our interest in the sandpile group is primarily motivated by the following variation of \emph{Kirchhoff's matrix-tree theorem}, which is proven using the \emph{Cauchy-Binet formula}. 
+
+\begin{thm}\cite[Theorem 3.3.2]{Merino} For any regular matroid $M$, the size of the sandpile group $S(M)$ is equal to the number of bases of $M$.
+\end{thm}
+
+Using linear algebra techniques, we can calculate $S(M)$ precisely. 
+
+\begin{prop}\cite[Section 8]{Biggs99}\label{prop:smith_normal}
+    For any square integer matrix $K$, the group $\coker_{\Z}(K)$ has cardinality equal to $|\det(K)|$. More precisely, let $a_1,a_2, \dots, a_n$ be the diagonal entries of the \emph{smith normal form} of $K$. Then, $\coker_{\Z}(K) \cong (\Z/{a_1}\Z) \oplus (\Z/{a_2}\Z) \oplus \cdots \oplus (\Z/{a_n}\Z)$.
+\end{prop} 
+
+In the next section, we will focus on specific properties of $R_{10}$, but first let us give a simple example of chip-firing on a regular matroid.  
+
+\begin{example}
+    Let $M$ be the regular matroid represented by the matrix 
+    \[A = \begin{bmatrix} 1 & 0 & -1 \\ 0 & 1 & -1\end{bmatrix}.\hspace{ .3 cm} \text{ This means that } A^* = \begin{bmatrix} 1 & 1 & 1\end{bmatrix}\hspace{ .3 cm} \text{ and } \hspace{ .3 cm} K = \begin{bmatrix} 1 & 0 & -1 \\ 0 & 1 & -1 \\ 1 & 1 & 1\end{bmatrix}.\]
+    By computing the Smith normal form of $K$, one can calculate that $S(M) = \Z/3\Z$, which means that there are 3 firing equivalence classes of chip configurations. 
+    
+    A chip configuration on $M$ can be written as a triple of integers $(a,b,c)$. We claim that each chip configuration is firing equivalent to exactly one of the chip configurations $(0,0,0)$, $(1,0,0)$, or $(2,0,0)$. In other words, these form a set of representatives for the elements of $S(M)$. One way to prove this claim is through linear algebra, noting that chip configurations $C$ and $D$ are firing equivalent if and only if $K^{-1}(C-D) \in \Z^3$. 
+
+    Alternatively, we can also prove the claim by showing how to go from an arbitrary configuration to one of the three representatives using a sequence of firings. In particular, suppose that we are given an arbitrary chip configuration $(a,b,c)$. First, we can apply the $(1,1,1)$ firing move a total of $-\lfloor(a+b+c)/3\rfloor$ times. Since each firing move subtracts 3 chips, the resulting configuration will have a total of $0$, $1$, or $2$ chips. Next, we can add or subtract $(0,1,-1)$ until no chips remain in the second position. Finally, we can add or subtract $(1,0,-1)$ until no chips remain in the third position. These firing moves do not change the total number of chips, so we end up with $0$, $1$, or $2$ chips in the first position, and no chips on the other two positions. 
+\end{example}
+
+\section{Chip-firing on $R_{10}$}\label{sec:R10} 
+
+Consider the totally unimodular matrix
+\begin{equation}\label{eq:R10}\mathcal A = \begin{bmatrix}
+    1 & 0 & 0 & 0 & 0 &   -1 & 1 & 0 & 0 & 1\\
+    0 & 1 & 0 & 0 & 0 &   1 & -1 & 1 & 0 & 0\\
+    0 & 0 & 1 & 0 & 0 &   0 & 1 & -1 & 1 & 0\\
+    0 & 0 & 0 & 1 & 0 &   0 & 0 & 1 & -1 & 1\\
+    0 & 0 & 0 & 0 & 1 &   1 & 0 & 0 & 1 & -1\\
+\end{bmatrix}.\end{equation}
+
+\begin{defn}\label{def:R10}
+    The matroid represented by $\mathcal A$ over $\mathbb R$ is called $R_{10}$. 
+\end{defn}
+
+We can write $\mathcal A$ as the block matrix $\begin{bmatrix} I_5 & \mathcal D \end{bmatrix}$, where $\mathcal D$ is the $5 \times 5$ matrix defined by:
+
+\[\mathcal D_{ij} = \begin{cases} 1 & \text{if $i=j$,}\\
+-1 &\text{if $i-j \equiv 1\pmod 5$,}\\
+0 & \text{otherwise.}\end{cases}\]
+
+Since $\mathcal A$ is in the format from~\eqref{eq:stand_form}, we can use~\eqref{eq:dual_form} to write $\mathcal A^* = \begin{bmatrix} -\mathcal D^t & I_5 \end{bmatrix} = \begin{bmatrix} -\mathcal D & I_5 \end{bmatrix}$, where the final equality holds because $\mathcal D$ is symmetric. Let $\mathcal K$ be the matrix 
+
+\[\mathcal K = \begin{bmatrix} \mathcal A\\ \mathcal A^* \end{bmatrix} = \begin{bmatrix} I_5 & \mathcal D \\ -\mathcal D & I_5 \end{bmatrix}= \begin{bmatrix}
+    1 & 0 & 0 & 0 & 0 &   -1 & 1 & 0 & 0 & 1\\
+    0 & 1 & 0 & 0 & 0 &   1 & -1 & 1 & 0 & 0\\
+    0 & 0 & 1 & 0 & 0 &   0 & 1 & -1 & 1 & 0\\
+    0 & 0 & 0 & 1 & 0 &   0 & 0 & 1 & -1 & 1\\
+    0 & 0 & 0 & 0 & 1 &   1 & 0 & 0 & 1 & -1\\
+    1 & -1 & 0 & 0 & -1 &  1 & 0 & 0 & 0 & 0\\
+    -1 & 1 & -1 & 0 & 0 &  0 & 1 & 0 & 0 & 0\\
+    0 & -1 & 1 & -1 & 0 &  0 & 0 & 1 & 0 & 0\\
+    0 & 0 & -1 & 1 & -1 &  0 & 0 & 0 & 1 & 0\\
+    -1 & 0 & 0 & -1 & 1 &  0 & 0 & 0 & 0 & 1\\
+\end{bmatrix}\]
+
+By Proposition~\ref{prop:smith_normal}, and the help of a computer algebra system, we can calculate that $|S(R_{10})| = 162$, which is also the number of bases of $R_{10}$. More precisely, after computing the Smith normal form, we find that $S(R_{10}) \cong (\Z/3\Z)^3 \oplus (\Z/6\Z)$.
+
+While these calculations can be done for any regular matroid, the fact that $\mathcal D$ is not only square, but also symmetric, allows for an alternate perspective using the \emph{Gaussian integers} $\Z[i]$.
+
+Let $\varphi$ be the bijection between $\Z^{10}$ and $\Z[i]^5$ such that 
+\[\varphi((v_0,v_1,v_2,v_3,v_4,v_5,v_6,v_7,v_8,v_9)^t) \to (v_0 + v_5i,~v_1 + v_6i,~v_2 + v_7i,~v_3 + v_8i,~v_4 + v_9i)^t.\]
+Furthermore, let $\overline{\mathcal K}$ be the $5\times 5$ matrix in $\Z[i]^5$ given by 
+\[\overline{\mathcal K} =  I_5 - \mathcal D i =\begin{bmatrix}
+    1 + i & -i & 0 & 0 & -i \\
+    -i & 1 + i & -i & 0 & 0 \\
+    0 & -i & 1 + i & -i & 0 \\
+    0 & 0 & -i & 1 + i & -i \\
+    -i & 0 & 0 & -i & 1 + i \\
+\end{bmatrix}\]
+
+From this construction, it is straightforward to verify the following equality. 
+\begin{prop}
+    Consider the matrices $\mathcal K$ and $\overline{\mathcal K}$ from above. For any vector $\mbf v \in \Z^{10}$, we have $\varphi(\mathcal K \mbf v) = \overline{\mathcal K}\varphi(\mbf v)$.
+\end{prop}
+
+This proposition tells us that $\im_{\Z} (\mathcal K)$ and $\im_{\Z[i]} (\overline{\mathcal K})$ are isomorphic, which also means that $\coker_{\Z} (\mathcal K)$ and $\coker_{\Z[i]} (\overline{\mathcal K})$ are isomorphic. This fact implies the following corollary.
+
+\begin{cor}
+    The sandpile group $S(R_{10})$ is equal to $\coker_{\Z[i]} (\overline{\mathcal K})$. 
+\end{cor}
+
+This corollary introduces an approachable way to interpret $S(R_{10})$. Imagine a pentagon such that each vertex can have two kinds of chips, real and imaginary. There are also four kinds of firing moves, which only differ by multiplication by $i$. Each of these moves impacts the chips on three adjacent vertices. 
+
+
+\begin{enumerate}[(A)]
+    \item Add $1+i$ to a vertex and add $-i$ to each neighboring vertex. 
+    \item Add $-1+i$ to a vertex and add $1$ to each neighboring vertex. 
+    \item Add $-1-i$ to a vertex and add $i$ to each neighboring vertex. 
+    \item Add $1-i$ to a vertex and add $-1$ to each neighboring vertex. 
+\end{enumerate}
+
+We will call these moves \emph{A-firings}, \emph{B-firings}, \emph{C-firings}, and \emph{D-firings} respectively. Note that a C-firing is just a negative A-firing and a D-firing is just a negative B-firing. Two chip-configurations on the pentagon are firing equivalent if and only if one can be reached from the other by some sequence of A, B, C, and D firings. 
+
+Instead of a collection of real and imaginary chips on a pentagon, chip configurations on $R_{10}$ can also be visualized as collections of nodes labeled 0 through 4 on lattice points on the complex plane (see Figure~\ref{fig:geometric}). A firing move consists of moving one node diagonally $\sqrt2$ units to another lattice point, and moving the two nodes with adjacent labels (mod 5) one unit in a direction $3\pi/4$ clockwise from the chosen node. 
+
+\begin{figure}
+\begin{center}
+    \begin{tikzpicture}[scale = .7, anno/.style = {very thick,-{Stealth[length = 2.5mm, width = 2.2mm, open]}}]
+        \draw [thick,<->,>=stealth'] (-3.5,0) to (3.5,0);
+        \draw [thick,<->,>=stealth'] (0,-3.5) to (0,3.5);
+        \foreach \x in {-3,...,3}
+            {\draw [dotted] (\x,-3.5) to (\x,3.5);
+            \draw [dotted] (-3.5,\x) to (3.5,\x);}
+    \tikzstyle{o}=[circle,draw,fill=black, text = white,inner sep=1pt,minimum size = 1.8mm]
+    \tikzstyle{k}=[circle,draw,fill = white,minimum size = 1.8mm]
+    \node[o] (0) at (1,1) {\Large{$0$}};
+    \node[o] (1) at (-2,3) {\Large{$1$}};
+    \node[o] (2) at (-2,0) {\Large{$2$}};
+    \node[o] (3) at (1,-2) {\Large{$3$}};
+    \node[o] (4) at (2,0) {\Large{$4$}};
+
+
+    \begin{scope}[shift = {(8,0)}]
+    \draw [thick,<->,>=stealth'] (-3.5,0) to (3.5,0);
+        \draw [thick,<->,>=stealth'] (0,-3.5) to (0,3.5);
+        \foreach \x in {-3,...,3}
+            {\draw [dotted] (\x,-3.5) to (\x,3.5);
+            \draw [dotted] (-3.5,\x) to (3.5,\x);}
+    \node[o] (0) at (2,2) {\Large{$0$}};
+    \node[o] (1) at (-2,2) {\Large{$1$}};
+    \node[o] (2) at (-2,0) {\Large{$2$}};
+    \node[o] (3) at (1,-2) {\Large{$3$}};
+    \node[o] (4) at (2,-1) {\Large{$4$}};
+
+    \node[k] (0') at (1,1){};
+    \node[k] (1') at (-2,3){};
+    \node[k] (4') at (2,0){};
+
+    \draw [anno] (0') to (0);
+    \draw [anno] (1') to (1);
+    \draw [anno] (4') to (4);
+    \end{scope}
+    
+     \begin{scope}[shift = {(16,0)}]
+    \draw [thick,<->,>=stealth'] (-3.5,0) to (3.5,0);
+        \draw [thick,<->,>=stealth'] (0,-3.5) to (0,3.5);
+        \foreach \x in {-3,...,3}
+            {\draw [dotted] (\x,-3.5) to (\x,3.5);
+            \draw [dotted] (-3.5,\x) to (3.5,\x);}
+    \tikzstyle{o}=[circle,draw,fill=black, text = white,inner sep=1pt,minimum size = 1.8mm]
+    \node[o] (0) at (2,2) {\Large{$0$}};
+    \node[o] (1) at (-3,2) {\Large{$1$}};
+    \node[o] (2) at (-1,-1) {\Large{$2$}};
+    \node[o] (3) at (0,-2) {\Large{$3$}};
+    \node[o] (4) at (2,-1) {\Large{$4$}};
+
+    \node[k] (2') at (-2,0){};
+    \node[k] (1') at (-2,2){};
+    \node[k] (3') at (1,-2){};
+
+    \draw [anno] (2') to (2);
+    \draw [anno] (1') to (1);
+    \draw [anno] (3') to (3);
+    \end{scope}
+
+    \begin{scope}[shift = {(0,-8)}]
+    \draw [thick,<->,>=stealth'] (-3.5,0) to (3.5,0);
+        \draw [thick,<->,>=stealth'] (0,-3.5) to (0,3.5);
+        \foreach \x in {-3,...,3}
+            {\draw [dotted] (\x,-3.5) to (\x,3.5);
+            \draw [dotted] (-3.5,\x) to (3.5,\x);}
+    \tikzstyle{o}=[circle,draw,fill=black, text = white,inner sep=1pt,minimum size = 1.8mm]
+    \node[o] (0) at (2,3) {\Large{$0$}};
+    \node[o] (1) at (-3,2) {\Large{$1$}};
+    \node[o] (2) at (-1,-1) {\Large{$2$}};
+    \node[o] (3) at (0,-1) {\Large{$3$}};
+    \node[o] (4) at (1,-2) {\Large{$4$}};
+
+    \node[k] (4') at (2,-1){};
+    \node[k] (3') at (0,-2){};
+    \node[k] (0') at (2,2){};
+
+    \draw [anno] (4') to (4);
+    \draw [anno] (3') to (3);
+    \draw [anno] (0') to (0);
+    \end{scope}
+
+    \begin{scope}[shift = {(8,-8)}]
+    \draw [thick,<->,>=stealth'] (-3.5,0) to (3.5,0);
+        \draw [thick,<->,>=stealth'] (0,-3.5) to (0,3.5);
+        \foreach \x in {-3,...,3}
+            {\draw [dotted] (\x,-3.5) to (\x,3.5);
+            \draw [dotted] (-3.5,\x) to (3.5,\x);}
+    \tikzstyle{o}=[circle,draw,fill=black, text = white,inner sep=1pt,minimum size = 1.8mm]
+    \node[o] (0) at (2,3) {\Large{$0$}};
+    \node[o] (1) at (-3,2) {\Large{$1$}};
+    \node[o] (2) at (-1,0) {\Large{$2$}};
+    \node[o] (3) at (-1,-2) {\Large{$3$}};
+    \node[o] (4) at (1,-1) {\Large{$4$}};
+
+    \node[k] (3') at (0,-1){};
+    \node[k] (2') at (-1,-1){};
+    \node[k] (4') at (1,-2){};
+
+    \draw [anno] (3') to (3);
+    \draw [anno] (2') to (2);
+    \draw [anno] (4') to (4);
+    \end{scope}
+
+    \begin{scope}[shift = {(16,-8)}]
+    \draw [thick,<->,>=stealth'] (-3.5,0) to (3.5,0);
+        \draw [thick,<->,>=stealth'] (0,-3.5) to (0,3.5);
+        \foreach \x in {-3,...,3}
+            {\draw [dotted] (\x,-3.5) to (\x,3.5);
+            \draw [dotted] (-3.5,\x) to (3.5,\x);}
+    \tikzstyle{o}=[circle,draw,fill=black, text = white,inner sep=1pt,minimum size = 1.8mm]
+    \node[o] (0) at (2,3) {\Large{$0$}};
+    \node[o] (1) at (-2,2) {\Large{$1$}};
+    \node[o] (2) at (-2,1) {\Large{$2$}};
+    \node[o] (3) at (0,-2) {\Large{$3$}};
+    \node[o] (4) at (1,-1) {\Large{$4$}};
+
+    \node[k] (2') at (-1,0){};
+    \node[k] (1') at (-3,2){};
+    \node[k] (3') at (-1,-2){};
+
+    \draw [anno] (3') to (3);
+    \draw [anno] (2') to (2);
+    \draw [anno] (1') to (1);
+    \end{scope}
+    
+
+        
+
+    
+    \end{tikzpicture}
+    \caption{This figure shows one way to visualize chip-firing on $R_{10}$. Chip-configurations correspond to 5 labeled nodes on lattice points on the complex plane. For example, the initial configuration is $[1+i, -2 + 3i, -2, 1-2i, 2]$ and the final configuration is $[2+3i, -2 + 2i, -2 + i,-2i, 1-i]$. This final configuration is reached after an A-firing of 0, a B-firing of 2, a C-firing of 4, a C-firing of 3, and a D-firing of 2. Note that there are no restrictions in this construction about multiple nodes occupying the same position; we only avoided this for the example to make things easier to draw.}
+    \label{fig:geometric}
+\end{center}
+\end{figure}
+
+\subsection{Representatives of $S(R_{10})$}
+Now, we will find a nice set of representatives for each equivalence class of $S(R_{10})$. 
+
+\begin{lemma}\label{lem:no_i}
+    Every equivalence class of $S(R_{10})$ contains chip configurations which do not have any imaginary chips. 
+\end{lemma}
+\begin{proof}
+    Suppose that a vertex has $a$ real chips and $b$ imaginary chips. If $b$ is positive, we perform a type D firing to the vertex $b$ times. If $b$ is negative, we perform a type B firing to the vertex $-b$ times. After this, the vertex will have no imaginary chips, and these firings do not impact the number of imaginary chips on any other vertex. After going through the process for all five of the vertices, there will be no imaginary chips remaining. 
+\end{proof}
+
+Now that we have shown that we can get rid of imaginary chips, we can find chip-configurations with specified restrictions on the number of real chips at each vertex. One useful fact that will assist in this technique is the following. 
+
+\begin{lemma}
+    There exists a unique element of $S(R_{10})$ with order 2. 
+\end{lemma}
+\begin{proof}
+    This follows quickly from the fact that $S(R_{10}) \cong (\Z/3\Z)^3 \oplus (\Z/6\Z)$. Using the notation of this decomposition, the only element with order 2 is $(0,0,0,3)$.
+\end{proof}
+
+For a chip configuration $C$, we will write $C \sim H$ if the equivalence class containing $C$ is the element of order $2$ in $S(R_{10})$. For chip configurations $C$ and $C'$, we will also write $C \sim C'$ if $C$ and $C'$ are firing equivalent. 
+
+\begin{lemma}\label{lem:half_vals} 
+    Let $C$ be the chip configuration which places 1 chip on each vertex. Let $D$ be the chip configuration that places $3$ chips on one vertex and $0$ chips on the other vertices. Then, $C \sim H$ and $D \sim H$. 
+\end{lemma}
+\begin{proof}
+    One can verify that 
+    \[\overline{\mathcal K}^{-1}(C) = \frac12\begin{bmatrix}1 + i\\ 1 + i\\ 1 + i\\ 1 + i\\ 1 + i\end{bmatrix}\text{ and }\overline{\mathcal K}^{-1}(D) = \frac12\begin{bmatrix}3 -i\\ 1 + i\\ -1 + i\\ -1 + i\\ 1 + i\end{bmatrix}.\] In both cases, we obtain a vector that is half of an element of $\mathbb Z[i]^5$.  
+\end{proof}
+
+\begin{remark}\label{rem:specific}
+    The proof of Lemma~\ref{lem:half_vals} also shows which firings are required to get to the configuration with 2 chips on every node, or the configuration with 6 chips on one node, and no chips anywhere else. 
+
+    For the first case, we do an A-firing and a B-firing at every node. For the second case, we do three A- firings and a D-firing on the specified node, one A-firing and one B-firing on each adjacent node, and one C-firing and one B-firing on each non-adjacent node. 
+\end{remark}
+
+\begin{thm}\label{thm:representatives}
+    Consider the five node model for chip-firing on $R_{10}$ and choose one particular node to act as \emph{the distinguished node}. We obtain one representative for each equivalence class of $S(R_{10})$ by placing either 0 or 3 chips on the distinguished node, and either 0, 1, or 2 chips on every other node. 
+\end{thm}
+\begin{proof}
+    To prove the theorem, we will show that every chip-configuration is firing equivalent to one of the given form. Since there are 162 total chip configurations of this form, and this is also the size of $S(R_{10})$, we can then conclude that each representative must be in a different firing equivalence class.
+    
+    Begin with an arbitrary chip-configuration $C$. By Lemma~\ref{lem:no_i}, there exists some $C'$ with no imaginary chips such that $C' \sim C$. Suppose that $C'$ has $a$ chips on the distinguished node. We can subtract one chip from every node $a$ times to get a new configuration $C''$. By Lemma~\ref{lem:half_vals}, we know that $C'' \sim (C' + aH)$. 
+
+    Next, for any node that doesn't have $0$, $1$, or $2$ chips, we can add or subtract 3 chips until it does. This gives a new configuration $C'''$ which has no chips on the distinguished node, and $0$, $1$, or $2$ chips on each other node. By Lemma~\ref{lem:half_vals}, if $b$ is the total number of times that we add/subtract $3$ chips, then \[C''' \sim (C'' + bH) \sim (C' + (a+b)H) \sim (C + (a+b)H).\]
+
+    Finally, since $2H$ is equivalent to the identity, we must either have $C''' \sim C$ or $C''' \sim (C + H)$, depending on the parity of $a+b$. In the first case, we are done, and $C'''$ is the desired representative. In the second case, we obtain the desired representative from $C'''$ after adding $3$ chips to the distinguished node. 
+\end{proof}
+
+To end this article, we give an algorithm for finding a representative from a particular configuration, which follows the proof of Theorem~\ref{thm:representatives}. 
+\begin{alg}
+    Input: An element of $\Z[i]^5$, thought of as a chip configuration
+    \begin{enumerate}[1.]
+        \item Use B-firings and D-firings to get rid of all imaginary chips from the vertices.
+        \item Introduce a variable boolean variable isEven.
+        \item Count the total chips. If this total is even, set isEven = True, otherwise, set isEven = False. 
+        \item Subtract the number of chips at the distinguished vertex from every vertex
+        \item At each vertex, set the number of chips to the remainder after dividing by 3. 
+        \item Count the total chips. If the total is even and isEven = False, or if the total is odd and isEven = True, then add 3 chips to the distinguished vertex. 
+    \end{enumerate}    
+    Output: the resulting configuration.
+\end{alg}
+
+Note that steps 4 and 5 can also be described in terms of firings by applying Remark~\ref{rem:specific}. 
+
+\bibliographystyle{alpha}
+\bibliography{biblio}
+\end{document}

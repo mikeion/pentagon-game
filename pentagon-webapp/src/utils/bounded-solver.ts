@@ -3,12 +3,12 @@
 
 import { ComplexNumber, SolverMove } from '@/types/game';
 
-// Move definitions
+// Move definitions (CORRECTED to match Alex's paper)
 const moves = {
-  'A': { vertex: { real: 1, imag: 1 }, adjacent: { real: -1, imag: 0 } },
-  'B': { vertex: { real: -1, imag: 1 }, adjacent: { real: 0, imag: -1 } },
-  'C': { vertex: { real: -1, imag: -1 }, adjacent: { real: 1, imag: 0 } },
-  'D': { vertex: { real: 1, imag: -1 }, adjacent: { real: 0, imag: 1 } },
+  'A': { vertex: { real: 1, imag: 1 }, adjacent: { real: 0, imag: -1 } },
+  'B': { vertex: { real: -1, imag: 1 }, adjacent: { real: 1, imag: 0 } },
+  'C': { vertex: { real: -1, imag: -1 }, adjacent: { real: 0, imag: 1 } },
+  'D': { vertex: { real: 1, imag: -1 }, adjacent: { real: -1, imag: 0 } },
 };
 
 // Pentagon adjacency
