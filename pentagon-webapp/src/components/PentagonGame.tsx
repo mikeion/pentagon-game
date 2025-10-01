@@ -54,31 +54,47 @@ export default function PentagonGame() {
   // const [showEducationalPanel, setShowEducationalPanel] = useState(false);
 
   const generateStartingState = useCallback(() => {
-    // Generate random starting state by applying moves from zero
+    // Generate random starting state using coefficient-based moves
+    // Examples: (+4A, -3B), (+2A, +3B), (-3A, -2B)
     const startingVertices = Array(5).fill(null).map(() => ({ real: 0, imag: 0 }));
-    
-    // Apply 5-8 random moves to create puzzle (using all 4 internal move types)
-    const numMoves = Math.floor(Math.random() * 4) + 5;
-    const moveTypes = ['A', 'B', 'C', 'D'] as const;
 
-    console.log(`Generating puzzle with ${numMoves} moves from zero`);
+    // Generate random coefficients for A and B (between -4 and +4, excluding 0)
+    let coeffA = Math.floor(Math.random() * 8) - 4;
+    let coeffB = Math.floor(Math.random() * 8) - 4;
+    if (coeffA === 0) coeffA = 1;
+    if (coeffB === 0) coeffB = 1;
 
-    for (let i = 0; i < numMoves; i++) {
+    console.log(`Generating puzzle: ${coeffA > 0 ? '+' : ''}${coeffA}A, ${coeffB > 0 ? '+' : ''}${coeffB}B`);
+
+    // Apply coeffA times of A moves to random vertices
+    const absCoeffA = Math.abs(coeffA);
+    const moveTypeA = coeffA > 0 ? 'A' : 'C'; // C is -A
+    for (let i = 0; i < absCoeffA; i++) {
       const vertex = Math.floor(Math.random() * 5);
-      const moveType = moveTypes[Math.floor(Math.random() * 4)];
-      const operation = Math.random() > 0.5 ? 'add' : 'subtract';
-      
-      const move = moves[moveType];
-      const multiplier = operation === 'subtract' ? -1 : 1;
-      
-      // Apply to vertex
-      startingVertices[vertex].real += move.vertex.real * multiplier;
-      startingVertices[vertex].imag += move.vertex.imag * multiplier;
-      
-      // Apply to adjacent vertices
+      const move = moves[moveTypeA];
+
+      startingVertices[vertex].real += move.vertex.real;
+      startingVertices[vertex].imag += move.vertex.imag;
+
       for (const adj of adjacency[vertex]) {
-        startingVertices[adj].real += move.adjacent.real * multiplier;
-        startingVertices[adj].imag += move.adjacent.imag * multiplier;
+        startingVertices[adj].real += move.adjacent.real;
+        startingVertices[adj].imag += move.adjacent.imag;
+      }
+    }
+
+    // Apply coeffB times of B moves to random vertices
+    const absCoeffB = Math.abs(coeffB);
+    const moveTypeB = coeffB > 0 ? 'B' : 'D'; // D is -B
+    for (let i = 0; i < absCoeffB; i++) {
+      const vertex = Math.floor(Math.random() * 5);
+      const move = moves[moveTypeB];
+
+      startingVertices[vertex].real += move.vertex.real;
+      startingVertices[vertex].imag += move.vertex.imag;
+
+      for (const adj of adjacency[vertex]) {
+        startingVertices[adj].real += move.adjacent.real;
+        startingVertices[adj].imag += move.adjacent.imag;
       }
     }
     
@@ -183,6 +199,11 @@ export default function PentagonGame() {
       currentMoveType: moveType,
     }));
   }, []);
+
+  const toggleMoveType = useCallback(() => {
+    const newMoveType: UIMoveType = currentUIMoveType === 'A' ? 'B' : 'A';
+    setMoveType(newMoveType);
+  }, [currentUIMoveType, setMoveType]);
 
   // Check win condition (only after initialization)
   useEffect(() => {
@@ -306,7 +327,7 @@ export default function PentagonGame() {
         <GameCanvas
           gameState={gameState}
           onVertexClick={applyMove}
-          onCenterClick={() => {/* TODO: Implement center click */}}
+          onCenterClick={toggleMoveType}
           hintVertex={hintVertex}
         />
       </div>
