@@ -238,15 +238,14 @@ export async function getFullSolution(
     const newVertices = simulateMove(currentState.vertices, vertex, moveType, 'add');
     const newDistance = newVertices.reduce((sum, v) => sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0);
 
-    if (newDistance >= currentDistance) {
-      console.log(`Move ${nextMove} doesn't improve distance (${newDistance.toFixed(3)} >= ${currentDistance.toFixed(3)}), stopping`);
-      break;
-    }
-
     moves.push(nextMove);
     currentState.vertices = newVertices;
 
-    console.log(`Applied ${nextMove}, new distance: ${newDistance.toFixed(3)}`);
+    if (newDistance < currentDistance) {
+      console.log(`Applied ${nextMove}, distance improved: ${currentDistance.toFixed(3)} → ${newDistance.toFixed(3)}`);
+    } else {
+      console.log(`Applied ${nextMove}, distance: ${currentDistance.toFixed(3)} → ${newDistance.toFixed(3)} (no improvement, but continuing)`);
+    }
   }
 
   console.log(`Full solution complete: ${moves.length} moves`);
