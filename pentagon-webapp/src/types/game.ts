@@ -3,7 +3,11 @@ export interface ComplexNumber {
   imag: number;
 }
 
+// Internal: All 4 moves for solver (C = -A, D = -B mathematically)
 export type MoveType = 'A' | 'B' | 'C' | 'D';
+
+// UI: Only show A and B to users (right-click applies negative)
+export type UIMoveType = 'A' | 'B';
 
 export interface Move {
   vertex: ComplexNumber;
