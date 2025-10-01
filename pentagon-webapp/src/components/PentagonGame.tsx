@@ -54,6 +54,12 @@ export default function PentagonGame() {
   const [isGettingSolution, setIsGettingSolution] = useState(false);
   const [showFullSolution, setShowFullSolution] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // Track stats for completion screen
+  const [moveCount, setMoveCount] = useState(0);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [solveTime, setSolveTime] = useState<number | null>(null);
+  const [moveHistory, setMoveHistory] = useState<Array<{ vertices: ComplexNumber[]; moveType: MoveType }>>([]);
   // const [showEducationalPanel, setShowEducationalPanel] = useState(false);
 
   const generateStartingState = useCallback(() => {
@@ -107,6 +113,13 @@ export default function PentagonGame() {
       goalVertices: zeroGoal.map(v => ({ ...v })),
       isWon: false,
     }));
+
+    // Reset stats for new puzzle
+    setMoveCount(0);
+    setStartTime(Date.now());
+    setSolveTime(null);
+    setMoveHistory([{ vertices: startingVertices.map(v => ({ ...v })), moveType: 'A' }]);
+
     setIsInitialized(true);
   }, []); // No dependencies
 
@@ -224,7 +237,30 @@ export default function PentagonGame() {
         currentMoveType: actualMoveType,
       };
     });
-  }, [gameState.currentMoveType]);
+
+    // Track move in history and increment counter
+    setMoveCount(prev => prev + 1);
+    setMoveHistory(prev => [...prev, {
+      vertices: gameState.vertices.map(v => ({ ...v })),
+      moveType: actualMoveType
+    }]);
+  }, [gameState.currentMoveType, gameState.vertices]);
+
+  const undoMove = useCallback(() => {
+    if (moveHistory.length <= 1) return; // Can't undo past initial state
+
+    const newHistory = moveHistory.slice(0, -1);
+    const previousState = newHistory[newHistory.length - 1];
+
+    setMoveHistory(newHistory);
+    setMoveCount(prev => Math.max(0, prev - 1));
+    setGameState(prev => ({
+      ...prev,
+      vertices: previousState.vertices.map(v => ({ ...v })),
+      currentMoveType: previousState.moveType,
+      isWon: false, // Reset win state when undoing
+    }));
+  }, [moveHistory]);
 
   const resetGame = useCallback(() => {
     setIsInitialized(false);
@@ -270,16 +306,21 @@ export default function PentagonGame() {
   // Check win condition (only after initialization)
   useEffect(() => {
     if (!isInitialized) return;
-    
-    const isWon = gameState.vertices.every((v, i) => 
-      v.real === gameState.goalVertices[i].real && 
+
+    const isWon = gameState.vertices.every((v, i) =>
+      v.real === gameState.goalVertices[i].real &&
       v.imag === gameState.goalVertices[i].imag
     );
-    
+
     if (isWon !== gameState.isWon) {
       setGameState(prev => ({ ...prev, isWon }));
+
+      // Capture solve time when winning
+      if (isWon && startTime && !solveTime) {
+        setSolveTime(Date.now() - startTime);
+      }
     }
-  }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized]);
+  }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized, startTime, solveTime]);
 
   // Generate initial starting state
   useEffect(() => {
@@ -294,7 +335,7 @@ export default function PentagonGame() {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-slate-900">
-      {/* Top-left overlay: RESET / UNDO */}
+      {/* Top-left overlay: RESET / UNDO / NEW */}
       <div className="absolute top-4 left-4 z-10 flex gap-2">
         <button
           onClick={resetGame}
@@ -302,6 +343,14 @@ export default function PentagonGame() {
           style={{ minWidth: '44px', minHeight: '44px' }}
         >
           Reset
+        </button>
+        <button
+          onClick={undoMove}
+          disabled={moveHistory.length <= 1}
+          className="px-4 py-2 bg-yellow-600/90 hover:bg-yellow-600 text-white rounded-lg font-semibold shadow-lg backdrop-blur-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ minWidth: '44px', minHeight: '44px' }}
+        >
+          Undo
         </button>
         <button
           onClick={generateStartingState}
@@ -392,8 +441,33 @@ export default function PentagonGame() {
 
       {/* Win celebration overlay */}
       {gameState.isWon && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 bg-green-600/95 px-8 py-4 rounded-xl shadow-2xl backdrop-blur-sm">
-          <p className="text-2xl font-bold text-white">🎉 Puzzle Solved!</p>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 bg-gradient-to-br from-green-600/95 to-emerald-700/95 px-12 py-8 rounded-2xl shadow-2xl backdrop-blur-sm border-2 border-green-400/50 max-w-md">
+          <div className="text-center">
+            <p className="text-4xl font-bold text-white mb-4">🎉 Congratulations!</p>
+            <p className="text-xl text-green-100 mb-6">Puzzle Solved!</p>
+
+            <div className="bg-white/20 rounded-lg p-4 mb-6 space-y-2">
+              <div className="flex justify-between items-center text-white">
+                <span className="text-lg">Moves:</span>
+                <span className="text-2xl font-bold">{moveCount}</span>
+              </div>
+              {solveTime && (
+                <div className="flex justify-between items-center text-white">
+                  <span className="text-lg">Time:</span>
+                  <span className="text-2xl font-bold">
+                    {Math.floor(solveTime / 60000)}:{String(Math.floor((solveTime % 60000) / 1000)).padStart(2, '0')}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={generateStartingState}
+              className="w-full px-6 py-3 bg-white text-green-700 rounded-lg font-bold text-lg hover:bg-green-50 transition-all shadow-lg"
+            >
+              New Puzzle
+            </button>
+          </div>
         </div>
       )}
 
