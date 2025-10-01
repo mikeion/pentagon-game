@@ -115,28 +115,26 @@ function solutionToMoves(solution: unknown, currentState: ComplexNumber[]): stri
 
   console.log(`Largest solution coefficient at vertex ${bestVertex}: ${solutionArray[bestVertex].real.toFixed(3)} + ${solutionArray[bestVertex].imag.toFixed(3)}i`);
 
-  // Test all possible moves at the best vertex to find which one gets closest to zero
-  let bestMove: { vertex: number; type: MoveType; operation: 'add' | 'subtract' } | null = null;
+  // Test all four move types at the best vertex to find which one gets closest to zero
+  let bestMove: { vertex: number; type: MoveType } | null = null;
   let bestDistance = Infinity;
 
   for (const moveType of ['A', 'B', 'C', 'D'] as MoveType[]) {
-    for (const operation of ['add', 'subtract'] as const) {
-      const newState = simulateMove(currentState, bestVertex, moveType, operation);
-      const distance = newState.reduce((sum, v) =>
-        sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0
-      );
+    const newState = simulateMove(currentState, bestVertex, moveType, 'add');
+    const distance = newState.reduce((sum, v) =>
+      sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0
+    );
 
-      console.log(`Testing ${moveType}${bestVertex} (${operation}): distance = ${distance.toFixed(3)}`);
+    console.log(`Testing ${moveType}${bestVertex}: distance = ${distance.toFixed(3)}`);
 
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        bestMove = { vertex: bestVertex, type: moveType, operation };
-      }
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestMove = { vertex: bestVertex, type: moveType };
     }
   }
 
   if (bestMove) {
-    const moveStr = bestMove.operation === 'subtract' ? `${bestMove.type}${bestMove.vertex} (long press)` : `${bestMove.type}${bestMove.vertex}`;
+    const moveStr = `${bestMove.type}${bestMove.vertex}`;
     console.log(`Best move found: ${moveStr} with distance ${bestDistance.toFixed(3)}`);
     return [moveStr];
   }
@@ -237,23 +235,12 @@ export async function getFullSolution(
     const nextMove = solution.moves[0];
     console.log(`Matrix solver suggests: ${nextMove}`);
 
-    // Parse the move string to extract vertex, move type, and operation
-    let vertex: number;
-    let moveType: MoveType;
-    let operation: 'add' | 'subtract' = 'add';
-
-    if (nextMove.includes('(long press)')) {
-      operation = 'subtract';
-      const cleanMove = nextMove.replace(' (long press)', '');
-      vertex = parseInt(cleanMove.slice(-1));
-      moveType = cleanMove.slice(0, -1) as MoveType;
-    } else {
-      vertex = parseInt(nextMove.slice(-1));
-      moveType = nextMove.slice(0, -1) as MoveType;
-    }
+    // Parse the move string to extract vertex and move type (format: "A0" or "C3")
+    const vertex = parseInt(nextMove.slice(-1));
+    const moveType = nextMove.slice(0, -1) as MoveType;
 
     // Apply the move to get the new state
-    const newVertices = simulateMove(currentState.vertices, vertex, moveType, operation);
+    const newVertices = simulateMove(currentState.vertices, vertex, moveType, 'add');
     const newDistance = newVertices.reduce((sum, v) => sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0);
 
     if (newDistance >= currentDistance) {

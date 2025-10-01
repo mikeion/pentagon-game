@@ -90,7 +90,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     // Draw center circle with current move rule
     const centerX = width / 2;
     const centerY = height / 2;
-    const centerRadius = 55;
+    const centerRadius = 70;
 
     // Determine UI move type (A or B) from internal move type (A/B/C/D)
     const uiMoveType = (gameState.currentMoveType === 'A' || gameState.currentMoveType === 'C') ? 'A' : 'B';
@@ -106,33 +106,39 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
 
     // Display current move in center - show as A/-A or B/-B
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 28px monospace';
+    ctx.font = 'bold 32px monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
     // Show move letter with negative sign for C and D
     let moveLabel = '';
-    let complexText = '';
+    let line1 = '';
+    let line2 = '';
     if (gameState.currentMoveType === 'A') {
       moveLabel = 'A';
-      complexText = '(1+i to vertex, -i to adj)';
+      line1 = '1+i to vertex';
+      line2 = '-i to adj';
     } else if (gameState.currentMoveType === 'C') {
       moveLabel = '-A';
-      complexText = '(-1-i to vertex, +i to adj)';
+      line1 = '-1-i to vertex';
+      line2 = '+i to adj';
     } else if (gameState.currentMoveType === 'B') {
       moveLabel = 'B';
-      complexText = '(-1+i to vertex, +1 to adj)';
+      line1 = '-1+i to vertex';
+      line2 = '+1 to adj';
     } else { // D
       moveLabel = '-B';
-      complexText = '(1-i to vertex, -1 to adj)';
+      line1 = '1-i to vertex';
+      line2 = '-1 to adj';
     }
 
-    ctx.fillText(moveLabel, centerX, centerY - 5);
+    ctx.fillText(moveLabel, centerX, centerY - 15);
 
-    // Show complex number details (smaller text)
-    ctx.font = '11px monospace';
+    // Show complex number details (smaller text, two lines)
+    ctx.font = '10px monospace';
     ctx.fillStyle = '#94A3B8';
-    ctx.fillText(complexText, centerX, centerY + 20);
+    ctx.fillText(line1, centerX, centerY + 10);
+    ctx.fillText(line2, centerX, centerY + 22);
 
     // Draw vertices with color coding
     gameState.vertices.forEach((vertex, i) => {
