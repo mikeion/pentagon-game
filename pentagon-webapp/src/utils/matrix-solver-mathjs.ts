@@ -87,9 +87,10 @@ function simulateMove(state: ComplexNumber[], vertex: number, moveType: MoveType
 }
 
 
-// Convert solution vector to move sequence by testing actual moves
+// Convert solution vector to move sequence by interpreting coefficients
+// The solution vector tells us the linear combination of A and B moves per vertex
 function solutionToMoves(solution: unknown, currentState: ComplexNumber[]): string[] {
-  // Convert math.js solution back to array of ComplexNumbers for analysis
+  // Convert math.js solution back to array of ComplexNumbers
   const solutionArray = [];
   for (let i = 0; i < 5; i++) {
     const complexVal = math.subset(solution as Parameters<typeof math.subset>[0], math.index(i));
@@ -101,40 +102,42 @@ function solutionToMoves(solution: unknown, currentState: ComplexNumber[]): stri
     `V${i}: ${v.real.toFixed(3)}${v.imag >= 0 ? '+' : ''}${v.imag.toFixed(3)}i`
   ).join(', '));
 
-  // Test ALL possible moves at ALL vertices to find the one that gets closest to zero
-  let bestMove: { vertex: number; type: MoveType } | null = null;
-  let bestDistance = Infinity;
-  const currentDistance = currentState.reduce((sum, v) =>
-    sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0
-  );
+  // The solution vector coefficient at vertex i is: real*B + imag*A
+  // We need to round to nearest integer and apply that many moves
+  const moves: string[] = [];
 
   for (let vertex = 0; vertex < 5; vertex++) {
-    for (const moveType of ['A', 'B', 'C', 'D'] as MoveType[]) {
-      const newState = simulateMove(currentState, vertex, moveType, 'add');
-      const distance = newState.reduce((sum, v) =>
-        sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0
-      );
+    const coeff = solutionArray[vertex];
 
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        bestMove = { vertex, type: moveType };
+    // Round to nearest integers
+    const numBMoves = Math.round(coeff.real);
+    const numAMoves = Math.round(coeff.imag);
+
+    // Apply A moves (or -A if negative)
+    if (numAMoves > 0) {
+      for (let i = 0; i < numAMoves; i++) {
+        moves.push(`A${vertex}`);
+      }
+    } else if (numAMoves < 0) {
+      for (let i = 0; i < -numAMoves; i++) {
+        moves.push(`C${vertex}`);
+      }
+    }
+
+    // Apply B moves (or -B if negative)
+    if (numBMoves > 0) {
+      for (let i = 0; i < numBMoves; i++) {
+        moves.push(`B${vertex}`);
+      }
+    } else if (numBMoves < 0) {
+      for (let i = 0; i < -numBMoves; i++) {
+        moves.push(`D${vertex}`);
       }
     }
   }
 
-  if (bestMove) {
-    const moveStr = `${bestMove.type}${bestMove.vertex}`;
-    const improvement = currentDistance - bestDistance;
-    if (improvement > 0) {
-      console.log(`Best move: ${moveStr} reduces distance from ${currentDistance.toFixed(3)} to ${bestDistance.toFixed(3)}`);
-    } else {
-      console.log(`Best move: ${moveStr} (no immediate improvement, but best available)`);
-    }
-    return [moveStr];
-  }
-
-  console.log('No moves available');
-  return [];
+  console.log(`Generated ${moves.length} moves from solution coefficients:`, moves);
+  return moves;
 }
 
 export interface MatrixSolution {
@@ -257,65 +260,24 @@ function simplifyMoves(moves: string[]): string[] {
   return simplified;
 }
 
-// Get full solution sequence using iterative matrix solver approach
+// Get full solution sequence using direct matrix solution
 export async function getFullSolution(
   initialState: GameState
 ): Promise<string[]> {
-  const moves: string[] = [];
-  const currentState: GameState = {
-    vertices: initialState.vertices.map(v => ({ ...v })),
-    goalVertices: initialState.goalVertices.map(v => ({ ...v })),
-    currentMoveType: initialState.currentMoveType,
-    selectedVertex: initialState.selectedVertex,
-    isWon: false
-  };
-  const maxIterations = 15; // Reasonable limit for full solutions
+  console.log('Computing full solution using matrix inverse K̄⁻¹');
 
-  console.log('Starting full solution with matrix solver approach');
+  // Use matrix solver to get the complete solution in one shot
+  const solution = await solveWithMatrix(initialState);
 
-  for (let iteration = 0; iteration < maxIterations; iteration++) {
-    // Check if we're already at the goal
-    const currentDistance = currentState.vertices.reduce((sum, v) => sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0);
-    if (currentDistance < 0.01) {
-      console.log(`Full solution found in ${iteration} moves!`);
-      break;
-    }
-
-    console.log(`Full solution iteration ${iteration + 1}, current distance: ${currentDistance.toFixed(3)}`);
-
-    // Use the same matrix solver as the hint system
-    const solution = await solveWithMatrix(currentState);
-
-    if (!solution || solution.moves.length === 0) {
-      console.log('Matrix solver found no moves, stopping full solution search');
-      break;
-    }
-
-    const nextMove = solution.moves[0];
-    console.log(`Matrix solver suggests: ${nextMove}`);
-
-    // Parse the move string to extract vertex and move type (format: "A0" or "C3")
-    const vertex = parseInt(nextMove.slice(-1));
-    const moveType = nextMove.slice(0, -1) as MoveType;
-
-    // Apply the move to get the new state
-    const newVertices = simulateMove(currentState.vertices, vertex, moveType, 'add');
-    const newDistance = newVertices.reduce((sum, v) => sum + Math.sqrt(v.real * v.real + v.imag * v.imag), 0);
-
-    moves.push(nextMove);
-    currentState.vertices = newVertices;
-
-    if (newDistance < currentDistance) {
-      console.log(`Applied ${nextMove}, distance improved: ${currentDistance.toFixed(3)} → ${newDistance.toFixed(3)}`);
-    } else {
-      console.log(`Applied ${nextMove}, distance: ${currentDistance.toFixed(3)} → ${newDistance.toFixed(3)} (no improvement, but continuing)`);
-    }
+  if (!solution || solution.moves.length === 0) {
+    console.log('Matrix solver found no solution');
+    return [];
   }
 
-  console.log(`Full solution complete: ${moves.length} moves before simplification`);
+  console.log(`Matrix solution generated ${solution.moves.length} moves`);
 
-  // Simplify the move sequence by canceling redundant moves
-  const simplifiedMoves = simplifyMoves(moves);
+  // Simplify and organize the move sequence
+  const simplifiedMoves = simplifyMoves(solution.moves);
 
   return simplifiedMoves;
 }
