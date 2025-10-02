@@ -4,7 +4,10 @@ import { ComplexNumber, GameState, MoveType } from '../types/game';
 // Create math.js instance with complex number support
 const math = create(all);
 
-// K̄⁻¹ matrix computed from K̄ = I₅ - Di (paper line 208)
+// K^-1 matrix computed from K = I_5 - Di (paper line 208 at the time I'm putting this in here lol)
+// in the future we can probably use some library to compute this for any matrix, just for this particular case
+// thought it'd be robust to put the inverse directly in here.
+
 const MATRIX_INVERSE = math.matrix([
   [math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1), math.complex(1, 1)],
   [math.complex(1, 1), math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1)],
@@ -13,7 +16,7 @@ const MATRIX_INVERSE = math.matrix([
   [math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1), math.complex(1, 1), math.complex(3, -1)]
 ]);
 
-// Scale by 1/6 as specified in LaTeX
+// Scale by 1/6
 const SCALED_MATRIX_INVERSE = math.multiply(MATRIX_INVERSE, 1/6);
 
 // Move definitions mapping complex numbers to move types
@@ -32,6 +35,9 @@ const adjacency: Record<number, number[]> = {
   3: [2, 4],
   4: [3, 0]
 };
+
+
+// A couple of functions to move from complex number to javascript complex number and back
 
 // Convert ComplexNumber to math.js complex
 function toMathComplex(c: ComplexNumber) {
@@ -57,7 +63,7 @@ function calculateDifferenceVector(current: GameState): unknown {
 
 // Apply the inverse matrix to get the solution vector
 function applySolutionMatrix(differenceVector: unknown): unknown {
-  // Matrix multiplication: M̄⁻¹ × difference
+  // Matrix multiplication: M^-1 × difference
   return math.multiply(SCALED_MATRIX_INVERSE, differenceVector as Parameters<typeof math.multiply>[1]);
 }
 
@@ -94,7 +100,7 @@ function solutionToMoves(solution: unknown, currentState: ComplexNumber[]): stri
     solutionArray.push(fromMathComplex(complexVal));
   }
   // Solution vector coefficient a+bi interpretation:
-  // - Real part (a) = number of A moves needed
+  // - Real part (a) = number of A moves needed (Alex you can help me think on this but this is what I got from the how does the firing work pdf)
   // - Imaginary part (b) = number of B moves needed
   const moves: string[] = [];
 
