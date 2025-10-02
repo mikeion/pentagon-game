@@ -63,50 +63,93 @@ export default function PentagonGame() {
   // const [showEducationalPanel, setShowEducationalPanel] = useState(false);
 
   const generateStartingState = useCallback(() => {
-    // Generate random starting state by simulating random moves
-    // Generate 8-12 total moves with random vertices and move types
+    // Generate random starting state by assigning move coefficients to each vertex
+    // Each vertex gets: some number of A moves (+ or -) and some number of B moves (+ or -)
     const startingVertices = Array(5).fill(null).map(() => ({ real: 0, imag: 0 }));
 
-    // Random total moves between 8-12
-    const totalMoves = Math.floor(Math.random() * 5) + 8; // 8, 9, 10, 11, or 12 moves
+    // Total target moves: 8-12
+    const targetMoves = Math.floor(Math.random() * 5) + 8; // 8, 9, 10, 11, or 12 moves
     const moveSequence: string[] = [];
 
-    for (let i = 0; i < totalMoves; i++) {
-      // Pick random vertex (0-4)
-      const vertex = Math.floor(Math.random() * 5);
+    // For each vertex, assign random coefficients for A and B
+    const vertexMoves: Array<{ vertex: number; aMoves: number; bMoves: number }> = [];
+    let totalAssigned = 0;
 
-      // Pick random move type: A or B (50/50)
-      const isAMove = Math.random() < 0.5;
+    // Distribute moves across vertices
+    for (let vertex = 0; vertex < 5; vertex++) {
+      // Decide if this vertex gets A moves and/or B moves
+      const hasAMoves = Math.random() < 0.6; // 60% chance
+      const hasBMoves = Math.random() < 0.6; // 60% chance
 
-      // Pick random polarity: positive or negative (50/50)
-      const isPositive = Math.random() < 0.5;
+      let aMoves = 0;
+      let bMoves = 0;
 
-      // Determine actual move type based on base type and polarity
-      let moveType: MoveType;
-      if (isAMove) {
-        moveType = isPositive ? 'A' : 'C'; // A or -A
-      } else {
-        moveType = isPositive ? 'B' : 'D'; // B or -B
+      if (hasAMoves) {
+        // 1-3 A moves (positive or negative)
+        const magnitude = Math.floor(Math.random() * 3) + 1;
+        aMoves = Math.random() < 0.5 ? magnitude : -magnitude;
       }
 
-      const move = moves[moveType];
-
-      // Apply move to vertex
-      startingVertices[vertex].real += move.vertex.real;
-      startingVertices[vertex].imag += move.vertex.imag;
-
-      // Apply to adjacent vertices
-      for (const adj of adjacency[vertex]) {
-        startingVertices[adj].real += move.adjacent.real;
-        startingVertices[adj].imag += move.adjacent.imag;
+      if (hasBMoves) {
+        // 1-3 B moves (positive or negative)
+        const magnitude = Math.floor(Math.random() * 3) + 1;
+        bMoves = Math.random() < 0.5 ? magnitude : -magnitude;
       }
 
-      // Track for logging
-      const moveLabel = isAMove ? (isPositive ? 'A' : '-A') : (isPositive ? 'B' : '-B');
-      moveSequence.push(`${moveLabel}, V${vertex}`);
+      vertexMoves.push({ vertex, aMoves, bMoves });
+      totalAssigned += Math.abs(aMoves) + Math.abs(bMoves);
     }
 
-    console.log(`Generated puzzle with ${totalMoves} random moves:`, moveSequence.join(' → '))
+    // Scale if we're too far from target (allow some variance)
+    console.log(`Initially assigned ${totalAssigned} moves (target: ${targetMoves})`);
+
+    // Apply all the moves
+    for (const { vertex, aMoves, bMoves } of vertexMoves) {
+      // Apply A moves (or -A if negative)
+      if (aMoves !== 0) {
+        const moveType = aMoves > 0 ? 'A' : 'C';
+        const move = moves[moveType];
+        const count = Math.abs(aMoves);
+
+        for (let i = 0; i < count; i++) {
+          startingVertices[vertex].real += move.vertex.real;
+          startingVertices[vertex].imag += move.vertex.imag;
+
+          for (const adj of adjacency[vertex]) {
+            startingVertices[adj].real += move.adjacent.real;
+            startingVertices[adj].imag += move.adjacent.imag;
+          }
+
+          const label = aMoves > 0 ? 'A' : '-A';
+          moveSequence.push(`${label}, V${vertex}`);
+        }
+      }
+
+      // Apply B moves (or -B if negative)
+      if (bMoves !== 0) {
+        const moveType = bMoves > 0 ? 'B' : 'D';
+        const move = moves[moveType];
+        const count = Math.abs(bMoves);
+
+        for (let i = 0; i < count; i++) {
+          startingVertices[vertex].real += move.vertex.real;
+          startingVertices[vertex].imag += move.vertex.imag;
+
+          for (const adj of adjacency[vertex]) {
+            startingVertices[adj].real += move.adjacent.real;
+            startingVertices[adj].imag += move.adjacent.imag;
+          }
+
+          const label = bMoves > 0 ? 'B' : '-B';
+          moveSequence.push(`${label}, V${vertex}`);
+        }
+      }
+    }
+
+    console.log(`Generated puzzle with ${moveSequence.length} moves:`, moveSequence.join(' → '))
+    console.log('Per-vertex breakdown:', vertexMoves.map(v =>
+      `V${v.vertex}: ${v.aMoves}A, ${v.bMoves}B`
+    ).join(' | '))
     
     setGameState(prev => ({
       ...prev,
