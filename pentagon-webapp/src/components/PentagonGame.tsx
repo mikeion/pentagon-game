@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import GameCanvas from './GameCanvas';
 import { ComplexNumber, GameState, Move, MoveType, UIMoveType } from '@/types/game';
-import { solveWithMatrix, getFullSolution } from '@/utils/matrix-solver-mathjs';
+import { getMatrixHint, getFullSolution } from '@/utils/matrix-solver-mathjs';
 
 // Move definitions (CORRECTED to match Alex's paper lines 231-234)
 // Paper specification:
@@ -206,11 +206,11 @@ export default function PentagonGame() {
 
     try {
       console.log('Getting hint for state:', gameState.vertices);
-      const solution = await solveWithMatrix(gameState);
-      console.log('Matrix solver returned:', solution);
+      const hintMoves = await getMatrixHint(gameState, 1);
+      console.log('Hint moves (simplified):', hintMoves);
 
-      if (solution && solution.moves.length > 0) {
-        const firstMove = solution.moves[0];
+      if (hintMoves && hintMoves.length > 0) {
+        const firstMove = hintMoves[0];
         console.log('First move:', firstMove);
 
         // Increment hints used

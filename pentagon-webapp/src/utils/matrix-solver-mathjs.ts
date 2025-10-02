@@ -190,7 +190,9 @@ export async function getMatrixHint(
   const solution = await solveWithMatrix(currentState);
 
   if (solution && solution.moves.length > 0) {
-    return solution.moves.slice(0, maxMoves);
+    // Simplify and organize before returning hints
+    const simplified = simplifyMoves(solution.moves);
+    return simplified.slice(0, maxMoves);
   }
 
   return [];
