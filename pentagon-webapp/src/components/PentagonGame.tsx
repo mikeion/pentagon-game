@@ -64,16 +64,19 @@ export default function PentagonGame() {
 
   const generateStartingState = useCallback(() => {
     // Generate random starting state using coefficient-based moves
-    // Examples: (+4A, -3B), (+2A, +3B), (-3A, -2B)
+    // Generate 10-12 total moves (combined A and B moves)
     const startingVertices = Array(5).fill(null).map(() => ({ real: 0, imag: 0 }));
 
-    // Generate random coefficients for A and B (between -4 and +4, excluding 0)
-    let coeffA = Math.floor(Math.random() * 8) - 4;
-    let coeffB = Math.floor(Math.random() * 8) - 4;
-    if (coeffA === 0) coeffA = 1;
-    if (coeffB === 0) coeffB = 1;
+    // Generate random coefficients for A and B that sum to 10-12 moves
+    const totalMoves = Math.floor(Math.random() * 3) + 10; // 10, 11, or 12 moves
+    const coeffAMagnitude = Math.floor(Math.random() * (totalMoves - 1)) + 1; // At least 1
+    const coeffBMagnitude = totalMoves - coeffAMagnitude; // Remaining moves
 
-    console.log(`Generating puzzle: ${coeffA > 0 ? '+' : ''}${coeffA}A, ${coeffB > 0 ? '+' : ''}${coeffB}B`);
+    // Randomly assign positive or negative
+    const coeffA = Math.random() < 0.5 ? coeffAMagnitude : -coeffAMagnitude;
+    const coeffB = Math.random() < 0.5 ? coeffBMagnitude : -coeffBMagnitude;
+
+    console.log(`Generating puzzle: ${coeffA > 0 ? '+' : ''}${coeffA}A, ${coeffB > 0 ? '+' : ''}${coeffB}B (${totalMoves} total moves)`);
 
     // Apply coeffA times of A moves to random vertices
     const absCoeffA = Math.abs(coeffA);
