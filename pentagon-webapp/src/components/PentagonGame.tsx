@@ -219,6 +219,18 @@ export default function PentagonGame() {
 
         console.log(`Hint: Click ${hint.moveType} on vertex ${hint.vertex}`);
 
+        // If hint suggests a different move type, switch to it
+        if (hint.moveType !== gameState.currentMoveType) {
+          console.log(`Switching from ${gameState.currentMoveType} to ${hint.moveType}`);
+          // Map internal move types (A,B,C,D) to UI move types (A or B)
+          const uiMoveType: UIMoveType = (hint.moveType === 'A' || hint.moveType === 'C') ? 'A' : 'B';
+          setCurrentUIMoveType(uiMoveType);
+          setGameState(prev => ({
+            ...prev,
+            currentMoveType: hint.moveType,
+          }));
+        }
+
         // Set hint vertex
         setHintVertex(hint.vertex);
 

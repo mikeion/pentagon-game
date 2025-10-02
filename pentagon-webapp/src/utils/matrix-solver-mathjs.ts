@@ -102,16 +102,19 @@ function solutionToMoves(solution: unknown, currentState: ComplexNumber[]): stri
     `V${i}: ${v.real.toFixed(3)}${v.imag >= 0 ? '+' : ''}${v.imag.toFixed(3)}i`
   ).join(', '));
 
-  // The solution vector coefficient at vertex i is: real*B + imag*A
-  // We need to round to nearest integer and apply that many moves
+  // CORRECTED INTERPRETATION (verified by testing):
+  // The solution vector coefficient a+bi means:
+  // - Real part (a) = number of A moves needed
+  // - Imaginary part (b) = number of B moves needed
+  // This is the OPPOSITE of the naive interpretation!
   const moves: string[] = [];
 
   for (let vertex = 0; vertex < 5; vertex++) {
     const coeff = solutionArray[vertex];
 
-    // Round to nearest integers
-    const numBMoves = Math.round(coeff.real);
-    const numAMoves = Math.round(coeff.imag);
+    // Real part = A moves, Imaginary part = B moves
+    const numAMoves = Math.round(coeff.real);
+    const numBMoves = Math.round(coeff.imag);
 
     // Apply A moves (or -A if negative)
     if (numAMoves > 0) {
@@ -184,6 +187,7 @@ export async function solveWithMatrix(
 
 // Get hint based on current button selection
 // Returns the vertex that needs the most moves of the selected type
+// If selected type not needed, returns best alternative move type
 export async function getMatrixHint(
   currentState: GameState,
   selectedMoveType: MoveType
@@ -232,6 +236,44 @@ export async function getMatrixHint(
     }
 
     console.log(`No moves of type ${selectedMoveType} needed in solution`);
+
+    // If selected move type not needed, find the best alternative
+    // Look for the move type with the highest total count across all vertices
+    const totalCounts: Record<MoveType, number> = { A: 0, B: 0, C: 0, D: 0 };
+    for (const counts of Object.values(moveCount)) {
+      totalCounts.A += counts.A;
+      totalCounts.B += counts.B;
+      totalCounts.C += counts.C;
+      totalCounts.D += counts.D;
+    }
+
+    // Find best alternative move type
+    let bestMoveType: MoveType | null = null;
+    let bestTotalCount = 0;
+    for (const [moveType, count] of Object.entries(totalCounts)) {
+      if (count > bestTotalCount) {
+        bestTotalCount = count;
+        bestMoveType = moveType as MoveType;
+      }
+    }
+
+    if (bestMoveType && bestTotalCount > 0) {
+      // Find vertex with most moves of this type
+      let altVertex = -1;
+      let altMaxCount = 0;
+      for (const [vertex, counts] of Object.entries(moveCount)) {
+        const count = counts[bestMoveType];
+        if (count > altMaxCount) {
+          altMaxCount = count;
+          altVertex = parseInt(vertex);
+        }
+      }
+
+      if (altVertex >= 0) {
+        console.log(`Alternative hint: ${bestMoveType} on V${altVertex} (switch to ${bestMoveType} button)`);
+        return { vertex: altVertex, moveType: bestMoveType };
+      }
+    }
   }
 
   console.log('No solution found or no hint available');
