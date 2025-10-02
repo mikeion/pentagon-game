@@ -205,55 +205,27 @@ export default function PentagonGame() {
     setHintVertex(undefined);
 
     try {
-      console.log('Getting hint for state:', gameState.vertices);
-      const hintMoves = await getMatrixHint(gameState, 1);
-      console.log('Hint moves (simplified):', hintMoves);
+      console.log('=== GETTING HINT ===');
+      console.log('Current state:', gameState.vertices.map((v, i) =>
+        `V${i}: {real: ${v.real}, imag: ${v.imag}}`
+      ).join(', '));
 
-      if (hintMoves && hintMoves.length > 0) {
-        const firstMove = hintMoves[0];
-        console.log('First move:', firstMove);
+      const hint = await getMatrixHint(gameState, gameState.currentMoveType);
+      console.log('Hint result:', hint);
 
+      if (hint) {
         // Increment hints used
         setHintsUsed(prev => prev + 1);
 
-        // Parse move: "A0 (long press)" or "B1" -> {moveType, vertex, operation}
-        const cleanMove = firstMove.replace(' (long press)', '');
-        const moveType = cleanMove[0] as MoveType; // A, B, C, or D
-        const vertexNum = parseInt(cleanMove[1]);
+        console.log(`Hint: Click ${hint.moveType} on vertex ${hint.vertex}`);
 
-        // Set the hint vertex
-        setHintVertex(vertexNum);
-
-        // Switch to the correct move type if needed
-        // Map internal move types to UI move types and operations
-        let targetUIMoveType: UIMoveType;
-        let targetInternalMoveType: MoveType;
-
-        if (moveType === 'A') {
-          targetUIMoveType = 'A';
-          targetInternalMoveType = 'A';
-        } else if (moveType === 'C') {
-          targetUIMoveType = 'A';
-          targetInternalMoveType = 'C'; // -A
-        } else if (moveType === 'B') {
-          targetUIMoveType = 'B';
-          targetInternalMoveType = 'B';
-        } else { // D
-          targetUIMoveType = 'B';
-          targetInternalMoveType = 'D'; // -B
-        }
-
-        // Update move type to match hint
-        setCurrentUIMoveType(targetUIMoveType);
-        setGameState(prev => ({
-          ...prev,
-          currentMoveType: targetInternalMoveType,
-        }));
-
-        console.log(`Hint: Click vertex ${vertexNum} with move ${targetInternalMoveType} (UI: ${targetUIMoveType})`);
+        // Set hint vertex
+        setHintVertex(hint.vertex);
 
         // Clear hint after 3 seconds
         setTimeout(() => setHintVertex(undefined), 3000);
+      } else {
+        console.log('No hint available - either solved or selected move type not needed');
       }
     } catch (error) {
       console.error('Matrix solver error:', error);

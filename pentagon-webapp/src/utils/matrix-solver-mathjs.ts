@@ -182,20 +182,60 @@ export async function solveWithMatrix(
   }
 }
 
-// Get hint using matrix solver
+// Get hint based on current button selection
+// Returns the vertex that needs the most moves of the selected type
 export async function getMatrixHint(
   currentState: GameState,
-  maxMoves: number = 3
-): Promise<string[]> {
+  selectedMoveType: MoveType
+): Promise<{ vertex: number; moveType: MoveType } | null> {
+  console.log('getMatrixHint called with state:', currentState.vertices);
+  console.log('Selected move type:', selectedMoveType);
+
   const solution = await solveWithMatrix(currentState);
 
   if (solution && solution.moves.length > 0) {
-    // Simplify and organize before returning hints
+    console.log('Raw solution moves:', solution.moves);
     const simplified = simplifyMoves(solution.moves);
-    return simplified.slice(0, maxMoves);
+    console.log('Simplified moves:', simplified);
+
+    // Count how many times each move type is needed per vertex
+    const moveCount: Record<number, Record<MoveType, number>> = {};
+
+    for (const move of simplified) {
+      const cleanMove = move.replace(' (long press)', '');
+      const moveType = cleanMove[0] as MoveType;
+      const vertex = parseInt(cleanMove[1]);
+
+      if (!moveCount[vertex]) {
+        moveCount[vertex] = { A: 0, B: 0, C: 0, D: 0 };
+      }
+      moveCount[vertex][moveType]++;
+    }
+
+    console.log('Move count per vertex:', moveCount);
+
+    // Find the vertex with the most moves of the selected type
+    let bestVertex = -1;
+    let maxCount = 0;
+
+    for (const [vertex, counts] of Object.entries(moveCount)) {
+      const count = counts[selectedMoveType];
+      if (count > maxCount) {
+        maxCount = count;
+        bestVertex = parseInt(vertex);
+      }
+    }
+
+    if (bestVertex >= 0 && maxCount > 0) {
+      console.log(`Best hint: ${selectedMoveType} on V${bestVertex} (${maxCount} times needed)`);
+      return { vertex: bestVertex, moveType: selectedMoveType };
+    }
+
+    console.log(`No moves of type ${selectedMoveType} needed in solution`);
   }
 
-  return [];
+  console.log('No solution found or no hint available');
+  return null;
 }
 
 // Simplify and organize move sequence
