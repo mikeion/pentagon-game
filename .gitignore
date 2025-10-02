@@ -1,6 +1,9 @@
 # CLAUDE.md is for local development guidance only
 CLAUDE.md
 
+# Documentation folder
+docs/
+
 # Node modules
 node_modules/
 
