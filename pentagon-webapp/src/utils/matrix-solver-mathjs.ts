@@ -5,8 +5,6 @@ import { ComplexNumber, GameState, MoveType } from '../types/game';
 const math = create(all);
 
 // K̄⁻¹ matrix computed from K̄ = I₅ - Di (paper line 208)
-// CORRECTED: Fixed imaginary part signs to match actual inverse
-// This is the true 5×5 complex matrix that solves the pentagon game
 const MATRIX_INVERSE = math.matrix([
   [math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1), math.complex(1, 1)],
   [math.complex(1, 1), math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1)],
@@ -18,8 +16,7 @@ const MATRIX_INVERSE = math.matrix([
 // Scale by 1/6 as specified in LaTeX
 const SCALED_MATRIX_INVERSE = math.multiply(MATRIX_INVERSE, 1/6);
 
-// Move definitions mapping complex numbers to move types (CORRECTED to match Alex's paper)
-// Must match PentagonGame.tsx exactly
+// Move definitions mapping complex numbers to move types
 const MOVE_MAPPINGS = {
   'A': { vertex: math.complex(1, 1), adjacent: math.complex(0, -1) },
   'B': { vertex: math.complex(-1, 1), adjacent: math.complex(1, 0) },
@@ -96,17 +93,9 @@ function solutionToMoves(solution: unknown, currentState: ComplexNumber[]): stri
     const complexVal = math.subset(solution as Parameters<typeof math.subset>[0], math.index(i));
     solutionArray.push(fromMathComplex(complexVal));
   }
-  console.log('Math.js solution vector:', solutionArray);
-
-  console.log('Solution vector coefficients:', solutionArray.map((v, i) =>
-    `V${i}: ${v.real.toFixed(3)}${v.imag >= 0 ? '+' : ''}${v.imag.toFixed(3)}i`
-  ).join(', '));
-
-  // CORRECTED INTERPRETATION (verified by testing):
-  // The solution vector coefficient a+bi means:
+  // Solution vector coefficient a+bi interpretation:
   // - Real part (a) = number of A moves needed
   // - Imaginary part (b) = number of B moves needed
-  // This is the OPPOSITE of the naive interpretation!
   const moves: string[] = [];
 
   for (let vertex = 0; vertex < 5; vertex++) {
@@ -139,7 +128,6 @@ function solutionToMoves(solution: unknown, currentState: ComplexNumber[]): stri
     }
   }
 
-  console.log(`Generated ${moves.length} moves from solution coefficients:`, moves);
   return moves;
 }
 
@@ -153,19 +141,9 @@ export async function solveWithMatrix(
   initialState: GameState
 ): Promise<MatrixSolution | null> {
   try {
-    console.log('Math.js Matrix solver input state:', initialState.vertices);
-
-    // Calculate the difference vector (goal is always zero)
     const differenceVector = calculateDifferenceVector(initialState);
-    console.log('Difference vector (math.js):', differenceVector);
-
-    // Apply the inverse matrix to get solution
     const solutionVector = applySolutionMatrix(differenceVector);
-    console.log('Solution vector (math.js):', solutionVector);
-
-    // Convert to move sequence using greedy approach
     const moves = solutionToMoves(solutionVector, initialState.vertices);
-    console.log('Generated moves:', moves);
 
     // Convert solution back to ComplexNumber array for return
     const solutionArray = [];
@@ -177,7 +155,7 @@ export async function solveWithMatrix(
     return {
       moves,
       solutionVector: solutionArray,
-      isExact: true // Using true 5×5 complex matrix from Alex's research
+      isExact: true
     };
   } catch (error) {
     console.error('Math.js Matrix solver error:', error);
@@ -192,15 +170,10 @@ export async function getMatrixHint(
   currentState: GameState,
   selectedMoveType: MoveType
 ): Promise<{ vertex: number; moveType: MoveType } | null> {
-  console.log('getMatrixHint called with state:', currentState.vertices);
-  console.log('Selected move type:', selectedMoveType);
-
   const solution = await solveWithMatrix(currentState);
 
   if (solution && solution.moves.length > 0) {
-    console.log('Raw solution moves:', solution.moves);
     const simplified = simplifyMoves(solution.moves);
-    console.log('Simplified moves:', simplified);
 
     // Count how many times each move type is needed per vertex
     const moveCount: Record<number, Record<MoveType, number>> = {};
@@ -216,8 +189,6 @@ export async function getMatrixHint(
       moveCount[vertex][moveType]++;
     }
 
-    console.log('Move count per vertex:', moveCount);
-
     // Find the vertex with the most moves of the selected type
     let bestVertex = -1;
     let maxCount = 0;
@@ -231,11 +202,8 @@ export async function getMatrixHint(
     }
 
     if (bestVertex >= 0 && maxCount > 0) {
-      console.log(`Best hint: ${selectedMoveType} on V${bestVertex} (${maxCount} times needed)`);
       return { vertex: bestVertex, moveType: selectedMoveType };
     }
-
-    console.log(`No moves of type ${selectedMoveType} needed in solution`);
 
     // If selected move type not needed, find the best alternative
     // Look for the move type with the highest total count across all vertices
@@ -270,13 +238,11 @@ export async function getMatrixHint(
       }
 
       if (altVertex >= 0) {
-        console.log(`Alternative hint: ${bestMoveType} on V${altVertex} (switch to ${bestMoveType} button)`);
         return { vertex: altVertex, moveType: bestMoveType };
       }
     }
   }
 
-  console.log('No solution found or no hint available');
   return null;
 }
 
@@ -336,51 +302,18 @@ function simplifyMoves(moves: string[]): string[] {
   }
 
   // Concatenate in order: A, B, -A (C), -B (D)
-  const simplified = [...aMoves, ...bMoves, ...cMoves, ...dMoves];
-
-  console.log(`Simplified ${moves.length} moves to ${simplified.length} moves (organized by type)`);
-  console.log(`Breakdown: ${aMoves.length} A moves, ${bMoves.length} B moves, ${cMoves.length} -A moves, ${dMoves.length} -B moves`);
-
-  return simplified;
+  return [...aMoves, ...bMoves, ...cMoves, ...dMoves];
 }
 
 // Get full solution sequence using direct matrix solution
 export async function getFullSolution(
   initialState: GameState
 ): Promise<string[]> {
-  console.log('Computing full solution using matrix inverse K̄⁻¹');
-
-  // Use matrix solver to get the complete solution in one shot
   const solution = await solveWithMatrix(initialState);
 
   if (!solution || solution.moves.length === 0) {
-    console.log('Matrix solver found no solution');
     return [];
   }
 
-  console.log(`Matrix solution generated ${solution.moves.length} moves`);
-
-  // Simplify and organize the move sequence
-  const simplifiedMoves = simplifyMoves(solution.moves);
-
-  return simplifiedMoves;
-}
-
-// Debug function to show solution vector
-export function debugSolutionVector(state: GameState): void {
-  const differenceVector = calculateDifferenceVector(state);
-  const solutionVector = applySolutionMatrix(differenceVector);
-
-  console.log('Current state:', state.vertices);
-  console.log('Difference vector (to reach zero):', differenceVector);
-  console.log('Solution vector:', solutionVector);
-
-  // Convert and display each solution component
-  for (let i = 0; i < 5; i++) {
-    const complexVal = math.subset(solutionVector as Parameters<typeof math.subset>[0], math.index(i));
-    const v = fromMathComplex(complexVal);
-    const magnitude = Math.sqrt(v.real * v.real + v.imag * v.imag);
-    const angle = Math.atan2(v.imag, v.real) * 180 / Math.PI;
-    console.log(`Vertex ${i}: ${v.real.toFixed(3)} + ${v.imag.toFixed(3)}i (mag: ${magnitude.toFixed(3)}, angle: ${angle.toFixed(1)}°)`);
-  }
+  return simplifyMoves(solution.moves);
 }
