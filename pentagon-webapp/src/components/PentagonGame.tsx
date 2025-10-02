@@ -55,53 +55,83 @@ export default function PentagonGame() {
   const [showFullSolution, setShowFullSolution] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // Difficulty and menu state
+  type Difficulty = 'easy' | 'medium' | 'hard' | 'custom';
+  const [showMenu, setShowMenu] = useState(true);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('medium');
+  const [customMoveCount, setCustomMoveCount] = useState(12);
+
   // Track stats for completion screen
   const [moveCount, setMoveCount] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [solveTime, setSolveTime] = useState<number | null>(null);
   const [moveHistory, setMoveHistory] = useState<Array<{ vertices: ComplexNumber[]; moveType: MoveType }>>([]);
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [solutionViewed, setSolutionViewed] = useState(false);
+  const [showSolutionConfirm, setShowSolutionConfirm] = useState(false);
   // const [showEducationalPanel, setShowEducationalPanel] = useState(false);
 
-  const generateStartingState = useCallback(() => {
+  const generateStartingState = useCallback((difficulty: Difficulty, customCount?: number) => {
     // Generate random starting state by assigning move coefficients to each vertex
     // Each vertex gets: some number of A moves (+ or -) and some number of B moves (+ or -)
     const startingVertices = Array(5).fill(null).map(() => ({ real: 0, imag: 0 }));
 
-    // Total target moves: 8-12
-    const targetMoves = Math.floor(Math.random() * 5) + 8; // 8, 9, 10, 11, or 12 moves
+    // Determine target move count based on difficulty
+    let minMoves, maxMoves;
+    if (difficulty === 'custom' && customCount) {
+      minMoves = maxMoves = customCount;
+    } else if (difficulty === 'easy') {
+      minMoves = 8; maxMoves = 12;
+    } else if (difficulty === 'medium') {
+      minMoves = 12; maxMoves = 16;
+    } else { // hard
+      minMoves = 16; maxMoves = 20;
+    }
+
+    const targetMoves = Math.floor(Math.random() * (maxMoves - minMoves + 1)) + minMoves;
     const moveSequence: string[] = [];
+
+    console.log(`Generating ${difficulty} puzzle with target: ${targetMoves} moves`);
 
     // For each vertex, assign random coefficients for A and B
     const vertexMoves: Array<{ vertex: number; aMoves: number; bMoves: number }> = [];
     let totalAssigned = 0;
 
+    // Calculate rough moves per vertex (distribute evenly with some randomness)
+    const movesPerVertex = Math.ceil(targetMoves / 5);
+
     // Distribute moves across vertices
     for (let vertex = 0; vertex < 5; vertex++) {
       // Decide if this vertex gets A moves and/or B moves
-      const hasAMoves = Math.random() < 0.6; // 60% chance
-      const hasBMoves = Math.random() < 0.6; // 60% chance
+      const hasAMoves = Math.random() < 0.7; // 70% chance
+      const hasBMoves = Math.random() < 0.7; // 70% chance
 
       let aMoves = 0;
       let bMoves = 0;
 
-      if (hasAMoves) {
-        // 1-3 A moves (positive or negative)
-        const magnitude = Math.floor(Math.random() * 3) + 1;
+      // Calculate max moves for this vertex to avoid overshooting
+      const remainingMoves = targetMoves - totalAssigned;
+      const maxForVertex = Math.min(movesPerVertex, remainingMoves);
+
+      if (hasAMoves && maxForVertex > 0) {
+        // 1 to maxForVertex/2 A moves (positive or negative)
+        const magnitude = Math.floor(Math.random() * Math.max(1, Math.ceil(maxForVertex / 2))) + 1;
         aMoves = Math.random() < 0.5 ? magnitude : -magnitude;
+        totalAssigned += Math.abs(aMoves);
       }
 
-      if (hasBMoves) {
-        // 1-3 B moves (positive or negative)
-        const magnitude = Math.floor(Math.random() * 3) + 1;
+      if (hasBMoves && totalAssigned < targetMoves) {
+        // Remaining budget for B moves
+        const remainingBudget = targetMoves - totalAssigned;
+        const magnitude = Math.floor(Math.random() * Math.min(Math.max(1, Math.ceil(maxForVertex / 2)), remainingBudget)) + 1;
         bMoves = Math.random() < 0.5 ? magnitude : -magnitude;
+        totalAssigned += Math.abs(bMoves);
       }
 
       vertexMoves.push({ vertex, aMoves, bMoves });
-      totalAssigned += Math.abs(aMoves) + Math.abs(bMoves);
     }
 
-    // Scale if we're too far from target (allow some variance)
-    console.log(`Initially assigned ${totalAssigned} moves (target: ${targetMoves})`);
+    console.log(`Assigned ${totalAssigned} moves (target: ${targetMoves})`);
 
     // Apply all the moves
     for (const { vertex, aMoves, bMoves } of vertexMoves) {
@@ -163,6 +193,9 @@ export default function PentagonGame() {
     setStartTime(Date.now());
     setSolveTime(null);
     setMoveHistory([{ vertices: startingVertices.map(v => ({ ...v })), moveType: 'A' }]);
+    setHintsUsed(0);
+    setSolutionViewed(false);
+    setShowMenu(false);
 
     setIsInitialized(true);
   }, []); // No dependencies
@@ -179,6 +212,9 @@ export default function PentagonGame() {
       if (solution && solution.moves.length > 0) {
         const firstMove = solution.moves[0];
         console.log('First move:', firstMove);
+
+        // Increment hints used
+        setHintsUsed(prev => prev + 1);
 
         // Parse move: "A0 (long press)" or "B1" -> {moveType, vertex, operation}
         const cleanMove = firstMove.replace(' (long press)', '');
@@ -235,6 +271,9 @@ export default function PentagonGame() {
       const moves = await getFullSolution(gameState);
       console.log('Full solution moves:', moves);
 
+      // Mark that solution was viewed
+      setSolutionViewed(true);
+
       setFullSolution(moves);
       setShowFullSolution(true);
     } catch (error) {
@@ -244,6 +283,15 @@ export default function PentagonGame() {
       setIsGettingSolution(false);
     }
   }, [gameState]);
+
+  const handleSolutionClick = useCallback(() => {
+    setShowSolutionConfirm(true);
+  }, []);
+
+  const confirmSolution = useCallback(() => {
+    setShowSolutionConfirm(false);
+    getFullSolutionMoves();
+  }, [getFullSolutionMoves]);
 
   const applyMove = useCallback((vertexIndex: number, operation: 'add' | 'subtract' = 'add') => {
     if (vertexIndex < 0 || vertexIndex > 4) return;
@@ -307,9 +355,13 @@ export default function PentagonGame() {
   }, [moveHistory]);
 
   const resetGame = useCallback(() => {
+    setShowMenu(true);
     setIsInitialized(false);
-    generateStartingState();
-  }, [generateStartingState]);
+  }, []);
+
+  const startNewGame = useCallback(() => {
+    generateStartingState(selectedDifficulty, customMoveCount);
+  }, [generateStartingState, selectedDifficulty, customMoveCount]);
 
   const setMoveType = useCallback((moveType: UIMoveType) => {
     setCurrentUIMoveType(moveType);
@@ -366,11 +418,8 @@ export default function PentagonGame() {
     }
   }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized, startTime, solveTime]);
 
-  // Generate initial starting state
-  useEffect(() => {
-    console.log('PentagonGame: Generating initial starting state');
-    generateStartingState();
-  }, [generateStartingState]);
+  // Don't auto-generate on mount - wait for user to select difficulty
+  // useEffect is removed - game starts with menu
 
   // Debug game state
   useEffect(() => {
