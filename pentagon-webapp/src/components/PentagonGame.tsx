@@ -63,52 +63,50 @@ export default function PentagonGame() {
   // const [showEducationalPanel, setShowEducationalPanel] = useState(false);
 
   const generateStartingState = useCallback(() => {
-    // Generate random starting state using coefficient-based moves
-    // Generate 10-12 total moves (combined A and B moves)
+    // Generate random starting state by simulating random moves
+    // Generate 8-12 total moves with random vertices and move types
     const startingVertices = Array(5).fill(null).map(() => ({ real: 0, imag: 0 }));
 
-    // Generate random coefficients for A and B that sum to 10-12 moves
-    const totalMoves = Math.floor(Math.random() * 3) + 10; // 10, 11, or 12 moves
-    const coeffAMagnitude = Math.floor(Math.random() * (totalMoves - 1)) + 1; // At least 1
-    const coeffBMagnitude = totalMoves - coeffAMagnitude; // Remaining moves
+    // Random total moves between 8-12
+    const totalMoves = Math.floor(Math.random() * 5) + 8; // 8, 9, 10, 11, or 12 moves
+    const moveSequence: string[] = [];
 
-    // Randomly assign positive or negative
-    const coeffA = Math.random() < 0.5 ? coeffAMagnitude : -coeffAMagnitude;
-    const coeffB = Math.random() < 0.5 ? coeffBMagnitude : -coeffBMagnitude;
-
-    console.log(`Generating puzzle: ${coeffA > 0 ? '+' : ''}${coeffA}A, ${coeffB > 0 ? '+' : ''}${coeffB}B (${totalMoves} total moves)`);
-
-    // Apply coeffA times of A moves to random vertices
-    const absCoeffA = Math.abs(coeffA);
-    const moveTypeA = coeffA > 0 ? 'A' : 'C'; // C is -A
-    for (let i = 0; i < absCoeffA; i++) {
+    for (let i = 0; i < totalMoves; i++) {
+      // Pick random vertex (0-4)
       const vertex = Math.floor(Math.random() * 5);
-      const move = moves[moveTypeA];
 
+      // Pick random move type: A or B (50/50)
+      const isAMove = Math.random() < 0.5;
+
+      // Pick random polarity: positive or negative (50/50)
+      const isPositive = Math.random() < 0.5;
+
+      // Determine actual move type based on base type and polarity
+      let moveType: MoveType;
+      if (isAMove) {
+        moveType = isPositive ? 'A' : 'C'; // A or -A
+      } else {
+        moveType = isPositive ? 'B' : 'D'; // B or -B
+      }
+
+      const move = moves[moveType];
+
+      // Apply move to vertex
       startingVertices[vertex].real += move.vertex.real;
       startingVertices[vertex].imag += move.vertex.imag;
 
+      // Apply to adjacent vertices
       for (const adj of adjacency[vertex]) {
         startingVertices[adj].real += move.adjacent.real;
         startingVertices[adj].imag += move.adjacent.imag;
       }
+
+      // Track for logging
+      const moveLabel = isAMove ? (isPositive ? 'A' : '-A') : (isPositive ? 'B' : '-B');
+      moveSequence.push(`${moveLabel}, V${vertex}`);
     }
 
-    // Apply coeffB times of B moves to random vertices
-    const absCoeffB = Math.abs(coeffB);
-    const moveTypeB = coeffB > 0 ? 'B' : 'D'; // D is -B
-    for (let i = 0; i < absCoeffB; i++) {
-      const vertex = Math.floor(Math.random() * 5);
-      const move = moves[moveTypeB];
-
-      startingVertices[vertex].real += move.vertex.real;
-      startingVertices[vertex].imag += move.vertex.imag;
-
-      for (const adj of adjacency[vertex]) {
-        startingVertices[adj].real += move.adjacent.real;
-        startingVertices[adj].imag += move.adjacent.imag;
-      }
-    }
+    console.log(`Generated puzzle with ${totalMoves} random moves:`, moveSequence.join(' → '))
     
     setGameState(prev => ({
       ...prev,
