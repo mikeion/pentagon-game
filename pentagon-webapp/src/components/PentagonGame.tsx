@@ -428,6 +428,57 @@ export default function PentagonGame() {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-slate-900">
+      {/* Difficulty Selection Menu */}
+      {showMenu && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm">
+          <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl border-2 border-indigo-500 max-w-md w-full">
+            <h2 className="text-3xl font-bold text-white mb-6 text-center">Pentagon Game</h2>
+            <p className="text-slate-300 mb-6 text-center">Select Difficulty</p>
+
+            <div className="space-y-3 mb-6">
+              <button
+                onClick={() => { setSelectedDifficulty('easy'); startNewGame(); }}
+                className="w-full px-6 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-lg transition-all"
+              >
+                Easy (8-12 moves)
+              </button>
+              <button
+                onClick={() => { setSelectedDifficulty('medium'); startNewGame(); }}
+                className="w-full px-6 py-4 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-semibold text-lg transition-all"
+              >
+                Medium (12-16 moves)
+              </button>
+              <button
+                onClick={() => { setSelectedDifficulty('hard'); startNewGame(); }}
+                className="w-full px-6 py-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-lg transition-all"
+              >
+                Hard (16-20 moves)
+              </button>
+
+              <div className="border-t border-slate-600 pt-3">
+                <label className="text-slate-300 text-sm mb-2 block">Custom (move count):</label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    min="5"
+                    max="30"
+                    value={customMoveCount}
+                    onChange={(e) => setCustomMoveCount(parseInt(e.target.value) || 12)}
+                    className="flex-1 px-3 py-2 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-indigo-500 focus:outline-none"
+                  />
+                  <button
+                    onClick={() => { setSelectedDifficulty('custom'); startNewGame(); }}
+                    className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-all"
+                  >
+                    Start
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Top-left overlay: RESET / UNDO / NEW */}
       <div className="absolute top-4 left-4 z-10 flex gap-2">
         <button
@@ -446,7 +497,7 @@ export default function PentagonGame() {
           Undo
         </button>
         <button
-          onClick={generateStartingState}
+          onClick={resetGame}
           className="px-4 py-2 bg-purple-600/90 hover:bg-purple-600 text-white rounded-lg font-semibold shadow-lg backdrop-blur-sm transition-all"
           style={{ minWidth: '44px', minHeight: '44px' }}
         >
@@ -465,7 +516,7 @@ export default function PentagonGame() {
           {isGettingHint ? '...' : 'Hint'}
         </button>
         <button
-          onClick={getFullSolutionMoves}
+          onClick={handleSolutionClick}
           disabled={isGettingSolution}
           className="px-4 py-2 bg-indigo-600/90 hover:bg-indigo-600 text-white rounded-lg font-semibold shadow-lg backdrop-blur-sm transition-all disabled:opacity-50"
           style={{ minWidth: '44px', minHeight: '44px' }}
@@ -473,6 +524,30 @@ export default function PentagonGame() {
           {isGettingSolution ? '...' : 'Solution'}
         </button>
       </div>
+
+      {/* Solution Confirmation Dialog */}
+      {showSolutionConfirm && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-slate-800 p-6 rounded-xl shadow-2xl border-2 border-yellow-500 max-w-sm">
+            <h3 className="text-xl font-bold text-white mb-3">View Solution?</h3>
+            <p className="text-slate-300 mb-6">This will mark the puzzle as solved with assistance.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowSolutionConfirm(false)}
+                className="flex-1 px-4 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-semibold transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmSolution}
+                className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-all"
+              >
+                Show Solution
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Bottom overlay: Move selector (A/B) */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 flex gap-3 bg-slate-800/90 px-6 py-3 rounded-xl shadow-lg backdrop-blur-sm">
@@ -552,10 +627,18 @@ export default function PentagonGame() {
                   </span>
                 </div>
               )}
+              <div className="flex justify-between items-center text-white">
+                <span className="text-lg">Hints Used:</span>
+                <span className="text-2xl font-bold">{hintsUsed}</span>
+              </div>
+              <div className="flex justify-between items-center text-white">
+                <span className="text-lg">Solution Viewed:</span>
+                <span className="text-2xl font-bold">{solutionViewed ? 'Yes' : 'No'}</span>
+              </div>
             </div>
 
             <button
-              onClick={generateStartingState}
+              onClick={resetGame}
               className="w-full px-6 py-3 bg-white text-green-700 rounded-lg font-bold text-lg hover:bg-green-50 transition-all shadow-lg"
             >
               New Puzzle
