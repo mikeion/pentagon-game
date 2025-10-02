@@ -87,7 +87,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     ctx.closePath();
     ctx.stroke();
 
-    // Draw center circle with current move rule
+    // Draw center pentagon with current move rule
     const centerX = width / 2;
     const centerY = height / 2;
     const centerRadius = 70;
@@ -95,12 +95,23 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     // Determine UI move type (A or B) from internal move type (A/B/C/D)
     const uiMoveType = (gameState.currentMoveType === 'A' || gameState.currentMoveType === 'C') ? 'A' : 'B';
 
-    // Center circle background
+    // Center pentagon background
     ctx.fillStyle = 'rgba(30, 41, 59, 0.95)';
     ctx.strokeStyle = uiMoveType === 'A' ? '#EC4899' : '#F59E0B';
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+    // Draw pentagon centered on screen
+    for (let i = 0; i < 5; i++) {
+      const angle = (i * 2 * Math.PI / 5) - Math.PI / 2; // Start from top
+      const x = centerX + centerRadius * Math.cos(angle);
+      const y = centerY + centerRadius * Math.sin(angle);
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+    ctx.closePath();
     ctx.fill();
     ctx.stroke();
 

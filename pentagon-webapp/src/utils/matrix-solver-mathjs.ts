@@ -193,6 +193,70 @@ export async function getMatrixHint(
   return [];
 }
 
+// Simplify and organize move sequence
+// Since the group is abelian, we can reorder and combine moves
+// Returns moves organized as: all A moves, then B moves, then -A (C), then -B (D)
+function simplifyMoves(moves: string[]): string[] {
+  // Count moves per vertex: moveCount[vertex][moveType] = count
+  const moveCount: Record<number, Record<string, number>> = {};
+
+  for (const moveStr of moves) {
+    const vertex = parseInt(moveStr.slice(-1));
+    const moveType = moveStr.slice(0, -1);
+
+    if (!moveCount[vertex]) {
+      moveCount[vertex] = {};
+    }
+    moveCount[vertex][moveType] = (moveCount[vertex][moveType] || 0) + 1;
+  }
+
+  // Now simplify: A and C cancel, B and D cancel
+  // Then organize by move type: A, B, -A (C), -B (D)
+  const aMoves: string[] = [];
+  const bMoves: string[] = [];
+  const cMoves: string[] = [];
+  const dMoves: string[] = [];
+
+  for (const vertex of Object.keys(moveCount).map(Number).sort()) {
+    const counts = moveCount[vertex];
+
+    // A - C (net A moves)
+    const netA = (counts['A'] || 0) - (counts['C'] || 0);
+    // B - D (net B moves)
+    const netB = (counts['B'] || 0) - (counts['D'] || 0);
+
+    // Add net A moves
+    if (netA > 0) {
+      for (let i = 0; i < netA; i++) {
+        aMoves.push(`A${vertex}`);
+      }
+    } else if (netA < 0) {
+      for (let i = 0; i < -netA; i++) {
+        cMoves.push(`C${vertex}`);
+      }
+    }
+
+    // Add net B moves
+    if (netB > 0) {
+      for (let i = 0; i < netB; i++) {
+        bMoves.push(`B${vertex}`);
+      }
+    } else if (netB < 0) {
+      for (let i = 0; i < -netB; i++) {
+        dMoves.push(`D${vertex}`);
+      }
+    }
+  }
+
+  // Concatenate in order: A, B, -A (C), -B (D)
+  const simplified = [...aMoves, ...bMoves, ...cMoves, ...dMoves];
+
+  console.log(`Simplified ${moves.length} moves to ${simplified.length} moves (organized by type)`);
+  console.log(`Breakdown: ${aMoves.length} A moves, ${bMoves.length} B moves, ${cMoves.length} -A moves, ${dMoves.length} -B moves`);
+
+  return simplified;
+}
+
 // Get full solution sequence using iterative matrix solver approach
 export async function getFullSolution(
   initialState: GameState
@@ -248,8 +312,12 @@ export async function getFullSolution(
     }
   }
 
-  console.log(`Full solution complete: ${moves.length} moves`);
-  return moves;
+  console.log(`Full solution complete: ${moves.length} moves before simplification`);
+
+  // Simplify the move sequence by canceling redundant moves
+  const simplifiedMoves = simplifyMoves(moves);
+
+  return simplifiedMoves;
 }
 
 // Debug function to show solution vector
