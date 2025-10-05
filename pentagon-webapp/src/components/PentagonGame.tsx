@@ -524,7 +524,12 @@ export default function PentagonGame() {
                 <p className="text-white mb-4 text-center font-semibold">Select Mode</p>
                 <div className="space-y-3">
                   <button
-                    onClick={() => { setGameMode('sandbox'); setShowModeSelect(false); setShowMenu(false); }}
+                    onClick={() => {
+                      setGameMode('sandbox');
+                      setShowModeSelect(false);
+                      setShowMenu(false);
+                      setGameState(prev => ({ ...prev, isWon: false }));
+                    }}
                     className="w-full px-6 py-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-semibold transition-all"
                   >
                     <div className="text-lg mb-1">Sandbox Mode</div>
@@ -538,7 +543,11 @@ export default function PentagonGame() {
                     <div className="text-sm text-emerald-200">Solve: reach all zeros</div>
                   </button>
                   <button
-                    onClick={() => { setGameMode('nice-representative'); setShowModeSelect(false); }}
+                    onClick={() => {
+                      setGameMode('nice-representative');
+                      setShowModeSelect(false);
+                      setGameState(prev => ({ ...prev, isWon: false }));
+                    }}
                     className="w-full px-6 py-5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg font-semibold transition-all"
                   >
                     <div className="text-lg mb-1">Nice Representative</div>
@@ -648,8 +657,8 @@ export default function PentagonGame() {
 
       {/* Sandbox Mode: Vertex Editor */}
       {gameMode === 'sandbox' && !showMenu && (
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-slate-800/95 backdrop-blur-md px-6 py-3 rounded-xl border border-cyan-500/50 shadow-xl">
-          <div className="flex items-center gap-4">
+        <div className="absolute top-4 left-4 right-16 md:left-1/2 md:right-auto md:transform md:-translate-x-1/2 z-20 bg-slate-800/95 backdrop-blur-md px-4 md:px-6 py-3 rounded-xl border border-cyan-500/50 shadow-xl">
+          <div className="flex items-center gap-2 md:gap-4 flex-wrap md:flex-nowrap">
             <label className="text-slate-300 text-sm font-semibold">Edit Vertex:</label>
             <select
               value={selectedVertexForEdit}
