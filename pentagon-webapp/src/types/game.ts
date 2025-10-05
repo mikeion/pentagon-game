@@ -18,7 +18,7 @@ export interface GameState {
   vertices: ComplexNumber[];
   goalVertices: ComplexNumber[];
   currentMoveType: MoveType;
-  selectedVertex: number;
+  selectedVertex: number | undefined;
   isWon: boolean;
 }
 
