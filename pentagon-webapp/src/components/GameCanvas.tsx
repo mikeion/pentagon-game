@@ -21,8 +21,9 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
   const calculateVertexPositions = useCallback((width: number, height: number) => {
     const centerX = width / 2;
     const centerY = height / 2;
-    // Pentagon radius - larger to fill canvas better (smaller vertices = more room)
-    const radius = Math.min(width, height) * 0.40;
+    // Pentagon radius - scale down on mobile to prevent label cutoff
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const radius = Math.min(width, height) * (isMobile ? 0.35 : 0.40);
 
     const positions: VertexPosition[] = [];
     for (let i = 0; i < 5; i++) {
@@ -220,7 +221,8 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       const centerX = canvasSize.width / 2;
       const centerY = canvasSize.height / 2;
       const angle = Math.atan2(pos.y - centerY, pos.x - centerX);
-      const labelDistance = 50; // Distance from vertex center (reduced to prevent cutoff)
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      const labelDistance = isMobile ? 42 : 50; // Closer on mobile to stay in bounds
       const labelX = pos.x + Math.cos(angle) * labelDistance;
       const labelY = pos.y + Math.sin(angle) * labelDistance;
 
