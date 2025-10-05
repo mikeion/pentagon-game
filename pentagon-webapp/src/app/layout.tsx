@@ -15,10 +15,22 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Pentagon Complex Number Firing Game",
   description: "A mathematical puzzle game based on Dr. Alex McDonough's research into group theory and complex number operations on pentagon configurations.",
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover', // Important for iPhone notch support
+  },
   icons: {
-    icon: '/favicon.svg?v=3',
-    shortcut: '/favicon.svg?v=3', 
-    apple: '/favicon.svg?v=3',
+    icon: '/favicon.svg?v=4',
+    shortcut: '/favicon.svg?v=4',
+    apple: '/favicon.svg?v=4',
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Pentagon Game',
   },
 };
 
