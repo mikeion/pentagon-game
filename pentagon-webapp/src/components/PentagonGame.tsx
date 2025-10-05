@@ -542,7 +542,7 @@ export default function PentagonGame() {
                     className="w-full px-6 py-5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg font-semibold transition-all"
                   >
                     <div className="text-lg mb-1">Nice Representative</div>
-                    <div className="text-sm text-amber-200">Find canonical form (Theorem 3.7)</div>
+                    <div className="text-sm text-amber-200">Find canonical form</div>
                   </button>
                 </div>
               </>
