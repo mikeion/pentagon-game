@@ -39,17 +39,18 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
   // Update canvas size and vertex positions
   useEffect(() => {
     const updateSize = () => {
-      // Full viewport sizing - pentagon should dominate the screen
+      // Use viewport units for truly responsive design
       const vw = window.innerWidth;
       const vh = window.innerHeight;
+      const isMobile = vw < 768;
 
-      // Reserve space for overlays (buttons at top corners + bottom controls on mobile)
-      const reservedTop = 160; // Extra space for top buttons and V0 label
-      const reservedBottom = window.innerWidth < 768 ? 180 : 120; // Bottom space for buttons (V2/V3 fit fine)
-      const reservedSides = 60; // Much more side padding for V1/V4 labels
+      // Reserve space as percentage of viewport
+      const reservedTopVh = isMobile ? 12 : 10; // 12vh on mobile, 10vh on desktop (for buttons)
+      const reservedBottomVh = isMobile ? 18 : 12; // 18vh on mobile, 12vh on desktop (for buttons)
+      const reservedSidesVw = 5; // 5vw on each side
 
-      const availableWidth = vw - (reservedSides * 2);
-      const availableHeight = vh - reservedTop - reservedBottom;
+      const availableWidth = vw * (1 - (reservedSidesVw * 2 / 100));
+      const availableHeight = vh * (1 - (reservedTopVh + reservedBottomVh) / 100);
 
       // Make canvas square, fitting in available space
       const size = Math.min(availableWidth, availableHeight);
@@ -217,27 +218,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      // Draw vertex label (V0, V1, etc.) - position radially outside vertex
-      const centerX = canvasSize.width / 2;
-      const centerY = canvasSize.height / 2;
-      const angle = Math.atan2(pos.y - centerY, pos.x - centerX);
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-      const labelDistance = isMobile ? 48 : 50; // Slightly closer on mobile
-
-      // Special handling for V0 on mobile - position inside/below to avoid cutoff
-      let labelX = pos.x + Math.cos(angle) * labelDistance;
-      let labelY = pos.y + Math.sin(angle) * labelDistance;
-
-      if (isMobile && i === 0) {
-        // V0 is at top - position it inside the pentagon (closer to center)
-        labelY = pos.y + 48; // Position below the vertex
-      }
-
-      ctx.fillStyle = '#EC4899';
-      ctx.font = 'bold 18px monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(`V${i}`, labelX, labelY);
+      // Vertex labels now rendered as HTML elements (see return statement)
 
       // Draw complex number - always center-aligned as single string
       ctx.font = 'bold 18px monospace';
@@ -368,7 +349,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
   }, [onCenterClick]);
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="relative flex items-center justify-center">
       <canvas
         ref={canvasRef}
         width={canvasSize.width}
@@ -385,6 +366,30 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
           WebkitBackfaceVisibility: 'hidden',
         }}
       />
+
+      {/* Vertex labels as HTML positioned absolutely - won't get clipped! */}
+      {vertexPositions.map((pos, i) => {
+        const centerX = canvasSize.width / 2;
+        const centerY = canvasSize.height / 2;
+        const angle = Math.atan2(pos.y - centerY, pos.x - centerX);
+        const labelDistance = 50;
+        const labelX = pos.x + Math.cos(angle) * labelDistance;
+        const labelY = pos.y + Math.sin(angle) * labelDistance;
+
+        return (
+          <div
+            key={i}
+            className="absolute text-pink-500 font-bold text-lg font-mono pointer-events-none"
+            style={{
+              left: `${labelX}px`,
+              top: `${labelY}px`,
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            V{i}
+          </div>
+        );
+      })}
     </div>
   );
 }
