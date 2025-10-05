@@ -150,7 +150,7 @@ export function updatePuzzleRecord(attempt: PuzzleAttempt): void {
     puzzleId: attempt.puzzleId,
     bestMoves: existing ? Math.min(existing.bestMoves, attempt.moves) : attempt.moves,
     bestTime: existing ? Math.min(existing.bestTime, attempt.time) : attempt.time,
-    bestStars: existing ? Math.max(existing.bestStars, attempt.stars) : attempt.stars,
+    bestStars: (existing ? Math.max(existing.bestStars, attempt.stars) : attempt.stars) as 1 | 2 | 3,
     attempts: (existing?.attempts || 0) + 1,
     completions: (existing?.completions || 0) + (attempt.completed ? 1 : 0),
     firstCompletedAt: existing?.firstCompletedAt || (attempt.completed ? attempt.timestamp : undefined),

@@ -68,6 +68,7 @@ function applySolutionMatrix(differenceVector: unknown): unknown {
 }
 
 // Simulate applying a move to a state
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function simulateMove(state: ComplexNumber[], vertex: number, moveType: MoveType, operation: 'add' | 'subtract' = 'add'): ComplexNumber[] {
   const newState = state.map(v => ({ ...v }));
   const move = MOVE_MAPPINGS[moveType];
@@ -92,6 +93,7 @@ function simulateMove(state: ComplexNumber[], vertex: number, moveType: MoveType
 
 // Convert solution vector to move sequence by interpreting coefficients
 // The solution vector tells us the linear combination of A and B moves per vertex
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function solutionToMoves(solution: unknown, currentState: ComplexNumber[]): string[] {
   // Convert math.js solution back to array of ComplexNumbers
   const solutionArray = [];
