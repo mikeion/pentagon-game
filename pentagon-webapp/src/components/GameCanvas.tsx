@@ -137,7 +137,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
 
     // Display current move in center - show as A/-A or B/-B
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 32px monospace';
+    ctx.font = 'bold 48px monospace'; // Increased from 32px
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -148,28 +148,28 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     if (gameState.currentMoveType === 'A') {
       moveLabel = 'A';
       line1 = '1+i to vertex';
-      line2 = '-i to adj';
+      line2 = '-1 to adj';
     } else if (gameState.currentMoveType === 'C') {
       moveLabel = '-A';
       line1 = '-1-i to vertex';
-      line2 = '+i to adj';
+      line2 = '+1 to adj';
     } else if (gameState.currentMoveType === 'B') {
       moveLabel = 'B';
       line1 = '-1+i to vertex';
-      line2 = '+1 to adj';
+      line2 = '-1 to adj';
     } else { // D
       moveLabel = '-B';
       line1 = '1-i to vertex';
-      line2 = '-1 to adj';
+      line2 = '+1 to adj';
     }
 
-    ctx.fillText(moveLabel, centerX, centerY - 15);
+    ctx.fillText(moveLabel, centerX, centerY - 20);
 
-    // Show complex number details (smaller text, two lines)
-    ctx.font = '10px monospace';
+    // Show complex number details (larger text for readability)
+    ctx.font = '14px monospace'; // Increased from 10px
     ctx.fillStyle = '#94A3B8';
-    ctx.fillText(line1, centerX, centerY + 10);
-    ctx.fillText(line2, centerX, centerY + 22);
+    ctx.fillText(line1, centerX, centerY + 15);
+    ctx.fillText(line2, centerX, centerY + 32);
 
     // Draw vertices with color coding
     gameState.vertices.forEach((vertex, i) => {
