@@ -43,9 +43,9 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       const vh = window.innerHeight;
 
       // Reserve space for overlays (buttons at top corners + bottom controls on mobile)
-      const reservedTop = 120; // Space for top buttons and V0 label
-      const reservedBottom = window.innerWidth < 768 ? 180 : 100; // Space for bottom buttons
-      const reservedSides = 30; // Side padding for breathing room
+      const reservedTop = 90; // Space for top buttons and V0 label
+      const reservedBottom = window.innerWidth < 768 ? 180 : 120; // Space for bottom buttons
+      const reservedSides = 20; // Side padding for breathing room
 
       const availableWidth = vw - (reservedSides * 2);
       const availableHeight = vh - reservedTop - reservedBottom;
@@ -220,7 +220,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       const centerX = canvasSize.width / 2;
       const centerY = canvasSize.height / 2;
       const angle = Math.atan2(pos.y - centerY, pos.x - centerX);
-      const labelDistance = 60; // Distance from vertex center
+      const labelDistance = 50; // Distance from vertex center (reduced to prevent cutoff)
       const labelX = pos.x + Math.cos(angle) * labelDistance;
       const labelY = pos.y + Math.sin(angle) * labelDistance;
 
