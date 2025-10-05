@@ -8,6 +8,7 @@ import { Menu, Lightbulb } from 'lucide-react';
 import GameCanvas from './GameCanvas';
 import { ComplexNumber, GameState, Move, MoveType, UIMoveType } from '@/types/game';
 import { getMatrixHint, getFullSolution } from '@/utils/matrix-solver-mathjs';
+import { checkGoal } from '@/utils/goal-checker';
 
 // Move definitions (CORRECTED to match Alex's paper lines 231-234)
 // Paper specification:
@@ -430,10 +431,21 @@ export default function PentagonGame() {
   useEffect(() => {
     if (!isInitialized) return;
 
-    const isWon = gameState.vertices.every((v, i) =>
-      v.real === gameState.goalVertices[i].real &&
-      v.imag === gameState.goalVertices[i].imag
-    );
+    let isWon = false;
+
+    if (gameMode === 'nice-representative') {
+      // Nice representative mode: check if configuration matches criteria
+      isWon = checkGoal(gameState.vertices, 'nice-representative', 0);
+    } else if (gameMode === 'sandbox') {
+      // Sandbox mode: no win condition, always false
+      isWon = false;
+    } else {
+      // Puzzle mode: check if all vertices match goal (all zeros)
+      isWon = gameState.vertices.every((v, i) =>
+        v.real === gameState.goalVertices[i].real &&
+        v.imag === gameState.goalVertices[i].imag
+      );
+    }
 
     if (isWon !== gameState.isWon) {
       setGameState(prev => ({ ...prev, isWon }));
@@ -478,7 +490,7 @@ export default function PentagonGame() {
         });
       }
     }
-  }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized, startTime, solveTime]);
+  }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized, startTime, solveTime, gameMode]);
 
   // Don't auto-generate on mount - wait for user to select difficulty
   // useEffect is removed - game starts with menu
