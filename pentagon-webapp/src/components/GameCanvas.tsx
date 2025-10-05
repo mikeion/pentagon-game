@@ -102,7 +102,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     // Draw center pentagon with current move rule
     const centerX = width / 2;
     const centerY = height / 2;
-    const centerRadius = 70;
+    const centerRadius = 100; // Increased from 70 to fill more space
 
     // Determine UI move type (A or B) from internal move type (A/B/C/D)
     const uiMoveType = (gameState.currentMoveType === 'A' || gameState.currentMoveType === 'C') ? 'A' : 'B';
