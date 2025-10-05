@@ -511,8 +511,30 @@ export default function PentagonGame() {
         </div>
       )}
 
-      {/* Top-left: Menu button (hamburger) */}
-      <div className="absolute top-safe left-safe z-20 menu-dropdown-container">
+      {/* Top-left: Hint button */}
+      <div className="absolute" style={{ top: '1rem', left: '1rem', zIndex: 20 }}>
+        <motion.button
+          onClick={getHint}
+          disabled={isGettingHint}
+          whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(16, 185, 129, 0.4)" }}
+          whileTap={{ scale: 0.95 }}
+          animate={!isGettingHint ? {
+            boxShadow: [
+              "0 0 0px rgba(16, 185, 129, 0)",
+              "0 0 15px rgba(16, 185, 129, 0.3)",
+              "0 0 0px rgba(16, 185, 129, 0)"
+            ]
+          } : {}}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="relative w-12 h-12 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-xl font-bold shadow-xl backdrop-blur-md transition-colors disabled:opacity-50 border border-emerald-500/50 flex items-center justify-center"
+          aria-label="Get hint"
+        >
+          <Lightbulb className={`w-6 h-6 ${isGettingHint ? 'animate-pulse' : ''}`} />
+        </motion.button>
+      </div>
+
+      {/* Top-right: Menu button (hamburger) */}
+      <div className="absolute menu-dropdown-container" style={{ top: '1rem', right: '1rem', zIndex: 20 }}>
         <motion.button
           onClick={(e) => {
             e.stopPropagation();
@@ -528,7 +550,7 @@ export default function PentagonGame() {
 
         {/* Dropdown menu */}
         {showMenuDropdown && (
-          <div className="absolute top-14 left-0 bg-slate-800/95 backdrop-blur-sm rounded-lg shadow-xl border border-slate-600 overflow-hidden min-w-[150px]">
+          <div className="absolute top-14 right-0 bg-slate-800/95 backdrop-blur-sm rounded-lg shadow-xl border border-slate-600 overflow-hidden min-w-[150px]">
             <button
               onClick={() => { resetGame(); setShowMenuDropdown(false); }}
               className="w-full px-4 py-3 bg-blue-600/90 hover:bg-blue-600 text-white text-left font-semibold transition-all border-b border-slate-600"
@@ -551,28 +573,6 @@ export default function PentagonGame() {
             </button>
           </div>
         )}
-      </div>
-
-      {/* Top-right: Hint button (most important) */}
-      <div className="absolute top-safe right-safe z-20">
-        <motion.button
-          onClick={getHint}
-          disabled={isGettingHint}
-          whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(16, 185, 129, 0.4)" }}
-          whileTap={{ scale: 0.95 }}
-          animate={!isGettingHint ? {
-            boxShadow: [
-              "0 0 0px rgba(16, 185, 129, 0)",
-              "0 0 15px rgba(16, 185, 129, 0.3)",
-              "0 0 0px rgba(16, 185, 129, 0)"
-            ]
-          } : {}}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="relative w-12 h-12 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-xl font-bold shadow-xl backdrop-blur-md transition-colors disabled:opacity-50 border border-emerald-500/50 flex items-center justify-center"
-          aria-label="Get hint"
-        >
-          <Lightbulb className={`w-6 h-6 ${isGettingHint ? 'animate-pulse' : ''}`} />
-        </motion.button>
       </div>
 
       {/* Solution Confirmation Dialog */}
