@@ -357,12 +357,24 @@ export default function PentagonGame() {
   }, [generateStartingState, selectedDifficulty, customMoveCount]);
 
   const setMoveType = useCallback((moveType: UIMoveType) => {
+    // Toggle behavior: if clicking the same button, switch between positive and negative
+    const currentInternal = gameState.currentMoveType;
+    let nextInternal: MoveType;
+
+    if (moveType === 'A') {
+      // If currently A, switch to C (-A); if currently C, switch to A
+      nextInternal = currentInternal === 'A' ? 'C' : 'A';
+    } else { // moveType === 'B'
+      // If currently B, switch to D (-B); if currently D, switch to B
+      nextInternal = currentInternal === 'B' ? 'D' : 'B';
+    }
+
     setCurrentUIMoveType(moveType);
     setGameState(prev => ({
       ...prev,
-      currentMoveType: moveType,
+      currentMoveType: nextInternal,
     }));
-  }, []);
+  }, [gameState.currentMoveType]);
 
   const toggleMoveType = useCallback(() => {
     // Cycle through: A -> B -> -A -> -B -> A
@@ -468,8 +480,20 @@ export default function PentagonGame() {
       {showMenu && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm">
           <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl border-2 border-indigo-500 max-w-md w-full">
-            <h2 className="text-3xl font-bold text-white mb-6 text-center">Pentagon Game</h2>
-            <p className="text-slate-300 mb-6 text-center">Select Difficulty</p>
+            <h2 className="text-3xl font-bold text-white mb-4 text-center">Pentagon Game</h2>
+
+            {/* How to Play */}
+            <div className="bg-slate-700/50 rounded-lg p-4 mb-6 text-sm">
+              <div className="text-white font-semibold mb-2">Goal: Get all vertices to zero</div>
+              <ul className="text-slate-300 space-y-1">
+                <li>• Click a vertex to apply move A or B</li>
+                <li>• Right-click (or long-press) for the negative move</li>
+                <li>• Moves affect the clicked vertex and its neighbors</li>
+                <li>• Blue = real, Purple = complex, Green = zero ✓</li>
+              </ul>
+            </div>
+
+            <p className="text-slate-300 mb-4 text-center font-semibold">Select Difficulty</p>
 
             <div className="space-y-3 mb-6">
               <button
