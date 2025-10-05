@@ -8,9 +8,10 @@ interface GameCanvasProps {
   onVertexClick: (vertexIndex: number, operation?: 'add' | 'subtract') => void;
   onCenterClick?: (operation: 'add' | 'subtract') => void;
   hintVertex?: number; // Vertex to highlight for hints
+  distinguishedVertex?: number; // Vertex to mark as distinguished (V0) for nice-representative goals
 }
 
-export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hintVertex }: GameCanvasProps) {
+export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hintVertex, distinguishedVertex }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [vertexPositions, setVertexPositions] = useState<VertexPosition[]>([]);
   const [canvasSize, setCanvasSize] = useState({ width: 600, height: 600 });
@@ -201,6 +202,25 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
         ctx.shadowBlur = 0;
       }
 
+      // Highlight distinguished vertex (V0) with gold ring
+      if (distinguishedVertex !== undefined && i === distinguishedVertex) {
+        ctx.shadowColor = '#F59E0B';
+        ctx.shadowBlur = 20;
+        ctx.strokeStyle = '#F59E0B';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 45, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Add "V0" label above the vertex
+        ctx.font = 'bold 14px monospace';
+        ctx.fillStyle = '#F59E0B';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('V₀', pos.x, pos.y - 50);
+      }
+
       // Draw vertex circle with gradient
       const vertexGradient = ctx.createRadialGradient(pos.x, pos.y - 10, 0, pos.x, pos.y, 35);
       vertexGradient.addColorStop(0, 'rgba(30, 41, 59, 1)');
@@ -244,7 +264,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
         ctx.fillText(fullText, pos.x, pos.y);
       }
     });
-  }, [canvasSize, vertexPositions, gameState.vertices, gameState.selectedVertex, gameState.currentMoveType, hintVertex]);
+  }, [canvasSize, vertexPositions, gameState.vertices, gameState.selectedVertex, gameState.currentMoveType, hintVertex, distinguishedVertex]);
 
   // Animation loop
   useEffect(() => {

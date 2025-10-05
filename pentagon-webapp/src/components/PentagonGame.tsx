@@ -1,13 +1,16 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import toast, { Toaster } from 'react-hot-toast';
 import { Menu, Lightbulb } from 'lucide-react';
 import GameCanvas from './GameCanvas';
-import { ComplexNumber, GameState, Move, MoveType, UIMoveType } from '@/types/game';
+import CampaignMenu from './CampaignMenu';
+import LevelSelect from './LevelSelect';
+import { ComplexNumber, GameState, Move, MoveType, UIMoveType, CampaignLevel } from '@/types/game';
 import { getMatrixHint, getFullSolution } from '@/utils/matrix-solver-mathjs';
+import { checkGoal } from '@/utils/goal-checker';
 
 // Move definitions (CORRECTED to match Alex's paper lines 231-234)
 // Paper specification:
@@ -62,10 +65,16 @@ export default function PentagonGame() {
   // Difficulty and menu state
   type Difficulty = 'easy' | 'medium' | 'hard' | 'expert' | 'custom';
   type GameMode = 'main-menu' | 'free-play' | 'campaign';
+  type CampaignView = 'chapters' | 'levels' | 'playing';
   const [gameMode, setGameMode] = useState<GameMode>('main-menu');
   const [showMenu, setShowMenu] = useState(true);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('medium');
   const [customMoveCount, setCustomMoveCount] = useState(12);
+
+  // Campaign state
+  const [campaignView, setCampaignView] = useState<CampaignView>('chapters');
+  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
+  const [currentCampaignLevel, setCurrentCampaignLevel] = useState<CampaignLevel | null>(null);
 
   // Track stats for completion screen
   const [moveCount, setMoveCount] = useState(0);
@@ -360,6 +369,50 @@ export default function PentagonGame() {
     generateStartingState(selectedDifficulty, customMoveCount);
   }, [generateStartingState, selectedDifficulty, customMoveCount]);
 
+  // Campaign handlers
+  const handleSelectChapter = useCallback((chapterId: string) => {
+    setSelectedChapterId(chapterId);
+    setCampaignView('levels');
+  }, []);
+
+  const handleSelectLevel = useCallback((level: CampaignLevel) => {
+    setCurrentCampaignLevel(level);
+
+    // Load the level
+    setGameState(prev => ({
+      ...prev,
+      vertices: level.startState.map(v => ({ ...v })),
+      goalVertices: level.goalType === 'all-zeros'
+        ? zeroGoal.map(v => ({ ...v }))
+        : level.startState.map(v => ({ ...v })), // For nice-representative, goal is calculated by checker
+      isWon: false,
+    }));
+
+    // Reset stats
+    setMoveCount(0);
+    setStartTime(Date.now());
+    setSolveTime(null);
+    setMoveHistory([{ vertices: level.startState.map(v => ({ ...v })), moveType: 'A' }]);
+    setHintsUsed(0);
+    setSolutionViewed(false);
+    setShowMenu(false);
+    setCampaignView('playing');
+    setIsInitialized(true);
+  }, []);
+
+  const handleBackToChapters = useCallback(() => {
+    setCampaignView('chapters');
+    setSelectedChapterId(null);
+  }, []);
+
+  const handleBackToMainMenu = useCallback(() => {
+    setGameMode('main-menu');
+    setCampaignView('chapters');
+    setSelectedChapterId(null);
+    setCurrentCampaignLevel(null);
+    setShowMenu(true);
+  }, []);
+
   const setMoveType = useCallback((moveType: UIMoveType) => {
     // Toggle behavior: if clicking the same button, switch between positive and negative
     const currentInternal = gameState.currentMoveType;
@@ -412,10 +465,22 @@ export default function PentagonGame() {
   useEffect(() => {
     if (!isInitialized) return;
 
-    const isWon = gameState.vertices.every((v, i) =>
-      v.real === gameState.goalVertices[i].real &&
-      v.imag === gameState.goalVertices[i].imag
-    );
+    let isWon = false;
+
+    // For campaign mode with nice-representative goal, use goal checker
+    if (currentCampaignLevel && currentCampaignLevel.goalType === 'nice-representative') {
+      isWon = checkGoal(
+        gameState.vertices,
+        currentCampaignLevel.goalType,
+        currentCampaignLevel.distinguishedVertex
+      );
+    } else {
+      // For all-zeros goal (free play or campaign all-zeros levels)
+      isWon = gameState.vertices.every((v, i) =>
+        v.real === gameState.goalVertices[i].real &&
+        v.imag === gameState.goalVertices[i].imag
+      );
+    }
 
     if (isWon !== gameState.isWon) {
       setGameState(prev => ({ ...prev, isWon }));
@@ -460,7 +525,7 @@ export default function PentagonGame() {
         });
       }
     }
-  }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized, startTime, solveTime]);
+  }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized, startTime, solveTime, currentCampaignLevel]);
 
   // Don't auto-generate on mount - wait for user to select difficulty
   // useEffect is removed - game starts with menu
@@ -480,8 +545,9 @@ export default function PentagonGame() {
         }
       }}
     >
-      {/* Main Menu - Mode Selection */}
-      {showMenu && gameMode === 'main-menu' && (
+      <AnimatePresence mode="wait">
+        {/* Main Menu - Mode Selection */}
+        {showMenu && gameMode === 'main-menu' && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm">
           <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl border-2 border-indigo-500 max-w-md w-full">
             <h2 className="text-3xl font-bold text-white mb-6 text-center">Chip Firing Game</h2>
@@ -519,10 +585,27 @@ export default function PentagonGame() {
             </div>
           </div>
         </div>
-      )}
+        )}
 
-      {/* Free Play Menu - Difficulty Selection */}
-      {showMenu && gameMode === 'free-play' && (
+        {/* Campaign Mode - Chapter Selection */}
+        {gameMode === 'campaign' && campaignView === 'chapters' && (
+          <CampaignMenu
+            onSelectChapter={handleSelectChapter}
+            onBack={handleBackToMainMenu}
+          />
+        )}
+
+        {/* Campaign Mode - Level Selection */}
+        {gameMode === 'campaign' && campaignView === 'levels' && selectedChapterId && (
+          <LevelSelect
+            chapterId={selectedChapterId}
+            onSelectLevel={handleSelectLevel}
+            onBack={handleBackToChapters}
+          />
+        )}
+
+        {/* Free Play Menu - Difficulty Selection */}
+        {showMenu && gameMode === 'free-play' && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm">
           <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl border-2 border-indigo-500 max-w-md w-full">
             <button
@@ -609,10 +692,31 @@ export default function PentagonGame() {
             </div>
           </div>
         </div>
-      )}
+        )}
+      </AnimatePresence>
 
-      {/* Top-left: Hint button */}
+      {/* Top-left: Goal display (campaign mode) and Hint button */}
       <div className="absolute" style={{ top: '1rem', left: '1rem', zIndex: 20 }}>
+        {/* Campaign goal indicator */}
+        {currentCampaignLevel && !showMenu && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-3 bg-slate-800/90 backdrop-blur-md px-4 py-2 rounded-xl border border-cyan-500/50 shadow-xl"
+          >
+            <div className="text-xs text-cyan-400 font-semibold mb-1">Goal:</div>
+            <div className="text-sm text-white font-bold">
+              {currentCampaignLevel.goalType === 'all-zeros' ? '🎯 All Zeros' : '✨ Nice Representative'}
+            </div>
+            {currentCampaignLevel.par && (
+              <div className="text-xs text-slate-400 mt-1">Par: {currentCampaignLevel.par} moves</div>
+            )}
+          </motion.div>
+        )}
+      </div>
+
+      {/* Hint button (separate positioning) */}
+      <div className="absolute" style={{ top: currentCampaignLevel && !showMenu ? '8rem' : '1rem', left: '1rem', zIndex: 20 }}>
         <motion.button
           onClick={getHint}
           disabled={isGettingHint}
@@ -842,6 +946,7 @@ export default function PentagonGame() {
           onVertexClick={applyMove}
           onCenterClick={toggleMoveType}
           hintVertex={hintVertex}
+          distinguishedVertex={currentCampaignLevel?.distinguishedVertex}
         />
       </div>
 
