@@ -194,7 +194,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
         ctx.shadowBlur = 30;
         ctx.fillStyle = 'rgba(34, 197, 94, 0.4)';
         ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 50, 0, 2 * Math.PI);
+        ctx.arc(pos.x, pos.y, 42, 0, 2 * Math.PI); // Smaller radius to avoid covering label
         ctx.fill();
         ctx.shadowBlur = 0;
       }
