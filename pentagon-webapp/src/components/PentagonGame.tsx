@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import toast, { Toaster } from 'react-hot-toast';
-import { Menu, Lightbulb, RotateCcw, Play, CheckCircle, Share2 } from 'lucide-react';
+import { Menu, Lightbulb } from 'lucide-react';
 import GameCanvas from './GameCanvas';
 import { ComplexNumber, GameState, Move, MoveType, UIMoveType } from '@/types/game';
 import { getMatrixHint, getFullSolution } from '@/utils/matrix-solver-mathjs';

@@ -65,16 +65,27 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
   // Drawing function
   const draw = useCallback((ctx: CanvasRenderingContext2D) => {
     const { width, height } = canvasSize;
-    
-    // Clear canvas with solid background
-    ctx.fillStyle = 'rgb(30, 41, 59)'; // Solid background to prevent rendering issues
+
+    // Clear canvas with gradient background
+    const gradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
+    gradient.addColorStop(0, 'rgb(30, 41, 59)');
+    gradient.addColorStop(1, 'rgb(15, 23, 42)');
+    ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
-    
+
     if (vertexPositions.length === 0) return;
 
-    // Draw pentagon edges ONLY (remove complete graph visualization)
-    ctx.strokeStyle = '#3B82F6';
-    ctx.lineWidth = 3;
+    // Draw pentagon edges with gradient and glow
+    const edgeGradient = ctx.createLinearGradient(0, 0, width, height);
+    edgeGradient.addColorStop(0, '#3B82F6');
+    edgeGradient.addColorStop(0.5, '#8B5CF6');
+    edgeGradient.addColorStop(1, '#06B6D4');
+
+    // Glow effect
+    ctx.shadowColor = '#3B82F6';
+    ctx.shadowBlur = 15;
+    ctx.strokeStyle = edgeGradient;
+    ctx.lineWidth = 4;
     ctx.beginPath();
     for (let i = 0; i < vertexPositions.length; i++) {
       const pos = vertexPositions[i];
@@ -86,6 +97,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     }
     ctx.closePath();
     ctx.stroke();
+    ctx.shadowBlur = 0;
 
     // Draw center pentagon with current move rule
     const centerX = width / 2;
@@ -95,10 +107,17 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     // Determine UI move type (A or B) from internal move type (A/B/C/D)
     const uiMoveType = (gameState.currentMoveType === 'A' || gameState.currentMoveType === 'C') ? 'A' : 'B';
 
-    // Center pentagon background
-    ctx.fillStyle = 'rgba(30, 41, 59, 0.95)';
+    // Center pentagon gradient background
+    const centerGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, centerRadius);
+    centerGradient.addColorStop(0, 'rgba(30, 41, 59, 0.98)');
+    centerGradient.addColorStop(1, 'rgba(15, 23, 42, 0.95)');
+    ctx.fillStyle = centerGradient;
+
+    // Glow effect for center pentagon
+    ctx.shadowColor = uiMoveType === 'A' ? '#EC4899' : '#F59E0B';
+    ctx.shadowBlur = 20;
     ctx.strokeStyle = uiMoveType === 'A' ? '#EC4899' : '#F59E0B';
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 5;
     ctx.beginPath();
     // Draw pentagon centered on screen
     for (let i = 0; i < 5; i++) {
@@ -114,6 +133,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
+    ctx.shadowBlur = 0;
 
     // Display current move in center - show as A/-A or B/-B
     ctx.fillStyle = '#FFFFFF';
@@ -157,30 +177,44 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       const isPureReal = vertex.imag === 0;
       const isZero = vertex.real === 0 && vertex.imag === 0;
 
-      // Highlight selected vertex
+      // Highlight selected vertex with glow
       if (i === gameState.selectedVertex) {
-        ctx.fillStyle = 'rgba(236, 72, 153, 0.4)';
+        ctx.shadowColor = '#EC4899';
+        ctx.shadowBlur = 25;
+        ctx.fillStyle = 'rgba(236, 72, 153, 0.3)';
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, 48, 0, 2 * Math.PI);
         ctx.fill();
+        ctx.shadowBlur = 0;
       }
 
-      // Highlight hint vertex with pulsing animation
+      // Highlight hint vertex with pulsing glow
       if (hintVertex !== undefined && i === hintVertex) {
-        ctx.fillStyle = 'rgba(34, 197, 94, 0.5)';
+        ctx.shadowColor = '#22C55E';
+        ctx.shadowBlur = 30;
+        ctx.fillStyle = 'rgba(34, 197, 94, 0.4)';
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, 50, 0, 2 * Math.PI);
         ctx.fill();
+        ctx.shadowBlur = 0;
       }
 
-      // Draw vertex circle (reduced from 45px to 35px)
-      ctx.fillStyle = '#1E293B';
+      // Draw vertex circle with gradient
+      const vertexGradient = ctx.createRadialGradient(pos.x, pos.y - 10, 0, pos.x, pos.y, 35);
+      vertexGradient.addColorStop(0, 'rgba(30, 41, 59, 1)');
+      vertexGradient.addColorStop(1, 'rgba(15, 23, 42, 0.95)');
+      ctx.fillStyle = vertexGradient;
+
+      // Vertex border with glow
+      ctx.shadowColor = '#8B5CF6';
+      ctx.shadowBlur = 10;
       ctx.strokeStyle = '#8B5CF6';
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.arc(pos.x, pos.y, 35, 0, 2 * Math.PI);
       ctx.fill();
       ctx.stroke();
+      ctx.shadowBlur = 0;
 
       // Draw vertex label (V0, V1, etc.)
       ctx.fillStyle = '#EC4899';
