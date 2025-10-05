@@ -497,19 +497,28 @@ export default function PentagonGame() {
 
             <div className="space-y-3 mb-6">
               <button
-                onClick={() => { setSelectedDifficulty('easy'); startNewGame(); }}
+                onClick={() => {
+                  setSelectedDifficulty('easy');
+                  generateStartingState('easy');
+                }}
                 className="w-full px-6 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-lg transition-all"
               >
                 Easy (8-12 moves)
               </button>
               <button
-                onClick={() => { setSelectedDifficulty('medium'); startNewGame(); }}
+                onClick={() => {
+                  setSelectedDifficulty('medium');
+                  generateStartingState('medium');
+                }}
                 className="w-full px-6 py-4 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-semibold text-lg transition-all"
               >
                 Medium (12-16 moves)
               </button>
               <button
-                onClick={() => { setSelectedDifficulty('hard'); startNewGame(); }}
+                onClick={() => {
+                  setSelectedDifficulty('hard');
+                  generateStartingState('hard');
+                }}
                 className="w-full px-6 py-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-lg transition-all"
               >
                 Hard (16-20 moves)
@@ -527,7 +536,10 @@ export default function PentagonGame() {
                     className="flex-1 px-3 py-2 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-indigo-500 focus:outline-none"
                   />
                   <button
-                    onClick={() => { setSelectedDifficulty('custom'); startNewGame(); }}
+                    onClick={() => {
+                      setSelectedDifficulty('custom');
+                      generateStartingState('custom', customMoveCount);
+                    }}
                     className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-all"
                   >
                     Start
