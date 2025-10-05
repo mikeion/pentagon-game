@@ -625,18 +625,18 @@ export default function PentagonGame() {
 
       {/* Nice Representative Mode Progress */}
       {gameMode === 'nice-representative' && !showMenu && !gameState.isWon && (
-        <div className="absolute top-[12vh] left-1/2 transform -translate-x-1/2 z-20 bg-slate-800/95 backdrop-blur-md px-[4vw] py-[2vh] rounded-xl border border-amber-500/50 shadow-xl max-w-[90vw] md:max-w-2xl">
-          <div className="text-center mb-[1vh]">
-            <div className="text-amber-400 font-bold text-[4vw] md:text-lg mb-[0.5vh]">Goal: Reach Nice Representative</div>
-            <div className="text-slate-300 text-[3vw] md:text-sm">
-              V0 ∈ {'{0, 3}'} • V1-V4 ∈ {'{0, 1, 2}'} • All real (no imaginary)
+        <div className="absolute top-16 left-4 z-20 bg-slate-800/95 backdrop-blur-md px-4 py-3 rounded-xl border border-amber-500/50 shadow-xl max-w-xs">
+          <div className="mb-2">
+            <div className="text-amber-400 font-bold text-sm mb-1">Goal: Nice Representative</div>
+            <div className="text-slate-300 text-xs">
+              V0 ∈ {'{0, 3}'} • V1-V4 ∈ {'{0, 1, 2}'} • All real
             </div>
           </div>
           {(() => {
             const progress = getNiceRepresentativeProgress(gameState.vertices, 0);
             if (progress.issues.length === 0) return null;
             return (
-              <div className="text-[2.5vw] md:text-sm space-y-[0.5vh]">
+              <div className="text-xs space-y-1">
                 {progress.issues.map((issue, i) => (
                   <div key={i} className="text-red-400">✗ {issue}</div>
                 ))}
