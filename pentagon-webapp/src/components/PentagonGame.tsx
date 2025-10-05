@@ -625,7 +625,7 @@ export default function PentagonGame() {
 
       {/* Nice Representative Mode Progress */}
       {gameMode === 'nice-representative' && !showMenu && !gameState.isWon && (
-        <div className="absolute top-[2vh] left-1/2 transform -translate-x-1/2 z-20 bg-slate-800/95 backdrop-blur-md px-[4vw] py-[2vh] rounded-xl border border-amber-500/50 shadow-xl max-w-[90vw] md:max-w-2xl">
+        <div className="absolute top-[12vh] left-1/2 transform -translate-x-1/2 z-20 bg-slate-800/95 backdrop-blur-md px-[4vw] py-[2vh] rounded-xl border border-amber-500/50 shadow-xl max-w-[90vw] md:max-w-2xl">
           <div className="text-center mb-[1vh]">
             <div className="text-amber-400 font-bold text-[4vw] md:text-lg mb-[0.5vh]">Goal: Reach Nice Representative</div>
             <div className="text-slate-300 text-[3vw] md:text-sm">
