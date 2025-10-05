@@ -61,6 +61,8 @@ export default function PentagonGame() {
 
   // Difficulty and menu state
   type Difficulty = 'easy' | 'medium' | 'hard' | 'expert' | 'custom';
+  type GameMode = 'main-menu' | 'free-play' | 'campaign';
+  const [gameMode, setGameMode] = useState<GameMode>('main-menu');
   const [showMenu, setShowMenu] = useState(true);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('medium');
   const [customMoveCount, setCustomMoveCount] = useState(12);
@@ -478,11 +480,58 @@ export default function PentagonGame() {
         }
       }}
     >
-      {/* Difficulty Selection Menu */}
-      {showMenu && (
+      {/* Main Menu - Mode Selection */}
+      {showMenu && gameMode === 'main-menu' && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm">
           <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl border-2 border-indigo-500 max-w-md w-full">
-            <h2 className="text-3xl font-bold text-white mb-4 text-center">Chip Firing Game</h2>
+            <h2 className="text-3xl font-bold text-white mb-6 text-center">Chip Firing Game</h2>
+
+            <p className="text-slate-400 text-center mb-6">
+              Explore the mathematics of the R₁₀ sandpile group
+            </p>
+
+            <div className="space-y-4">
+              <button
+                onClick={() => setGameMode('campaign')}
+                className="w-full px-6 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold text-xl transition-all shadow-lg"
+              >
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-2xl">📚</span>
+                  <span>Campaign Mode</span>
+                </div>
+                <p className="text-sm text-indigo-200 mt-2">
+                  Learn chip-firing step by step
+                </p>
+              </button>
+
+              <button
+                onClick={() => setGameMode('free-play')}
+                className="w-full px-6 py-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-bold text-xl transition-all shadow-lg"
+              >
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-2xl">🎮</span>
+                  <span>Free Play</span>
+                </div>
+                <p className="text-sm text-emerald-200 mt-2">
+                  Random puzzles, any difficulty
+                </p>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Free Play Menu - Difficulty Selection */}
+      {showMenu && gameMode === 'free-play' && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm">
+          <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl border-2 border-indigo-500 max-w-md w-full">
+            <button
+              onClick={() => setGameMode('main-menu')}
+              className="mb-4 text-slate-400 hover:text-white transition-colors"
+            >
+              ← Back to Main Menu
+            </button>
+            <h2 className="text-3xl font-bold text-white mb-4 text-center">Free Play</h2>
 
             {/* How to Play */}
             <div className="bg-slate-700/50 rounded-lg p-4 mb-6 text-sm">
