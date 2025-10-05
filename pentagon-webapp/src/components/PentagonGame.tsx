@@ -79,6 +79,11 @@ export default function PentagonGame() {
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
   // const [showEducationalPanel, setShowEducationalPanel] = useState(false);
 
+  // Sandbox mode - vertex editor
+  const [selectedVertexForEdit, setSelectedVertexForEdit] = useState(0);
+  const [editReal, setEditReal] = useState('0');
+  const [editImag, setEditImag] = useState('0');
+
   const generateStartingState = useCallback((difficulty: Difficulty, customCount?: number) => {
     // Generate random starting state by assigning move coefficients to each vertex
     // Each vertex gets: some number of A moves (+ or -) and some number of B moves (+ or -)
@@ -259,6 +264,18 @@ export default function PentagonGame() {
       setIsGettingHint(false);
     }
   }, [gameState]);
+
+  const setVertexValue = useCallback(() => {
+    const real = parseInt(editReal) || 0;
+    const imag = parseInt(editImag) || 0;
+
+    setGameState(prev => {
+      const newVertices = prev.vertices.map((v, i) =>
+        i === selectedVertexForEdit ? { real, imag } : { ...v }
+      );
+      return { ...prev, vertices: newVertices };
+    });
+  }, [editReal, editImag, selectedVertexForEdit]);
 
   const getFullSolutionMoves = useCallback(async () => {
     setIsGettingSolution(true);
@@ -594,8 +611,56 @@ export default function PentagonGame() {
         </div>
       )}
 
+      {/* Sandbox Mode: Vertex Editor */}
+      {gameMode === 'sandbox' && !showMenu && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-slate-800/95 backdrop-blur-md px-6 py-3 rounded-xl border border-cyan-500/50 shadow-xl">
+          <div className="flex items-center gap-4">
+            <label className="text-slate-300 text-sm font-semibold">Edit Vertex:</label>
+            <select
+              value={selectedVertexForEdit}
+              onChange={(e) => {
+                const v = parseInt(e.target.value);
+                setSelectedVertexForEdit(v);
+                setEditReal(gameState.vertices[v].real.toString());
+                setEditImag(gameState.vertices[v].imag.toString());
+              }}
+              className="px-3 py-1.5 bg-slate-700 text-white rounded border border-slate-600 focus:border-cyan-500 focus:outline-none"
+            >
+              {[0, 1, 2, 3, 4].map(i => (
+                <option key={i} value={i}>V{i}</option>
+              ))}
+            </select>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                value={editReal}
+                onChange={(e) => setEditReal(e.target.value)}
+                className="w-16 px-2 py-1.5 bg-slate-700 text-white rounded border border-slate-600 focus:border-cyan-500 focus:outline-none text-center"
+                placeholder="0"
+              />
+              <span className="text-slate-400">+</span>
+              <input
+                type="number"
+                value={editImag}
+                onChange={(e) => setEditImag(e.target.value)}
+                className="w-16 px-2 py-1.5 bg-slate-700 text-white rounded border border-slate-600 focus:border-cyan-500 focus:outline-none text-center"
+                placeholder="0"
+              />
+              <span className="text-slate-400">i</span>
+            </div>
+            <button
+              onClick={setVertexValue}
+              className="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded font-semibold transition-all"
+            >
+              Set
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Top-left: Hint button */}
-      <div className="absolute" style={{ top: '1rem', left: '1rem', zIndex: 20 }}>
+      {gameMode !== 'sandbox' && (
+        <div className="absolute" style={{ top: '1rem', left: '1rem', zIndex: 20 }}>
         <motion.button
           onClick={getHint}
           disabled={isGettingHint}
@@ -614,7 +679,8 @@ export default function PentagonGame() {
         >
           <Lightbulb className={`w-6 h-6 ${isGettingHint ? 'animate-pulse' : ''}`} />
         </motion.button>
-      </div>
+        </div>
+      )}
 
       {/* Top-right: Menu button (hamburger) */}
       <div className="absolute menu-dropdown-container" style={{ top: '1rem', right: '1rem', zIndex: 20 }}>
