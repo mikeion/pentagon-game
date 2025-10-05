@@ -216,40 +216,42 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      // Draw vertex label (V0, V1, etc.)
+      // Draw vertex label (V0, V1, etc.) - position radially outside vertex
+      const centerX = canvasSize.width / 2;
+      const centerY = canvasSize.height / 2;
+      const angle = Math.atan2(pos.y - centerY, pos.x - centerX);
+      const labelDistance = 60; // Distance from vertex center
+      const labelX = pos.x + Math.cos(angle) * labelDistance;
+      const labelY = pos.y + Math.sin(angle) * labelDistance;
+
       ctx.fillStyle = '#EC4899';
       ctx.font = 'bold 18px monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(`V${i}`, pos.x - 55, pos.y - 55);
+      ctx.fillText(`V${i}`, labelX, labelY);
 
-      // Draw complex number with separate colors for real and imaginary parts
+      // Draw complex number - always center-aligned as single string
       ctx.font = 'bold 18px monospace';
+      ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
       if (isZero) {
         ctx.fillStyle = '#10B981'; // Green for zero
-        ctx.textAlign = 'center';
         ctx.fillText('0', pos.x, pos.y);
       } else if (isPureReal) {
-        // Just real part - blue color
-        ctx.fillStyle = '#60A5FA';
-        ctx.textAlign = 'center';
+        ctx.fillStyle = '#60A5FA'; // Blue for pure real
         ctx.fillText(`${vertex.real}`, pos.x, pos.y);
       } else {
-        // Both parts - draw separately with different colors
+        // Complex number - display as single string with gradient effect
         const sign = vertex.imag >= 0 ? '+' : '';
-        const realText = `${vertex.real}`;
-        const imagText = `${sign}${vertex.imag}i`;
+        const fullText = `${vertex.real}${sign}${vertex.imag}i`;
 
-        // Measure text to position correctly
-        ctx.textAlign = 'right';
-        ctx.fillStyle = '#60A5FA'; // Blue for real part
-        ctx.fillText(realText, pos.x - 2, pos.y);
-
-        ctx.textAlign = 'left';
-        ctx.fillStyle = '#C084FC'; // Purple for imaginary part
-        ctx.fillText(imagText, pos.x + 2, pos.y);
+        // Create gradient for complex numbers
+        const textGradient = ctx.createLinearGradient(pos.x - 30, pos.y, pos.x + 30, pos.y);
+        textGradient.addColorStop(0, '#60A5FA'); // Blue
+        textGradient.addColorStop(1, '#C084FC'); // Purple
+        ctx.fillStyle = textGradient;
+        ctx.fillText(fullText, pos.x, pos.y);
       }
     });
   }, [canvasSize, vertexPositions, gameState.vertices, gameState.selectedVertex, gameState.currentMoveType, hintVertex]);

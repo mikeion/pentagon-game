@@ -512,7 +512,7 @@ export default function PentagonGame() {
       )}
 
       {/* Top-left: Menu button (hamburger) */}
-      <div className="absolute top-safe left-safe z-10 menu-dropdown-container">
+      <div className="absolute top-safe left-safe z-20 menu-dropdown-container">
         <motion.button
           onClick={(e) => {
             e.stopPropagation();
@@ -554,7 +554,7 @@ export default function PentagonGame() {
       </div>
 
       {/* Top-right: Hint button (most important) */}
-      <div className="absolute top-safe right-safe z-10">
+      <div className="absolute top-safe right-safe z-20">
         <motion.button
           onClick={getHint}
           disabled={isGettingHint}
