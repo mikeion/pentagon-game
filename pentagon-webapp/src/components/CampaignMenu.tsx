@@ -51,9 +51,9 @@ export default function CampaignMenu({ onSelectChapter, onBack }: CampaignMenuPr
       initial="hidden"
       animate="visible"
       exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-      className="min-h-screen w-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col items-center justify-center p-4"
+      className="min-h-screen w-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-y-auto"
     >
-      <div className="max-w-4xl w-full">
+      <div className="max-w-4xl mx-auto px-4 py-12">
         <motion.h1
           variants={headerVariants}
           className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 mb-4 text-center"
@@ -62,9 +62,9 @@ export default function CampaignMenu({ onSelectChapter, onBack }: CampaignMenuPr
         </motion.h1>
         <motion.p
           variants={headerVariants}
-          className="text-slate-300 text-center mb-8 max-w-2xl mx-auto"
+          className="text-slate-300 text-center mb-8 max-w-2xl mx-auto text-base"
         >
-          Learn chip-firing step by step through carefully designed puzzles based on mathematical research.
+          Master the mathematics of the R₁₀ sandpile group through 5 chapters covering chip-firing moves, imaginary elimination, and the 162 equivalence classes.
         </motion.p>
 
         <motion.div

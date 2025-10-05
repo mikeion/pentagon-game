@@ -715,8 +715,9 @@ export default function PentagonGame() {
         )}
       </div>
 
-      {/* Hint button (separate positioning) */}
-      <div className="absolute" style={{ top: currentCampaignLevel && !showMenu ? '8rem' : '1rem', left: '1rem', zIndex: 20 }}>
+      {/* Hint button (separate positioning) - only show when playing */}
+      {!showMenu && (
+        <div className="absolute" style={{ top: currentCampaignLevel ? '8rem' : '1rem', left: '1rem', zIndex: 20 }}>
         <motion.button
           onClick={getHint}
           disabled={isGettingHint}
@@ -735,9 +736,11 @@ export default function PentagonGame() {
         >
           <Lightbulb className={`w-6 h-6 ${isGettingHint ? 'animate-pulse' : ''}`} />
         </motion.button>
-      </div>
+        </div>
+      )}
 
-      {/* Top-right: Menu button (hamburger) */}
+      {/* Top-right: Menu button (hamburger) - only show when playing */}
+      {!showMenu && (
       <div className="absolute menu-dropdown-container" style={{ top: '1rem', right: '1rem', zIndex: 20 }}>
         <motion.button
           onClick={(e) => {
@@ -778,6 +781,7 @@ export default function PentagonGame() {
           </div>
         )}
       </div>
+      )}
 
       {/* Solution Confirmation Dialog */}
       {showSolutionConfirm && (
@@ -803,8 +807,9 @@ export default function PentagonGame() {
         </div>
       )}
 
-      {/* Bottom overlay: Move selector (A/B) - larger for mobile */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 flex gap-4 bg-gradient-to-r from-slate-800/90 to-slate-900/90 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-md border border-slate-700/50">
+      {/* Bottom overlay: Move selector (A/B) - larger for mobile - only show when playing */}
+      {!showMenu && (
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 flex gap-4 bg-gradient-to-r from-slate-800/90 to-slate-900/90 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-md border border-slate-700/50">
         {(['A', 'B'] as const).map((moveType: UIMoveType) => (
           <motion.button
             key={moveType}
@@ -833,7 +838,8 @@ export default function PentagonGame() {
             <span className="relative z-10">{moveType}</span>
           </motion.button>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* Full solution modal */}
       {showFullSolution && fullSolution.length > 0 && (

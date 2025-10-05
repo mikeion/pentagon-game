@@ -44,13 +44,13 @@ export const campaignChapters: CampaignChapter[] = [
       {
         id: '1-3',
         title: 'Neighbors Matter',
-        description: 'Moves affect the clicked vertex AND its two neighbors. V0 connects to V1 and V4.',
+        description: 'Use move A on V1. Notice how it affects V1 and its neighbors (V0 and V2)!',
         startState: [
-          { real: -1, imag: -1 }, // V0: click here with A
-          { real: 0, imag: 1 },   // V1: will get -i from V0
+          { real: -1, imag: -1 }, // V0: neighbor of V1, gets -i from V1's A move
+          { real: -1, imag: -1 }, // V1: click here with A -> becomes 0
+          { real: 0, imag: 1 },   // V2: neighbor of V1, gets -i from V1's A move
           { real: 0, imag: 0 },
           { real: 0, imag: 0 },
-          { real: 0, imag: 1 },   // V4: will get -i from V0
         ],
         goalType: 'all-zeros',
         par: 1,
@@ -58,12 +58,12 @@ export const campaignChapters: CampaignChapter[] = [
       {
         id: '1-4',
         title: 'Combining A and B',
-        description: 'Use both moves to solve. Remember: right-click applies the negative move!',
+        description: 'Use move B on V1, then move A on V2. Practice switching between moves!',
         startState: [
-          { real: 0, imag: 0 },
-          { real: 0, imag: 1 },   // Needs -B (or D)
-          { real: 0, imag: -1 },  // Needs B
-          { real: 0, imag: 0 },
+          { real: -1, imag: 0 }, // V0: neighbor of V1, gets +1 from B
+          { real: 1, imag: -1 }, // V1: click B here -> becomes 0
+          { real: -2, imag: -1 }, // V2: neighbor of V1 (gets +1), then click A here
+          { real: 0, imag: 1 },  // V3: neighbor of V2, gets -i from A
           { real: 0, imag: 0 },
         ],
         goalType: 'all-zeros',
@@ -79,16 +79,16 @@ export const campaignChapters: CampaignChapter[] = [
       {
         id: '2-1',
         title: 'Pure Imaginary',
-        description: 'Remove imaginary chips using moves B and -B. This demonstrates Lemma 3.1 from the paper.',
+        description: 'Use move A to eliminate imaginary part on V0. Notice A adds -i to neighbors!',
         startState: [
-          { real: 0, imag: 2 },   // 2i -> use 2 B moves
+          { real: -1, imag: 0 },  // V0: click A here
+          { real: 0, imag: 1 },   // V1: has +i that will be canceled by -i from A
           { real: 0, imag: 0 },
           { real: 0, imag: 0 },
-          { real: 0, imag: 0 },
-          { real: 0, imag: 0 },
+          { real: 0, imag: 1 },   // V4: has +i that will be canceled by -i from A
         ],
         goalType: 'all-zeros',
-        par: 2,
+        par: 1,
       },
       {
         id: '2-2',

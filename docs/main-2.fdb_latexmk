@@ -1,5 +1,5 @@
 # Fdb version 4
-["bibtex main-2"] 0 "main-2.aux" "main-2.bbl" "main-2" 0 0
+["bibtex main-2"] 0 "main-2.aux" "main-2.bbl" "main-2" 1759699479.34662 0
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/base/alpha.bst" 1292289607 23907 a5f93555796fb564b924339521f10a7c ""
   "biblio.bib" 0 -1 0 ""
   "main-2.aux" 0 -1 0 "pdflatex"
@@ -7,8 +7,8 @@
   "main-2.bbl"
   "main-2.blg"
   (rewritten before read)
-["pdflatex"] 1759342432.61497 "/Users/mikeion/Documents/dev/utilities/pentagon-game/docs/main-2.tex" "main-2.pdf" "main-2" 1759342433.70676 0
-  "/Users/mikeion/Documents/dev/utilities/pentagon-game/docs/main-2.tex" 1759342430.953 31095 8428d46423f3869d538374d24ab00e21 ""
+["pdflatex"] 1759699477.85914 "/Users/mikeion/Documents/dev/utilities/pentagon-game/docs/main-2.tex" "main-2.pdf" "main-2" 1759699479.34678 0
+  "/Users/mikeion/Documents/dev/utilities/pentagon-game/docs/main-2.tex" 1759699476.2966 36662 29efc6472f4dc150112066e641edc1d8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy5.tfm" 1246382020 1120 1e8878807317373affa7f7bba4cf2f6a ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy6.tfm" 1246382020 1124 14ccf5552bc7f77ca02a8a402bea8bfb ""
@@ -216,9 +216,9 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1728068048.9956 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1728067986 8221420 47a4bf8b811bc138eb228700e994db68 ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "main-2.aux" 1759342433.47061 2236 08f1ca576acf17a5cb2ff1ed9bb6a5cd "pdflatex"
+  "main-2.aux" 1759699479.00219 2553 778c4d5afe04930a8fc5612aaf25ab39 "pdflatex"
   "main-2.bbl" 0 -1 0 "bibtex main-2"
-  "main-2.tex" 1759342430.953 31095 8428d46423f3869d538374d24ab00e21 ""
+  "main-2.tex" 1759699476.2966 36662 29efc6472f4dc150112066e641edc1d8 ""
   (generated)
   "main-2.aux"
   "main-2.log"

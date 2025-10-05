@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.10.4)  1 OCT 2025 11:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.10.4)  5 OCT 2025 14:24
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -543,55 +543,62 @@ Package pgfplots Warning: running in backwards compatibility mode (unsuitable ti
  on input line 73.
 
 
-LaTeX Warning: Citation `Merino' on page 1 undefined on input line 82.
+LaTeX Warning: Citation `Merino' on page 1 undefined on input line 83.
 
 
-LaTeX Warning: Citation `Seymour' on page 1 undefined on input line 84.
+LaTeX Warning: Citation `Seymour' on page 1 undefined on input line 85.
 
 
-LaTeX Warning: Citation `Klivans' on page 1 undefined on input line 86.
+LaTeX Warning: Citation `Klivans' on page 1 undefined on input line 87.
 
 
-LaTeX Warning: Citation `Biggs99' on page 1 undefined on input line 88.
+LaTeX Warning: Citation `Biggs99' on page 1 undefined on input line 89.
 
 
-LaTeX Warning: Citation `Merino' on page 1 undefined on input line 88.
+LaTeX Warning: Citation `Merino' on page 1 undefined on input line 89.
 
 
-LaTeX Warning: Citation `Tutte' on page 1 undefined on input line 98.
-
-
-LaTeX Warning: Citation `Oxley' on page 1 undefined on input line 103.
+LaTeX Warning: Citation `Tutte' on page 1 undefined on input line 99.
 
 [1{/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 
-LaTeX Warning: Citation `BBY' on page 2 undefined on input line 114.
+LaTeX Warning: Citation `Oxley' on page 2 undefined on input line 104.
 
 
-LaTeX Warning: Citation `SuWagner' on page 2 undefined on input line 114.
+LaTeX Warning: Citation `BBY' on page 2 undefined on input line 115.
 
 
-LaTeX Warning: Citation `BBY' on page 2 undefined on input line 117.
+LaTeX Warning: Citation `SuWagner' on page 2 undefined on input line 115.
 
 
-LaTeX Warning: Citation `CutsFlows' on page 2 undefined on input line 117.
+LaTeX Warning: Citation `BBY' on page 2 undefined on input line 118.
 
 
-LaTeX Warning: Citation `MCDthesis' on page 2 undefined on input line 125.
+LaTeX Warning: Citation `CutsFlows' on page 2 undefined on input line 118.
+
+
+LaTeX Warning: Citation `MCDthesis' on page 2 undefined on input line 126.
 
 [2]
 
-LaTeX Warning: Citation `Klivans' on page 3 undefined on input line 137.
+LaTeX Warning: Citation `Klivans' on page 3 undefined on input line 138.
 
 
-LaTeX Warning: Citation `Merino' on page 3 undefined on input line 144.
+LaTeX Warning: Citation `Merino' on page 3 undefined on input line 145.
 
 
-LaTeX Warning: Citation `Biggs99' on page 3 undefined on input line 149.
+LaTeX Warning: Citation `Biggs99' on page 3 undefined on input line 150.
 
-[3] [4] [5]
+[3] [4] [5] [6]
+
+LaTeX Warning: Reference `names' on page 7 undefined on input line 465.
+
+[7]
+
+LaTeX Warning: Citation `Gioan' on page 8 undefined on input line 473.
+
 No file main-2.bbl.
-[6] [7] (./main-2.aux)
+[8] (./main-2.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
@@ -602,18 +609,18 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 25782 strings out of 474116
- 655565 string characters out of 5743682
- 1960187 words of memory out of 5000000
- 47566 multiletter control sequences out of 15000+600000
+ 25789 strings out of 474116
+ 655689 string characters out of 5743682
+ 1964187 words of memory out of 5000000
+ 47573 multiletter control sequences out of 15000+600000
  571407 words of font info for 85 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  99i,13n,107p,930b,911s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb>
-Output written on main-2.pdf (7 pages, 262547 bytes).
+Output written on main-2.pdf (8 pages, 273454 bytes).
 PDF statistics:
- 131 PDF objects out of 1000 (max. 8388607)
- 81 compressed objects within 1 object stream
+ 134 PDF objects out of 1000 (max. 8388607)
+ 83 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

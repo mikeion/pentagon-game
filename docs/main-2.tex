@@ -72,10 +72,11 @@ Eugene, Oregon 97403, USA}
 
 \begin{document}
 
-\begin{abstract}A celebrated result of Seymour is that all \emph{regular matroids} are built up from \emph{graphic matroids}, \emph{cographic matroids}, and a specific 10 element rank 5 matroid called $R_{10}$. In this article, we give a simple description of chip-firing on $R_{10}$ using complex numbers on a pentagon, and link to an app where readers can play around with the combinatorial dynamics of the system. We also provide an easy to describe set of representatives for each of the 162 equivalence classes that make up the \emph{sandpile group} of $R_{10}$. \end{abstract}
+\begin{abstract}A celebrated result of Seymour is that all \emph{regular matroids} are built up from \emph{graphic matroids}, \emph{cographic matroids}, and a specific 10 element rank 5 matroid called $R_{10}$. In this article, we give a simple description of chip-firing on $R_{10}$ using complex numbers on the vertices of a pentagon, and link to an app where readers can play around with the combinatorial dynamics of the system. We also provide an easy to describe set of representatives for each of the 162 equivalence classes that make up the \emph{sandpile group} of $R_{10}$. \end{abstract}
 
 \maketitle
 \anote{We still need to link the app.}
+\anote{Also, I think it might be nice to have a screenshot from the app somewhere for people too lazy to click the link.} 
 %\mnote{And here's a note from you! Feel free to change the color of your notes from orange to something else.} 
 \section{Introduction}
 
@@ -133,7 +134,7 @@ This quotient group $\Z^E/\im_{\Z}K$ is called the \emph{cokernel} of $K$ over $
 
 One way to think of the sandpile group of $M$ is in terms of \emph{chip configurations} and \emph{firings moves}. Begin by thinking of an element $C \in \Z^E$ as an assignment of an integer number of \emph{chips} assigned to each element of $E$. If we add or subtract a row of $K$, this redistributes the chips to give a new chip configuration $C'$ such that $C$ and $C'$ are equivalent as elements of $S(M)$. We say that adding or subtracting a row of $K$ is a \emph{firing move} on the chip configuration, and we say that two chip configurations are \emph{firing equivalent} if one can be reached from the other by a sequence of firing moves. Algebraically speaking, chip configurations $C$ and $C'$ are firing equivalent if and only if $C - C' \in \im_{\Z} K$. Equivalently, this holds precisely when $K^{-1}(C-C')$ is an integer vector. 
 
-\begin{remark}
+\begin{remark}\label{rem:traditional}
     Typically, \emph{chip configurations} refer to a collection of chips on the vertices of a graph, instead of on the ground set of a regular matroid. In this context, a \emph{firing move} removes $\deg(v)$ chips from a vertex $v$, and sends one to each neighbor of $v$. In this context, it is common to disallow firings which result in a negative number of chips on the firing vertex. For more information about this more traditional perspective, see~\cite{Klivans}. 
     
     In our construction, firings are more abstract, and the total number of chips is not necessarily preserved. Furthermore, we place no restrictions on when a firing is allowed, and it is not a problem for elements of $E$ to have negative chips. 
@@ -157,7 +158,7 @@ In the next section, we will focus on specific properties of $R_{10}$, but first
     \[A = \begin{bmatrix} 1 & 0 & -1 \\ 0 & 1 & -1\end{bmatrix}.\hspace{ .3 cm} \text{ This means that } A^* = \begin{bmatrix} 1 & 1 & 1\end{bmatrix}\hspace{ .3 cm} \text{ and } \hspace{ .3 cm} K = \begin{bmatrix} 1 & 0 & -1 \\ 0 & 1 & -1 \\ 1 & 1 & 1\end{bmatrix}.\]
     By computing the Smith normal form of $K$, one can calculate that $S(M) = \Z/3\Z$, which means that there are 3 firing equivalence classes of chip configurations. 
     
-    A chip configuration on $M$ can be written as a triple of integers $(a,b,c)$. We claim that each chip configuration is firing equivalent to exactly one of the chip configurations $(0,0,0)$, $(1,0,0)$, or $(2,0,0)$. In other words, these form a set of representatives for the elements of $S(M)$. One way to prove this claim is through linear algebra, noting that chip configurations $C$ and $D$ are firing equivalent if and only if $K^{-1}(C-D) \in \Z^3$. 
+    A chip configuration on $M$ can be written as a triple of integers $(a,b,c)$. We claim that each chip configuration is firing equivalent to exactly one of the chip configurations $(0,0,0)$, $(1,0,0)$, or $(2,0,0)$. In other words, these form a set of representatives for the elements of $S(M)$. One way to prove this claim is through linear algebra, noting that chip configurations $C$ and $C'$ are firing equivalent if and only if $K^{-1}(C-C') \in \Z^3$. 
 
     Alternatively, we can also prove the claim by showing how to go from an arbitrary configuration to one of the three representatives using a sequence of firings. In particular, suppose that we are given an arbitrary chip configuration $(a,b,c)$. First, we can apply the $(1,1,1)$ firing move a total of $-\lfloor(a+b+c)/3\rfloor$ times. Since each firing move subtracts 3 chips, the resulting configuration will have a total of $0$, $1$, or $2$ chips. Next, we can add or subtract $(0,1,-1)$ until no chips remain in the second position. Finally, we can add or subtract $(1,0,-1)$ until no chips remain in the third position. These firing moves do not change the total number of chips, so we end up with $0$, $1$, or $2$ chips in the first position, and no chips on the other two positions. 
 \end{example}
@@ -203,7 +204,7 @@ By Proposition~\ref{prop:smith_normal}, and the help of a computer algebra syste
 While these calculations can be done for any regular matroid, the fact that $\mathcal D$ is not only square, but also symmetric, allows for an alternate perspective using the \emph{Gaussian integers} $\Z[i]$.
 
 Let $\varphi$ be the bijection between $\Z^{10}$ and $\Z[i]^5$ such that 
-\[\varphi((v_0,v_1,v_2,v_3,v_4,v_5,v_6,v_7,v_8,v_9)^t) \to (v_0 + v_5i,~v_1 + v_6i,~v_2 + v_7i,~v_3 + v_8i,~v_4 + v_9i)^t.\]
+\[\varphi((v_0,v_1,v_2,v_3,v_4,v_5,v_6,v_7,v_8,v_9)^t) \to (v_0 - v_5i,~v_1 - v_6i,~v_2 - v_7i,~v_3 - v_8i,~v_4 - v_9i)^t.\]
 Furthermore, let $\overline{\mathcal K}$ be the $5\times 5$ matrix in $\Z[i]^5$ given by 
 \[\overline{\mathcal K} =  I_5 - \mathcal D i =\begin{bmatrix}
     1 + i & -i & 0 & 0 & -i \\
@@ -224,17 +225,17 @@ This proposition tells us that $\im_{\Z} (\mathcal K)$ and $\im_{\Z[i]} (\overli
     The sandpile group $S(R_{10})$ is equal to $\coker_{\Z[i]} (\overline{\mathcal K})$. 
 \end{cor}
 
-This corollary introduces an approachable way to interpret $S(R_{10})$. Imagine a pentagon such that each vertex can have two kinds of chips, real and imaginary. There are also four kinds of firing moves, which only differ by multiplication by $i$. Each of these moves impacts the chips on three adjacent vertices. 
+This corollary introduces an approachable way to interpret $S(R_{10})$. Imagine a pentagon such that each node can have two kinds of chips, real and imaginary.\footnote{We use the term \emph{node} in place of \emph{vertex} to help distinguish our version of chip-firing from the more traditional version on a graph (which is mentioned in Remark~\ref{rem:traditional}). Each node of the pentagon corresponds to a pair of elements of the ground set of $R_{10}$. Note that the ground set of a matroid can be thought of as an abstraction of the \emph{edges} of a graph, not the \emph{vertices}.} There are also four kinds of firing moves, which only differ by multiplication by $i$. Each of these moves impacts the chips on three adjacent nodes. 
 
 
-\begin{enumerate}[(A)]
-    \item Add $1+i$ to a vertex and add $-i$ to each neighboring vertex. 
-    \item Add $-1+i$ to a vertex and add $1$ to each neighboring vertex. 
-    \item Add $-1-i$ to a vertex and add $i$ to each neighboring vertex. 
-    \item Add $1-i$ to a vertex and add $-1$ to each neighboring vertex. 
-\end{enumerate}
+\begin{itemize}
+    \item[(A)~] Add $1+i$ to a node and add $-i$ to each neighboring node. 
+    \item[(B)~] Add $-1+i$ to a node and add $1$ to each neighboring node. 
+    \item[(-A)] Add $-1-i$ to a node and add $i$ to each neighboring node. 
+    \item[(-B)] Add $1-i$ to a node and add $-1$ to each neighboring node. 
+\end{itemize}
 
-We will call these moves \emph{A-firings}, \emph{B-firings}, \emph{C-firings}, and \emph{D-firings} respectively. Note that a C-firing is just a negative A-firing and a D-firing is just a negative B-firing. Two chip-configurations on the pentagon are firing equivalent if and only if one can be reached from the other by some sequence of A, B, C, and D firings. 
+We will call these moves \emph{A-firings}, \emph{B-firings}, \emph{(-A)-firings}, and \emph{(-B)-firings} respectively. Two chip-configurations on the pentagon are firing equivalent if and only if one can be reached from the other by some sequence of A, B, (-A), and (-B) firings. 
 
 Instead of a collection of real and imaginary chips on a pentagon, chip configurations on $R_{10}$ can also be visualized as collections of nodes labeled 0 through 4 on lattice points on the complex plane (see Figure~\ref{fig:geometric}). A firing move consists of moving one node diagonally $\sqrt2$ units to another lattice point, and moving the two nodes with adjacent labels (mod 5) one unit in a direction $3\pi/4$ clockwise from the chosen node. 
 
@@ -369,7 +370,7 @@ Instead of a collection of real and imaginary chips on a pentagon, chip configur
 
     
     \end{tikzpicture}
-    \caption{This figure shows one way to visualize chip-firing on $R_{10}$. Chip-configurations correspond to 5 labeled nodes on lattice points on the complex plane. For example, the initial configuration is $[1+i, -2 + 3i, -2, 1-2i, 2]$ and the final configuration is $[2+3i, -2 + 2i, -2 + i,-2i, 1-i]$. This final configuration is reached after an A-firing of 0, a B-firing of 2, a C-firing of 4, a C-firing of 3, and a D-firing of 2. Note that there are no restrictions in this construction about multiple nodes occupying the same position; we only avoided this for the example to make things easier to draw.}
+    \caption{This figure shows one way to visualize chip-firing on $R_{10}$. Chip-configurations correspond to 5 labeled nodes on lattice points on the complex plane. For example, the initial configuration is $(1+i, -2 + 3i, -2, 1-2i, 2)$ and the final configuration is $(2+3i, -2 + 2i, -2 + i,-2i, 1-i)$. This final configuration is reached after an A-firing of 0, a B-firing of 2, a (-A)-firing of 4, a (-A)-firing of 3, and a (-B)-firing of 2. Note that there are no restrictions in this construction about multiple nodes occupying the same position; we only avoided this for the example to make things easier to draw.}
     \label{fig:geometric}
 \end{center}
 \end{figure}
@@ -381,32 +382,32 @@ Now, we will find a nice set of representatives for each equivalence class of $S
     Every equivalence class of $S(R_{10})$ contains chip configurations which do not have any imaginary chips. 
 \end{lemma}
 \begin{proof}
-    Suppose that a vertex has $a$ real chips and $b$ imaginary chips. If $b$ is positive, we perform a type D firing to the vertex $b$ times. If $b$ is negative, we perform a type B firing to the vertex $-b$ times. After this, the vertex will have no imaginary chips, and these firings do not impact the number of imaginary chips on any other vertex. After going through the process for all five of the vertices, there will be no imaginary chips remaining. 
+    Suppose that a node has $a$ real chips and $b$ imaginary chips. If $b$ is positive, we perform a (-B)-firing to the node $b$ times. If $b$ is negative, we perform a type B firing to the node $-b$ times. After this, the node will have no imaginary chips, and these firings do not impact the number of imaginary chips on any other node. After going through the process for all five of the vertices, there will be no imaginary chips remaining. 
 \end{proof}
 
-Now that we have shown that we can get rid of imaginary chips, we can find chip-configurations with specified restrictions on the number of real chips at each vertex. One useful fact that will assist in this technique is the following. 
+Now that we have shown that we can get rid of imaginary chips, we can find chip-configurations with specified restrictions on the number of real chips at each node. One useful fact that will assist in this technique is the following. 
 
 \begin{lemma}
     There exists a unique element of $S(R_{10})$ with order 2. 
 \end{lemma}
 \begin{proof}
-    This follows quickly from the fact that $S(R_{10}) \cong (\Z/3\Z)^3 \oplus (\Z/6\Z)$. Using the notation of this decomposition, the only element with order 2 is $(0,0,0,3)$.
+    This follows quickly from the fact that $S(R_{10}) \cong (\Z/3\Z)^3 \oplus (\Z/6\Z)$. Using the notation of this decomposition, the only element with order 2 is $[0,0,0,3]$.
 \end{proof}
 
 For a chip configuration $C$, we will write $C \sim H$ if the equivalence class containing $C$ is the element of order $2$ in $S(R_{10})$. For chip configurations $C$ and $C'$, we will also write $C \sim C'$ if $C$ and $C'$ are firing equivalent. 
 
 \begin{lemma}\label{lem:half_vals} 
-    Let $C$ be the chip configuration which places 1 chip on each vertex. Let $D$ be the chip configuration that places $3$ chips on one vertex and $0$ chips on the other vertices. Then, $C \sim H$ and $D \sim H$. 
+    Let $C$ be the chip configuration which places 1 chip on each node. Let $C'$ be the chip configuration that places $3$ chips on one node and $0$ chips on the other node. Then, $C \sim H$ and $C' \sim H$. 
 \end{lemma}
 \begin{proof}
     One can verify that 
-    \[\overline{\mathcal K}^{-1}(C) = \frac12\begin{bmatrix}1 + i\\ 1 + i\\ 1 + i\\ 1 + i\\ 1 + i\end{bmatrix}\text{ and }\overline{\mathcal K}^{-1}(D) = \frac12\begin{bmatrix}3 -i\\ 1 + i\\ -1 + i\\ -1 + i\\ 1 + i\end{bmatrix}.\] In both cases, we obtain a vector that is half of an element of $\mathbb Z[i]^5$.  
+    \begin{equation}\label{eq:half_proof}\overline{\mathcal K}^{-1}(C) = \frac12\begin{bmatrix}1 + i\\ 1 + i\\ 1 + i\\ 1 + i\\ 1 + i\end{bmatrix}\text{ and }\overline{\mathcal K}^{-1}(C') = \frac12\begin{bmatrix}3 -i\\ 1 + i\\ -1 + i\\ -1 + i\\ 1 + i\end{bmatrix}.\end{equation} In both cases, we obtain a vector that is half of an element of $\mathbb Z[i]^5$.  
 \end{proof}
 
 \begin{remark}\label{rem:specific}
-    The proof of Lemma~\ref{lem:half_vals} also shows which firings are required to get to the configuration with 2 chips on every node, or the configuration with 6 chips on one node, and no chips anywhere else. 
+    We can also use~\eqref{eq:half_proof} to determine which firings are required to add 2 chips to every node, or to add 6 chips to a specific node. 
 
-    For the first case, we do an A-firing and a B-firing at every node. For the second case, we do three A- firings and a D-firing on the specified node, one A-firing and one B-firing on each adjacent node, and one C-firing and one B-firing on each non-adjacent node. 
+    For the first case, we do an A-firing and a B-firing at every node. For the second case, we do three A- firings and a (-B)-firing on the specified node, one A-firing and one B-firing on each adjacent node, and one (-A)-firing and one B-firing on each non-adjacent node. 
 \end{remark}
 
 \begin{thm}\label{thm:representatives}
@@ -422,21 +423,62 @@ For a chip configuration $C$, we will write $C \sim H$ if the equivalence class 
     Finally, since $2H$ is equivalent to the identity, we must either have $C''' \sim C$ or $C''' \sim (C + H)$, depending on the parity of $a+b$. In the first case, we are done, and $C'''$ is the desired representative. In the second case, we obtain the desired representative from $C'''$ after adding $3$ chips to the distinguished node. 
 \end{proof}
 
-To end this article, we give an algorithm for finding a representative from a particular configuration, which follows the proof of Theorem~\ref{thm:representatives}. 
-\begin{alg}
-    Input: An element of $\Z[i]^5$, thought of as a chip configuration
+The last step in the proof of Theorem~\ref{thm:representatives} required determining whether $C''' \sim C$ or $C''' \sim (C + H)$. One approach would be to check if $\overline{\mathcal K}^{-1}(C''' - C) \in \mathbb Z[i]^5$, but there is an even simpler way using the following lemma. 
+
+\begin{lemma}\label{lem:parity}
+    Let $C$ and $C'$ be chip configurations such that $C \sim C' + H$. Then, the total number of chips on $C$ and the total number of chips on $C'$ must have opposite parity (counting both real and imaginary chips). 
+\end{lemma}
+\begin{proof}
+    Each of the four kinds of firings has a net effect of adding or subtracting exactly 2 chips to the configuration. In particular, a sequence of firings cannot change the parity of the total number of chips. Furthermore, both of the chip configurations identified in Lemma~\ref{lem:half_vals} have an odd number of total chips. The result follows. 
+\end{proof}
+
+The following algorithm gives a simple procedure to determine a representative from Theorem~\ref{thm:representatives} for each equivalence class of $S(R_{10})$. For the most part, the algorithm follows the proof of Theorem~\ref{thm:representatives}, but we avoid firing language to make the argument easier to parse, and we take advantage of Lemma~\ref{lem:parity}. 
+
+\begin{alg}\label{alg:stabilize}
+    Input: An element of $\Z[i]^5$, thought of as a chip configuration.
     \begin{enumerate}[1.]
-        \item Use B-firings and D-firings to get rid of all imaginary chips from the vertices.
-        \item Introduce a variable boolean variable isEven.
+        \item Label the vertices $v_0,v_1,v_2,v_3,v_4$ and let $\psi(v_k)$ be the number of imaginary chips at node $v_k$. 
+        \item At each node $v_k$, add $\psi(v_{k}) - \psi(v_{k+1}) - \psi(v_{k-1})$ real chips (where indices are mod 5). 
+        \item Remove all imaginary chips. 
+        \item Introduce a boolean variable isEven.
         \item Count the total chips. If this total is even, set isEven = True, otherwise, set isEven = False. 
-        \item Subtract the number of chips at the distinguished vertex from every vertex
-        \item At each vertex, set the number of chips to the remainder after dividing by 3. 
-        \item Count the total chips. If the total is even and isEven = False, or if the total is odd and isEven = True, then add 3 chips to the distinguished vertex. 
+        \item Subtract the number of chips at the distinguished node from every node
+        \item At each node, set the number of chips to the remainder after dividing by 3. 
+        \item Count the total chips. If the total is even and isEven = False, or if the total is odd and isEven = True, then add 3 chips to the distinguished node. 
     \end{enumerate}    
     Output: the resulting configuration.
 \end{alg}
+\begin{proof}
+The first 3 steps use $B$- firings and $(-B)$-firings to get rid of all imaginary chips (see Lemma~\ref{lem:no_i}). Steps 4 and 5 keep track of the parity of the configuration so that we can use Lemma~\ref{lem:parity} to distinguish between chip-configurations that differ by $H$. Steps 6 and 7 use Lemma~\ref{lem:half_vals} to add chip configurations equal to $H$. Finally, Step 8 applies our earlier parity reasoning. 
+\end{proof}
 
-Note that steps 4 and 5 can also be described in terms of firings by applying Remark~\ref{rem:specific}. 
+\begin{example}
+    Let us apply Algorithm~\ref{alg:stabilize} to find a nice representative for the equivalence class of $S(R_{10})$ that contains the chip configuration $(3+i, 4-6i, 7+i, -8-8i, 3)$ (with $v_0$ as our distinguished node). 
+
+    In the initial configuration, we have $\psi(v_0) = 1$, $\psi(v_1) = -6$, $\psi(v_2) = 1$, and $\psi(v_4) = -8$, $\psi(v_5) = 0$. In Step 2, we add $7$ chips to $v_0$, $-8$ chips to $v_1$, $15$ chips to $v_2$, $-9$ chips to $v_3$, and $7$ chips to $v_4$. After Step 3, we have the chip configuration $(10,-4,22,-17,10)$. In Steps 4 and 5, we set isEven = False. After Steps 6 and 7, we have the chip configuration $(0, 1, 0, 0, 0)$. Finally, since the total number of chips is still odd, we do not change anything in Step 8. Thus, $(0, 1, 0, 0, 0)$ is our representative configuration. 
+
+    We can verify that this configuration is in the same equivalence class as our original configuration by computing 
+    \[ \overline{\mathcal K}^{-1}\left (\begin{bmatrix} 0 \\ 1 \\ 0 \\ 0 \\ 0\end{bmatrix}-\begin{bmatrix} 3+i \\ 4 - 6i \\ 7+i \\ -8-8i \\ 3\end{bmatrix}\right ) = \begin{bmatrix} -5 - i \\ -4 + i \\ -4 + 3i \\ 4 - i\\ -1\end{bmatrix}\]
+    The resulting vector is in $\Z[i]^5$, so the two chip configurations must be firing equivalent. More explicitly, the real part of the vector tells the number of $A$-firings required at each node, while the imaginary part tells the number of $B$-firings required at each node, in order to get from the initial configuration to $(0,1,0,0,0)$. 
+\end{example}
+
+\anote{The end of this section would talk about sandpile torsor stuff, but I don't know if I like it. You can ignore the rest of the paper for now, and I'll decide in the future how to address this stuff (if at all). Maybe, I'll just throw a little something in Remark~\ref{names}.}
+
+\subsection{The orientation perspective}
+
+To end this article, we want to briefly comment on an alternate approach to defining sandpile groups of regular matroids, which can also be used to produce different sets of representatives of $S(R_{10})$. Instead of assigning an integer to each element of the ground set, one can instead work with \emph{orientations} on the ground set. This perspective is equivalent to requiring each node of the pentagon to have either 0 or 1 real chips and either 0 or 1 imaginary chips. 
+
+One difference with this alternate perspective is that any ``firing move'' must maintain the restriction that every node is assigned either 0 or 1 real chips and either 0 or 1 imaginary chips. However, this is not always possible when the only firing moves allowed are $A$, $B$, $(-A)$ and $(-B)$ firings. For example, since every move has both positive and negative coefficients, no such move would be possible from the all zeros configuration. 
+
+Nevertheless, this problem goes away if we also allow for simultaneous moves. For example, if we perform all 5 $B$ moves simultaneously, this adds 1+i moves to each node, which is valid in this framework from the all zeros configuration. Furthermore, the allowable moves correspond to reversing \emph{circuits} or \emph{cocircuits} of the matroid. For many more details on this perspective, see~\cite{Gioan}. 
+
+\anote{I might add something here about how future work could find relationships between bases and equivalence classes of $S(R_{10})$, while also citing a few approaches that can be used.} 
+
+
+
+
+
+
 
 \bibliographystyle{alpha}
 \bibliography{biblio}
