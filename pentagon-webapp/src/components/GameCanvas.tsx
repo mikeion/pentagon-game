@@ -21,8 +21,8 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
   const calculateVertexPositions = useCallback((width: number, height: number) => {
     const centerX = width / 2;
     const centerY = height / 2;
-    // Make pentagon fill 80-90% of viewport (much larger than before)
-    const radius = Math.min(width, height) * 0.38;
+    // Pentagon radius - larger to fill canvas better (smaller vertices = more room)
+    const radius = Math.min(width, height) * 0.40;
 
     const positions: VertexPosition[] = [];
     for (let i = 0; i < 5; i++) {
@@ -43,9 +43,9 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       const vh = window.innerHeight;
 
       // Reserve space for overlays (buttons at top corners + bottom controls on mobile)
-      const reservedTop = 80; // Space for top overlay buttons
-      const reservedBottom = window.innerWidth < 768 ? 200 : 100; // More space on mobile
-      const reservedSides = 40; // Padding on sides
+      const reservedTop = 80; // Space for top buttons
+      const reservedBottom = window.innerWidth < 768 ? 180 : 100; // Space for bottom buttons
+      const reservedSides = 30; // Side padding for breathing room
 
       const availableWidth = vw - (reservedSides * 2);
       const availableHeight = vh - reservedTop - reservedBottom;
@@ -161,7 +161,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       if (i === gameState.selectedVertex) {
         ctx.fillStyle = 'rgba(236, 72, 153, 0.4)';
         ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 60, 0, 2 * Math.PI);
+        ctx.arc(pos.x, pos.y, 48, 0, 2 * Math.PI);
         ctx.fill();
       }
 
@@ -169,16 +169,16 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       if (hintVertex !== undefined && i === hintVertex) {
         ctx.fillStyle = 'rgba(34, 197, 94, 0.5)';
         ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 65, 0, 2 * Math.PI);
+        ctx.arc(pos.x, pos.y, 50, 0, 2 * Math.PI);
         ctx.fill();
       }
 
-      // Draw vertex circle
+      // Draw vertex circle (reduced from 45px to 35px)
       ctx.fillStyle = '#1E293B';
       ctx.strokeStyle = '#8B5CF6';
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.arc(pos.x, pos.y, 45, 0, 2 * Math.PI);
+      ctx.arc(pos.x, pos.y, 35, 0, 2 * Math.PI);
       ctx.fill();
       ctx.stroke();
 
@@ -249,8 +249,8 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     for (let i = 0; i < vertexPositions.length; i++) {
       const pos = vertexPositions[i];
       const distance = Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2);
-      
-      if (distance < 45) {
+
+      if (distance < 35) {
         // Start long press timer for mobile
         setIsLongPress(false);
         const timer = setTimeout(() => {
@@ -295,7 +295,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       const pos = vertexPositions[i];
       const distance = Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2);
 
-      if (distance < 45) {
+      if (distance < 35) {
         const operation = e.button === 2 || isLongPress ? 'subtract' : 'add';
         onVertexClick(i, operation);
         break;
