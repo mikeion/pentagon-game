@@ -27,8 +27,7 @@ export default function MainMenu() {
             onClick={() => router.push('/campaign')}
             className="w-full px-6 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold text-xl transition-all shadow-lg"
           >
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-2xl">📚</span>
+            <div className="flex items-center justify-center">
               <span>Campaign Mode</span>
             </div>
             <p className="text-sm text-indigo-200 mt-2">
@@ -42,8 +41,7 @@ export default function MainMenu() {
             onClick={() => router.push('/free-play')}
             className="w-full px-6 py-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-bold text-xl transition-all shadow-lg"
           >
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-2xl">🎮</span>
+            <div className="flex items-center justify-center">
               <span>Free Play</span>
             </div>
             <p className="text-sm text-emerald-200 mt-2">

@@ -170,7 +170,7 @@ export default function CampaignLevelGame({ chapterId, level, onBack, onNext }: 
           colors: ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b']
         });
 
-        toast.success('Level Complete! 🎉', {
+        toast.success('Level Complete!', {
           duration: 3000,
           position: 'top-center',
         });
@@ -189,7 +189,7 @@ export default function CampaignLevelGame({ chapterId, level, onBack, onNext }: 
         >
           <div className="text-xs text-cyan-400 font-semibold mb-1">Goal:</div>
           <div className="text-sm text-white font-bold">
-            {level.goalType === 'all-zeros' ? '🎯 All Zeros' : '✨ Nice Representative'}
+            {level.goalType === 'all-zeros' ? 'All Zeros' : 'Nice Representative'}
           </div>
           {level.par && (
             <div className="text-xs text-slate-400 mt-1">Par: {level.par} moves</div>
@@ -249,7 +249,7 @@ export default function CampaignLevelGame({ chapterId, level, onBack, onNext }: 
         <div className="absolute inset-0 z-29 flex items-center justify-center bg-black/20">
           <div className="bg-gradient-to-br from-green-600/95 to-emerald-700/95 px-8 py-6 rounded-2xl shadow-2xl backdrop-blur-sm border-2 border-green-400/50 max-w-sm mx-4">
             <div className="text-center">
-              <p className="text-3xl font-bold text-white mb-3">🎉 Level Complete!</p>
+              <p className="text-3xl font-bold text-white mb-3">Level Complete!</p>
               <div className="bg-white/20 rounded-lg p-4 mb-4 space-y-2 text-left">
                 <div className="flex justify-between items-center text-white">
                   <span className="text-base">Moves:</span>
