@@ -480,7 +480,7 @@ export default function PentagonGame() {
       {showMenu && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm">
           <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl border-2 border-indigo-500 max-w-md w-full">
-            <h2 className="text-3xl font-bold text-white mb-4 text-center">Pentagon Game</h2>
+            <h2 className="text-3xl font-bold text-white mb-4 text-center">Chip Firing Game</h2>
 
             {/* How to Play */}
             <div className="bg-slate-700/50 rounded-lg p-4 mb-6 text-sm">
