@@ -776,9 +776,9 @@ export default function PentagonGame() {
       {/* Toast notifications */}
       <Toaster />
 
-      {/* Footer attribution */}
+      {/* Footer attribution - hidden on mobile to avoid overlap */}
       {!showMenu && (
-        <div className="absolute bottom-2 left-0 right-0 flex justify-center pointer-events-none">
+        <div className="hidden md:flex absolute bottom-2 left-0 right-0 justify-center pointer-events-none">
           <div className="text-xs text-slate-500 flex items-center gap-1.5 pointer-events-auto">
             <span>Game by</span>
             <a

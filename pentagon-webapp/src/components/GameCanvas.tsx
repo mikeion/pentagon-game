@@ -44,7 +44,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
 
       // Reserve space for overlays (buttons at top corners + bottom controls on mobile)
       const reservedTop = 90; // Space for top buttons and V0 label
-      const reservedBottom = window.innerWidth < 768 ? 180 : 120; // Space for bottom buttons
+      const reservedBottom = window.innerWidth < 768 ? 140 : 120; // Reduced bottom space on mobile
       const reservedSides = 20; // Side padding for breathing room
 
       const availableWidth = vw - (reservedSides * 2);
@@ -148,19 +148,19 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     if (gameState.currentMoveType === 'A') {
       moveLabel = 'A';
       line1 = '1+i to vertex';
-      line2 = '-1 to adj';
+      line2 = '-i to adj';
     } else if (gameState.currentMoveType === 'C') {
       moveLabel = '-A';
       line1 = '-1-i to vertex';
-      line2 = '+1 to adj';
+      line2 = '+i to adj';
     } else if (gameState.currentMoveType === 'B') {
       moveLabel = 'B';
       line1 = '-1+i to vertex';
-      line2 = '-1 to adj';
+      line2 = '+1 to adj';
     } else { // D
       moveLabel = '-B';
       line1 = '1-i to vertex';
-      line2 = '+1 to adj';
+      line2 = '-1 to adj';
     }
 
     ctx.fillText(moveLabel, centerX, centerY - 20);

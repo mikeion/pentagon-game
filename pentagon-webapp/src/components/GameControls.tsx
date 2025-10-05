@@ -1,6 +1,7 @@
 'use client';
 
 import { GameState, MoveType } from '@/types/game';
+import { Jacquard_12, Jolly_Lodger } from 'next/font/google';
 
 interface GameControlsProps {
   gameState: GameState;
@@ -163,3 +164,7 @@ export default function GameControls({
     </div>
   );
 }
+
+
+
+ 
