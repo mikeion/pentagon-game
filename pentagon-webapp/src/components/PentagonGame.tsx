@@ -236,7 +236,11 @@ export default function PentagonGame() {
           }));
         }
 
-        // Set hint vertex
+        // Clear selected vertex and set hint vertex (avoid confusion)
+        setGameState(prev => ({
+          ...prev,
+          selectedVertex: undefined,
+        }));
         setHintVertex(hint.vertex);
 
         // Clear hint after 3 seconds
