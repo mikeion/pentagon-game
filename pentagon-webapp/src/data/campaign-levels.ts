@@ -16,13 +16,13 @@ export const campaignChapters: CampaignChapter[] = [
       {
         id: '1-1',
         title: 'Meet Move A',
-        description: 'Apply move A to return to zero. A adds 1+i to the vertex and -i to neighbors.',
+        description: 'Apply move A to V0 to return to zero. A adds 1+i to the vertex and -i to neighbors.',
         startState: [
           { real: -1, imag: -1 }, // V0: needs one A move
+          { real: 0, imag: 1 },   // V1: will become 0 after getting -i from V0
           { real: 0, imag: 0 },
           { real: 0, imag: 0 },
-          { real: 0, imag: 0 },
-          { real: 0, imag: 0 },
+          { real: 0, imag: 1 },   // V4: will become 0 after getting -i from V0
         ],
         goalType: 'all-zeros',
         par: 1,
@@ -30,13 +30,13 @@ export const campaignChapters: CampaignChapter[] = [
       {
         id: '1-2',
         title: 'Meet Move B',
-        description: 'Apply move B to return to zero. B adds -1+i to the vertex and +1 to neighbors.',
+        description: 'Apply move B to V0 to return to zero. B adds -1+i to the vertex and +1 to neighbors.',
         startState: [
           { real: 1, imag: -1 }, // V0: needs one B move
+          { real: -1, imag: 0 }, // V1: will become 0 after getting +1 from V0
           { real: 0, imag: 0 },
           { real: 0, imag: 0 },
-          { real: 0, imag: 0 },
-          { real: 0, imag: 0 },
+          { real: -1, imag: 0 }, // V4: will become 0 after getting +1 from V0
         ],
         goalType: 'all-zeros',
         par: 1,
