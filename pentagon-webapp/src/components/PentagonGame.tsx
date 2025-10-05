@@ -675,42 +675,68 @@ export default function PentagonGame() {
 
       {/* Win celebration overlay */}
       {gameState.isWon && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 bg-gradient-to-br from-green-600/95 to-emerald-700/95 px-12 py-8 rounded-2xl shadow-2xl backdrop-blur-sm border-2 border-green-400/50 max-w-md">
-          <div className="text-center">
-            <p className="text-4xl font-bold text-white mb-4">🎉 Congratulations!</p>
-            <p className="text-xl text-green-100 mb-6">Puzzle Solved!</p>
+        <>
+          {/* Backdrop - click to dismiss on desktop */}
+          <div
+            className="absolute inset-0 z-29 bg-black/20 md:bg-transparent"
+            onClick={() => {
+              // On desktop, allow dismissing by clicking backdrop
+              if (window.innerWidth >= 768) {
+                // Keep the modal open, user can use X button or New Puzzle
+              }
+            }}
+          />
 
-            <div className="bg-white/20 rounded-lg p-4 mb-6 space-y-2">
-              <div className="flex justify-between items-center text-white">
-                <span className="text-lg">Moves:</span>
-                <span className="text-2xl font-bold">{moveCount}</span>
-              </div>
-              {solveTime && (
-                <div className="flex justify-between items-center text-white">
-                  <span className="text-lg">Time:</span>
-                  <span className="text-2xl font-bold">
-                    {Math.floor(solveTime / 60000)}:{String(Math.floor((solveTime % 60000) / 1000)).padStart(2, '0')}
-                  </span>
-                </div>
-              )}
-              <div className="flex justify-between items-center text-white">
-                <span className="text-lg">Hints Used:</span>
-                <span className="text-2xl font-bold">{hintsUsed}</span>
-              </div>
-              <div className="flex justify-between items-center text-white">
-                <span className="text-lg">Solution Viewed:</span>
-                <span className="text-2xl font-bold">{solutionViewed ? 'Yes' : 'No'}</span>
-              </div>
-            </div>
-
+          {/* Modal - centered on mobile, top-right on desktop */}
+          <div className="absolute top-1/2 left-1/2 md:top-20 md:left-auto md:right-6 transform -translate-x-1/2 -translate-y-1/2 md:translate-x-0 md:translate-y-0 z-30 bg-gradient-to-br from-green-600/95 to-emerald-700/95 px-8 py-6 rounded-2xl shadow-2xl backdrop-blur-sm border-2 border-green-400/50 max-w-sm w-full mx-4">
+            {/* Close button - desktop only */}
             <button
-              onClick={resetGame}
-              className="w-full px-6 py-3 bg-white text-green-700 rounded-lg font-bold text-lg hover:bg-green-50 transition-all shadow-lg"
+              onClick={() => {
+                // Just reset to start new game
+                resetGame();
+              }}
+              className="hidden md:block absolute top-3 right-3 w-8 h-8 text-white/70 hover:text-white hover:bg-white/20 rounded-lg transition-all"
+              aria-label="Close"
             >
-              New Puzzle
+              ✕
             </button>
+
+            <div className="text-center">
+              <p className="text-3xl font-bold text-white mb-3">🎉 Congratulations!</p>
+              <p className="text-lg text-green-100 mb-4">Puzzle Solved!</p>
+
+              <div className="bg-white/20 rounded-lg p-4 mb-4 space-y-2 text-left">
+                <div className="flex justify-between items-center text-white">
+                  <span className="text-base">Moves:</span>
+                  <span className="text-xl font-bold">{moveCount}</span>
+                </div>
+                {solveTime && (
+                  <div className="flex justify-between items-center text-white">
+                    <span className="text-base">Time:</span>
+                    <span className="text-xl font-bold">
+                      {Math.floor(solveTime / 60000)}:{String(Math.floor((solveTime % 60000) / 1000)).padStart(2, '0')}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center text-white">
+                  <span className="text-base">Hints Used:</span>
+                  <span className="text-xl font-bold">{hintsUsed}</span>
+                </div>
+                <div className="flex justify-between items-center text-white">
+                  <span className="text-base">Solution Viewed:</span>
+                  <span className="text-xl font-bold">{solutionViewed ? 'Yes' : 'No'}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={resetGame}
+                className="w-full px-6 py-3 bg-white text-green-700 rounded-lg font-bold text-base hover:bg-green-50 transition-all shadow-lg"
+              >
+                New Puzzle
+              </button>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Main canvas - centered, full screen */}
