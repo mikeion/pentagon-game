@@ -4,20 +4,18 @@ import { ComplexNumber, GameState, MoveType } from '../types/game';
 // Create math.js instance with complex number support
 const math = create(all);
 
-// K^-1 matrix computed from K = I_5 - Di (paper line 208 at the time I'm putting this in here lol)
-// in the future we can probably use some library to compute this for any matrix, just for this particular case
-// thought it'd be robust to put the inverse directly in here.
-
-const MATRIX_INVERSE = math.matrix([
-  [math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1), math.complex(1, 1)],
-  [math.complex(1, 1), math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1)],
-  [math.complex(-1, 1), math.complex(1, 1), math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1)],
-  [math.complex(-1, 1), math.complex(-1, 1), math.complex(1, 1), math.complex(3, -1), math.complex(1, 1)],
-  [math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1), math.complex(1, 1), math.complex(3, -1)]
+// K matrix from paper (line 208): K = I_5 - Di
+// where D is the pentagon adjacency matrix with diagonal 1s and -1s for adjacent vertices
+const K_MATRIX = math.matrix([
+  [math.complex(1, 1), math.complex(0, -1), math.complex(0, 0), math.complex(0, 0), math.complex(0, -1)],
+  [math.complex(0, -1), math.complex(1, 1), math.complex(0, -1), math.complex(0, 0), math.complex(0, 0)],
+  [math.complex(0, 0), math.complex(0, -1), math.complex(1, 1), math.complex(0, -1), math.complex(0, 0)],
+  [math.complex(0, 0), math.complex(0, 0), math.complex(0, -1), math.complex(1, 1), math.complex(0, -1)],
+  [math.complex(0, -1), math.complex(0, 0), math.complex(0, 0), math.complex(0, -1), math.complex(1, 1)]
 ]);
 
-// Scale by 1/6
-const SCALED_MATRIX_INVERSE = math.multiply(MATRIX_INVERSE, 1/6);
+// Compute K^-1 using math.js inv() function (verified to match hardcoded inverse)
+const K_INVERSE = math.inv(K_MATRIX);
 
 // Move definitions mapping complex numbers to move types
 const MOVE_MAPPINGS = {
@@ -53,18 +51,19 @@ function fromMathComplex(c: unknown): ComplexNumber {
   };
 }
 
-// Calculate the difference vector from current state to goal (0+0i)
-function calculateDifferenceVector(current: GameState): unknown {
-  // Since goal is always [0+0i, 0+0i, 0+0i, 0+0i, 0+0i]
-  // The difference is simply -current
-  const currentVector = math.matrix(current.vertices.map(toMathComplex));
-  return math.multiply(currentVector, -1);
+// Calculate the difference vector from current state to goal
+function calculateDifferenceVector(current: ComplexNumber[], goal: ComplexNumber[]): unknown {
+  const currentVector = math.matrix(current.map(toMathComplex));
+  const goalVector = math.matrix(goal.map(toMathComplex));
+
+  // difference = goal - current
+  return math.subtract(goalVector, currentVector);
 }
 
 // Apply the inverse matrix to get the solution vector
 function applySolutionMatrix(differenceVector: unknown): unknown {
-  // Matrix multiplication: M^-1 × difference
-  return math.multiply(SCALED_MATRIX_INVERSE, differenceVector as Parameters<typeof math.multiply>[1]);
+  // Matrix multiplication: K^-1 × difference
+  return math.multiply(K_INVERSE, differenceVector as Parameters<typeof math.multiply>[1]);
 }
 
 // Simulate applying a move to a state
@@ -149,7 +148,8 @@ export async function solveWithMatrix(
   initialState: GameState
 ): Promise<MatrixSolution | null> {
   try {
-    const differenceVector = calculateDifferenceVector(initialState);
+    // Use goalVertices from GameState (works for both base game and campaign)
+    const differenceVector = calculateDifferenceVector(initialState.vertices, initialState.goalVertices);
     const solutionVector = applySolutionMatrix(differenceVector);
     const moves = solutionToMoves(solutionVector, initialState.vertices);
 

@@ -1,8 +1,7 @@
-// Test that our matrix inverse is correct
 const math = require('mathjs');
 
-// K̄ = I₅ - Di from the paper
-const K = math.matrix([
+// K matrix from paper (line 208): K = I_5 - Di
+const K_MATRIX = math.matrix([
   [math.complex(1, 1), math.complex(0, -1), math.complex(0, 0), math.complex(0, 0), math.complex(0, -1)],
   [math.complex(0, -1), math.complex(1, 1), math.complex(0, -1), math.complex(0, 0), math.complex(0, 0)],
   [math.complex(0, 0), math.complex(0, -1), math.complex(1, 1), math.complex(0, -1), math.complex(0, 0)],
@@ -10,8 +9,8 @@ const K = math.matrix([
   [math.complex(0, -1), math.complex(0, 0), math.complex(0, 0), math.complex(0, -1), math.complex(1, 1)]
 ]);
 
-// Our claimed inverse (without the 1/6 scaling)
-const K_inv = math.matrix([
+// The hardcoded inverse (times 6) from the current code
+const EXPECTED_INVERSE_TIMES_6 = math.matrix([
   [math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1), math.complex(1, 1)],
   [math.complex(1, 1), math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1)],
   [math.complex(-1, 1), math.complex(1, 1), math.complex(3, -1), math.complex(1, 1), math.complex(-1, 1)],
@@ -19,23 +18,29 @@ const K_inv = math.matrix([
   [math.complex(1, 1), math.complex(-1, 1), math.complex(-1, 1), math.complex(1, 1), math.complex(3, -1)]
 ]);
 
-// K × K_inv should equal 6×I₅ (since we haven't applied the 1/6 scaling yet)
-const product = math.multiply(K, K_inv);
+console.log('K Matrix:');
+console.log(K_MATRIX.toString());
+console.log('\n');
 
-console.log('K × K_inv =');
-console.log(product.toString());
+// Compute K^-1 using math.inv()
+const K_INVERSE = math.inv(K_MATRIX);
 
-// Check if it equals 6×I₅
-const expected = math.multiply(math.identity(5), 6);
-console.log('\nExpected (6×I₅) =');
-console.log(expected.toString());
+console.log('Computed K^-1:');
+console.log(K_INVERSE.toString());
+console.log('\n');
 
-// Also compute the actual inverse using math.js
-console.log('\nComputing actual inverse with math.js...');
-const actual_inverse = math.inv(K);
-console.log('Actual K⁻¹ =');
-console.log(actual_inverse.toString());
+// Scale by 6 to compare with expected
+const K_INVERSE_TIMES_6 = math.multiply(K_INVERSE, 6);
 
-console.log('\nScaled by 6:');
-const scaled_actual = math.multiply(actual_inverse, 6);
-console.log(scaled_actual.toString());
+console.log('Computed K^-1 × 6:');
+console.log(K_INVERSE_TIMES_6.toString());
+console.log('\n');
+
+console.log('Expected K^-1 × 6 (hardcoded):');
+console.log(EXPECTED_INVERSE_TIMES_6.toString());
+console.log('\n');
+
+// Verify: K × K^-1 should equal identity
+const IDENTITY_CHECK = math.multiply(K_MATRIX, K_INVERSE);
+console.log('K × K^-1 (should be identity):');
+console.log(IDENTITY_CHECK.toString());
