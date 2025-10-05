@@ -8,7 +8,7 @@ import { Menu, Lightbulb } from 'lucide-react';
 import GameCanvas from './GameCanvas';
 import { ComplexNumber, GameState, Move, MoveType, UIMoveType } from '@/types/game';
 import { getMatrixHint, getFullSolution } from '@/utils/matrix-solver-mathjs';
-import { checkGoal } from '@/utils/goal-checker';
+import { isNiceRepresentative, getNiceRepresentativeProgress } from '@/utils/nice-representative-solver';
 
 // Move definitions (CORRECTED to match Alex's paper lines 231-234)
 // Paper specification:
@@ -435,7 +435,7 @@ export default function PentagonGame() {
 
     if (gameMode === 'nice-representative') {
       // Nice representative mode: check if configuration matches criteria
-      isWon = checkGoal(gameState.vertices, 'nice-representative', 0);
+      isWon = isNiceRepresentative(gameState.vertices, 0);
     } else if (gameMode === 'sandbox') {
       // Sandbox mode: no win condition, always false
       isWon = false;
@@ -623,6 +623,29 @@ export default function PentagonGame() {
         </div>
       )}
 
+      {/* Nice Representative Mode Progress */}
+      {gameMode === 'nice-representative' && !showMenu && !gameState.isWon && (
+        <div className="absolute top-[2vh] left-1/2 transform -translate-x-1/2 z-20 bg-slate-800/95 backdrop-blur-md px-[4vw] py-[2vh] rounded-xl border border-amber-500/50 shadow-xl max-w-[90vw] md:max-w-2xl">
+          <div className="text-center mb-[1vh]">
+            <div className="text-amber-400 font-bold text-[4vw] md:text-lg mb-[0.5vh]">Goal: Reach Nice Representative</div>
+            <div className="text-slate-300 text-[3vw] md:text-sm">
+              V0 ∈ {'{0, 3}'} • V1-V4 ∈ {'{0, 1, 2}'} • All real (no imaginary)
+            </div>
+          </div>
+          {(() => {
+            const progress = getNiceRepresentativeProgress(gameState.vertices, 0);
+            if (progress.issues.length === 0) return null;
+            return (
+              <div className="text-[2.5vw] md:text-sm space-y-[0.5vh]">
+                {progress.issues.map((issue, i) => (
+                  <div key={i} className="text-red-400">✗ {issue}</div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
       {/* Sandbox Mode: Vertex Editor */}
       {gameMode === 'sandbox' && !showMenu && (
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-slate-800/95 backdrop-blur-md px-6 py-3 rounded-xl border border-cyan-500/50 shadow-xl">
@@ -728,9 +751,19 @@ export default function PentagonGame() {
             <button
               onClick={() => { handleSolutionClick(); setShowMenuDropdown(false); }}
               disabled={isGettingSolution}
-              className="w-full px-4 py-3 bg-indigo-600/90 hover:bg-indigo-600 text-white text-left font-semibold transition-all disabled:opacity-50"
+              className="w-full px-4 py-3 bg-indigo-600/90 hover:bg-indigo-600 text-white text-left font-semibold transition-all disabled:opacity-50 border-b border-slate-600"
             >
               {isGettingSolution ? 'Loading...' : 'Solution'}
+            </button>
+            <button
+              onClick={() => {
+                setShowMenu(true);
+                setShowModeSelect(true);
+                setShowMenuDropdown(false);
+              }}
+              className="w-full px-4 py-3 bg-purple-600/90 hover:bg-purple-600 text-white text-left font-semibold transition-all"
+            >
+              Main Menu
             </button>
           </div>
         )}
