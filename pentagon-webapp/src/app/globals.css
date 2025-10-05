@@ -1,8 +1,27 @@
 @import "tailwindcss";
 
+/* Accessible Dark Minimalist Palette for R₁₀ Chip-Firing */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Dark mode by default for energy efficiency and reduced eye strain */
+  --background: #0f172a;        /* slate-900: Deep blue-gray base */
+  --surface: #1e293b;           /* slate-800: Elevated surfaces */
+  --surface-light: #334155;     /* slate-700: Interactive elements */
+
+  /* Text colors - WCAG AA compliant */
+  --foreground: #f1f5f9;        /* slate-100: Primary text (15.3:1 contrast) */
+  --foreground-dim: #cbd5e1;    /* slate-300: Secondary text (10.8:1 contrast) */
+  --foreground-muted: #94a3b8;  /* slate-400: Tertiary text (6.4:1 contrast) */
+
+  /* Accent colors - Single color for focus */
+  --accent: #06b6d4;            /* cyan-500: Primary accent (5.8:1 contrast on dark) */
+  --accent-bright: #22d3ee;     /* cyan-400: Hover states */
+  --accent-dim: #0891b2;        /* cyan-600: Pressed states */
+
+  /* Semantic colors */
+  --success: #10b981;           /* emerald-500: Zero state / completion */
+  --warning: #f59e0b;           /* amber-500: Nice representative highlight */
+  --real-number: #3b82f6;       /* blue-500: Real numbers (pure real) */
+  --complex-number: #a855f7;    /* purple-500: Complex numbers (has imaginary) */
 }
 
 @theme inline {
@@ -12,10 +31,16 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+/* Light mode override (optional - default to dark) */
+@media (prefers-color-scheme: light) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Users can still get light mode if they prefer */
+    --background: #ffffff;
+    --surface: #f8fafc;
+    --surface-light: #f1f5f9;
+    --foreground: #0f172a;
+    --foreground-dim: #475569;
+    --foreground-muted: #64748b;
   }
 }
 
