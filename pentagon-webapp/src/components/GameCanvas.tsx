@@ -44,7 +44,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       const vh = window.innerHeight;
 
       // Reserve space for overlays (buttons at top corners + bottom controls on mobile)
-      const reservedTop = 140; // More space for top buttons and V0 label
+      const reservedTop = 160; // Extra space for top buttons and V0 label
       const reservedBottom = window.innerWidth < 768 ? 180 : 120; // Bottom space for buttons (V2/V3 fit fine)
       const reservedSides = 60; // Much more side padding for V1/V4 labels
 
