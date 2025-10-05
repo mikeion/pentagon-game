@@ -18,11 +18,11 @@ export const campaignChapters: CampaignChapter[] = [
         title: 'Meet Move A',
         description: 'Apply move A to V0 to return to zero. A adds 1+i to the vertex and -i to neighbors.',
         startState: [
-          { real: -1, imag: -1 }, // V0: needs one A move
-          { real: 0, imag: 1 },   // V1: will become 0 after getting -i from V0
+          { real: 1, imag: 1 },
+          { real: 0, imag: -1 },
           { real: 0, imag: 0 },
           { real: 0, imag: 0 },
-          { real: 0, imag: 1 },   // V4: will become 0 after getting -i from V0
+          { real: 0, imag: -1 },
         ],
         goalType: 'all-zeros',
         par: 1,
@@ -32,23 +32,23 @@ export const campaignChapters: CampaignChapter[] = [
         title: 'Meet Move B',
         description: 'Apply move B to V0 to return to zero. B adds -1+i to the vertex and +1 to neighbors.',
         startState: [
-          { real: 1, imag: -1 }, // V0: needs one B move
-          { real: -1, imag: 0 }, // V1: will become 0 after getting +1 from V0
+          { real: -1, imag: 1 },
+          { real: 1, imag: 0 },
           { real: 0, imag: 0 },
           { real: 0, imag: 0 },
-          { real: -1, imag: 0 }, // V4: will become 0 after getting +1 from V0
+          { real: 1, imag: 0 },
         ],
         goalType: 'all-zeros',
         par: 1,
       },
       {
         id: '1-3',
-        title: 'Neighbors Matter',
-        description: 'Use move A on V1. Notice how it affects V1 and its neighbors (V0 and V2)!',
+        title: 'Different Vertex',
+        description: 'This time, apply move A to V1 instead of V0. Which vertex you click matters!',
         startState: [
-          { real: -1, imag: -1 }, // V0: neighbor of V1, gets -i from V1's A move
-          { real: -1, imag: -1 }, // V1: click here with A -> becomes 0
-          { real: 0, imag: 1 },   // V2: neighbor of V1, gets -i from V1's A move
+          { real: 0, imag: -1 },
+          { real: 1, imag: 1 },
+          { real: 0, imag: -1 },
           { real: 0, imag: 0 },
           { real: 0, imag: 0 },
         ],
@@ -60,14 +60,28 @@ export const campaignChapters: CampaignChapter[] = [
         title: 'Combining A and B',
         description: 'Use move B on V1, then move A on V2. Practice switching between moves!',
         startState: [
-          { real: -1, imag: 0 }, // V0: neighbor of V1, gets +1 from B
-          { real: 1, imag: -1 }, // V1: click B here -> becomes 0
-          { real: -2, imag: -1 }, // V2: neighbor of V1 (gets +1), then click A here
-          { real: 0, imag: 1 },  // V3: neighbor of V2, gets -i from A
+          { real: 1, imag: 0 },
+          { real: -1, imag: 0 },
+          { real: 2, imag: 1 },
+          { real: 0, imag: -1 },
           { real: 0, imag: 0 },
         ],
         goalType: 'all-zeros',
         par: 2,
+      },
+      {
+        id: '1-5',
+        title: 'Going Backwards',
+        description: 'Right-click (or long-press on mobile) V0 with move A selected to apply -A. Negative moves reverse their positive versions!',
+        startState: [
+          { real: -1, imag: -1 },
+          { real: 0, imag: 1 },
+          { real: 0, imag: 0 },
+          { real: 0, imag: 0 },
+          { real: 0, imag: 1 },
+        ],
+        goalType: 'all-zeros',
+        par: 1,
       },
     ],
   },
@@ -79,13 +93,13 @@ export const campaignChapters: CampaignChapter[] = [
       {
         id: '2-1',
         title: 'Pure Imaginary',
-        description: 'Use move A to eliminate imaginary part on V0. Notice A adds -i to neighbors!',
+        description: 'Use move A on V0. See how one move can eliminate imaginary chips!',
         startState: [
-          { real: -1, imag: 0 },  // V0: click A here
-          { real: 0, imag: 1 },   // V1: has +i that will be canceled by -i from A
+          { real: 1, imag: 1 },
+          { real: 0, imag: -1 },
           { real: 0, imag: 0 },
           { real: 0, imag: 0 },
-          { real: 0, imag: 1 },   // V4: has +i that will be canceled by -i from A
+          { real: 0, imag: -1 },
         ],
         goalType: 'all-zeros',
         par: 1,
@@ -93,27 +107,27 @@ export const campaignChapters: CampaignChapter[] = [
       {
         id: '2-2',
         title: 'Mixed Numbers',
-        description: 'Complex numbers can be split into real and imaginary parts. Handle each separately.',
+        description: 'Multiple moves needed. Try A on V0, B on V1, A on V2.',
         startState: [
-          { real: 1, imag: 2 },   // 1+2i
-          { real: 0, imag: -1 },  // -i
-          { real: 0, imag: 0 },
-          { real: 0, imag: 0 },
-          { real: 0, imag: 0 },
+          { real: 2, imag: 1 },
+          { real: -1, imag: -1 },
+          { real: 2, imag: 1 },
+          { real: 0, imag: -1 },
+          { real: 0, imag: -1 },
         ],
         goalType: 'all-zeros',
-        par: 4,
+        par: 3,
       },
       {
         id: '2-3',
         title: 'All Imaginary',
-        description: 'Every vertex has imaginary chips. You can always eliminate them!',
+        description: 'Every vertex has imaginary chips. Apply A to each vertex!',
         startState: [
-          { real: 0, imag: 1 },
-          { real: 0, imag: -1 },
-          { real: 0, imag: 1 },
-          { real: 0, imag: -1 },
-          { real: 0, imag: 1 },
+          { real: 1, imag: -1 },
+          { real: 1, imag: -1 },
+          { real: 1, imag: -1 },
+          { real: 1, imag: -1 },
+          { real: 1, imag: -1 },
         ],
         goalType: 'all-zeros',
         par: 5,
@@ -127,31 +141,31 @@ export const campaignChapters: CampaignChapter[] = [
     levels: [
       {
         id: '3-1',
-        title: 'One Chip Each',
-        description: 'Config [1,1,1,1,1] is special - it equals H, the unique order-2 element. Double it to get [2,2,2,2,2].',
+        title: 'Complex Pattern',
+        description: 'A harder puzzle with multiple moves. Work through it systematically!',
         startState: [
-          { real: 1, imag: 0 },
-          { real: 1, imag: 0 },
-          { real: 1, imag: 0 },
-          { real: 1, imag: 0 },
-          { real: 1, imag: 0 },
+          { real: 2, imag: 0 },
+          { real: -1, imag: -1 },
+          { real: 3, imag: 1 },
+          { real: -1, imag: -1 },
+          { real: 2, imag: 0 },
         ],
         goalType: 'all-zeros',
-        par: 10, // This one is interesting!
+        par: 5,
       },
       {
         id: '3-2',
-        title: 'Three on One',
-        description: 'Config [3,0,0,0,0] also equals H! Try reaching [6,0,0,0,0] (which equals 2H = 0).',
+        title: 'Multiple Moves',
+        description: 'Some vertices need multiple moves. Think ahead!',
         startState: [
-          { real: 3, imag: 0 },
-          { real: 0, imag: 0 },
-          { real: 0, imag: 0 },
-          { real: 0, imag: 0 },
-          { real: 0, imag: 0 },
+          { real: 3, imag: 2 },
+          { real: 0, imag: -1 },
+          { real: 0, imag: 1 },
+          { real: 1, imag: 0 },
+          { real: 0, imag: -2 },
         ],
         goalType: 'all-zeros',
-        par: 8,
+        par: 4,
       },
     ],
   },
