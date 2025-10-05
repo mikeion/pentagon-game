@@ -9,11 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "framer-motion": "^12.23.12",
+    "canvas-confetti": "^1.9.3",
+    "framer-motion": "^12.23.22",
+    "lucide-react": "^0.544.0",
     "mathjs": "^14.7.0",
     "next": "15.5.3",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-hot-toast": "^2.6.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

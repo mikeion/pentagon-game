@@ -1,6 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
+import toast, { Toaster } from 'react-hot-toast';
+import { Menu, Lightbulb, RotateCcw, Play, CheckCircle, Share2 } from 'lucide-react';
 import GameCanvas from './GameCanvas';
 import { ComplexNumber, GameState, Move, MoveType, UIMoveType } from '@/types/game';
 import { getMatrixHint, getFullSolution } from '@/utils/matrix-solver-mathjs';
@@ -69,6 +73,7 @@ export default function PentagonGame() {
   const [hintsUsed, setHintsUsed] = useState(0);
   const [solutionViewed, setSolutionViewed] = useState(false);
   const [showSolutionConfirm, setShowSolutionConfirm] = useState(false);
+  const [showMenuDropdown, setShowMenuDropdown] = useState(false);
   // const [showEducationalPanel, setShowEducationalPanel] = useState(false);
 
   const generateStartingState = useCallback((difficulty: Difficulty, customCount?: number) => {
@@ -398,6 +403,41 @@ export default function PentagonGame() {
       // Capture solve time when winning
       if (isWon && startTime && !solveTime) {
         setSolveTime(Date.now() - startTime);
+
+        // Victory celebration!
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b']
+        });
+
+        // Second burst for extra celebration
+        setTimeout(() => {
+          confetti({
+            particleCount: 50,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 }
+          });
+          confetti({
+            particleCount: 50,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 }
+          });
+        }, 250);
+
+        // Success toast
+        toast.success('Puzzle Solved! 🎉', {
+          duration: 3000,
+          position: 'top-center',
+          style: {
+            background: '#10b981',
+            color: '#fff',
+            fontWeight: '600',
+          },
+        });
       }
     }
   }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized, startTime, solveTime]);
@@ -411,7 +451,15 @@ export default function PentagonGame() {
   }, [gameState]);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-slate-900">
+    <div
+      className="relative w-screen h-screen overflow-hidden bg-slate-900"
+      onClick={(e) => {
+        // Close dropdown when clicking outside
+        if (showMenuDropdown && !(e.target as HTMLElement).closest('.menu-dropdown-container')) {
+          setShowMenuDropdown(false);
+        }
+      }}
+    >
       {/* Difficulty Selection Menu */}
       {showMenu && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm">
@@ -463,50 +511,68 @@ export default function PentagonGame() {
         </div>
       )}
 
-      {/* Top-left overlay: RESET / UNDO / NEW */}
-      <div className="absolute top-4 left-4 z-10 flex gap-2">
-        <button
-          onClick={resetGame}
-          className="px-4 py-2 bg-blue-600/90 hover:bg-blue-600 text-white rounded-lg font-semibold shadow-lg backdrop-blur-sm transition-all"
-          style={{ minWidth: '44px', minHeight: '44px' }}
+      {/* Top-left: Menu button (hamburger) */}
+      <div className="absolute top-safe left-safe z-10 menu-dropdown-container">
+        <motion.button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowMenuDropdown(!showMenuDropdown);
+          }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="w-12 h-12 bg-slate-800/80 hover:bg-slate-700/90 text-white rounded-xl font-bold shadow-xl backdrop-blur-md transition-colors border border-slate-600/50 flex items-center justify-center"
+          aria-label="Menu"
         >
-          Reset
-        </button>
-        <button
-          onClick={undoMove}
-          disabled={moveHistory.length <= 1}
-          className="px-4 py-2 bg-yellow-600/90 hover:bg-yellow-600 text-white rounded-lg font-semibold shadow-lg backdrop-blur-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ minWidth: '44px', minHeight: '44px' }}
-        >
-          Undo
-        </button>
-        <button
-          onClick={resetGame}
-          className="px-4 py-2 bg-purple-600/90 hover:bg-purple-600 text-white rounded-lg font-semibold shadow-lg backdrop-blur-sm transition-all"
-          style={{ minWidth: '44px', minHeight: '44px' }}
-        >
-          New
-        </button>
+          <Menu className="w-6 h-6" />
+        </motion.button>
+
+        {/* Dropdown menu */}
+        {showMenuDropdown && (
+          <div className="absolute top-14 left-0 bg-slate-800/95 backdrop-blur-sm rounded-lg shadow-xl border border-slate-600 overflow-hidden min-w-[150px]">
+            <button
+              onClick={() => { resetGame(); setShowMenuDropdown(false); }}
+              className="w-full px-4 py-3 bg-blue-600/90 hover:bg-blue-600 text-white text-left font-semibold transition-all border-b border-slate-600"
+            >
+              New Game
+            </button>
+            <button
+              onClick={() => { undoMove(); setShowMenuDropdown(false); }}
+              disabled={moveHistory.length <= 1}
+              className="w-full px-4 py-3 bg-yellow-600/90 hover:bg-yellow-600 text-white text-left font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-b border-slate-600"
+            >
+              Undo
+            </button>
+            <button
+              onClick={() => { handleSolutionClick(); setShowMenuDropdown(false); }}
+              disabled={isGettingSolution}
+              className="w-full px-4 py-3 bg-indigo-600/90 hover:bg-indigo-600 text-white text-left font-semibold transition-all disabled:opacity-50"
+            >
+              {isGettingSolution ? 'Loading...' : 'Solution'}
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Top-right overlay: HINT / MENU */}
-      <div className="absolute top-4 right-4 z-10 flex gap-2">
-        <button
+      {/* Top-right: Hint button (most important) */}
+      <div className="absolute top-safe right-safe z-10">
+        <motion.button
           onClick={getHint}
           disabled={isGettingHint}
-          className="px-4 py-2 bg-green-600/90 hover:bg-green-600 text-white rounded-lg font-semibold shadow-lg backdrop-blur-sm transition-all disabled:opacity-50"
-          style={{ minWidth: '44px', minHeight: '44px' }}
+          whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(16, 185, 129, 0.4)" }}
+          whileTap={{ scale: 0.95 }}
+          animate={!isGettingHint ? {
+            boxShadow: [
+              "0 0 0px rgba(16, 185, 129, 0)",
+              "0 0 15px rgba(16, 185, 129, 0.3)",
+              "0 0 0px rgba(16, 185, 129, 0)"
+            ]
+          } : {}}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="relative w-12 h-12 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-xl font-bold shadow-xl backdrop-blur-md transition-colors disabled:opacity-50 border border-emerald-500/50 flex items-center justify-center"
+          aria-label="Get hint"
         >
-          {isGettingHint ? '...' : 'Hint'}
-        </button>
-        <button
-          onClick={handleSolutionClick}
-          disabled={isGettingSolution}
-          className="px-4 py-2 bg-indigo-600/90 hover:bg-indigo-600 text-white rounded-lg font-semibold shadow-lg backdrop-blur-sm transition-all disabled:opacity-50"
-          style={{ minWidth: '44px', minHeight: '44px' }}
-        >
-          {isGettingSolution ? '...' : 'Solution'}
-        </button>
+          <Lightbulb className={`w-6 h-6 ${isGettingHint ? 'animate-pulse' : ''}`} />
+        </motion.button>
       </div>
 
       {/* Solution Confirmation Dialog */}
@@ -533,23 +599,35 @@ export default function PentagonGame() {
         </div>
       )}
 
-      {/* Bottom overlay: Move selector (A/B) */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 flex gap-3 bg-slate-800/90 px-6 py-3 rounded-xl shadow-lg backdrop-blur-sm">
+      {/* Bottom overlay: Move selector (A/B) - larger for mobile */}
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 flex gap-4 bg-gradient-to-r from-slate-800/90 to-slate-900/90 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-md border border-slate-700/50">
         {(['A', 'B'] as const).map((moveType: UIMoveType) => (
-          <button
+          <motion.button
             key={moveType}
             onClick={() => setMoveType(moveType)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            animate={currentUIMoveType === moveType ? {
+              scale: [1, 1.05, 1],
+            } : {}}
+            transition={{ duration: 0.3 }}
             className={`
-              px-8 py-3 rounded-lg font-bold text-2xl transition-all duration-200
+              relative w-20 h-16 rounded-xl font-bold text-3xl transition-all duration-200 overflow-hidden
               ${currentUIMoveType === moveType
-                ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/50'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                ? 'bg-gradient-to-br from-pink-500 to-rose-600 text-white shadow-lg shadow-pink-600/50'
+                : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/70 border border-slate-600'
               }
             `}
-            style={{ minWidth: '60px', minHeight: '50px' }}
           >
-            {moveType}
-          </button>
+            {currentUIMoveType === moveType && (
+              <motion.div
+                layoutId="activeButton"
+                className="absolute inset-0 bg-gradient-to-br from-pink-500 to-rose-600"
+                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+              />
+            )}
+            <span className="relative z-10">{moveType}</span>
+          </motion.button>
         ))}
       </div>
 
@@ -640,6 +718,9 @@ export default function PentagonGame() {
           hintVertex={hintVertex}
         />
       </div>
+
+      {/* Toast notifications */}
+      <Toaster />
     </div>
   );
 }
