@@ -775,6 +775,34 @@ export default function PentagonGame() {
 
       {/* Toast notifications */}
       <Toaster />
+
+      {/* Footer attribution */}
+      {!showMenu && (
+        <div className="absolute bottom-2 left-0 right-0 flex justify-center pointer-events-none">
+          <div className="text-xs text-slate-500 flex items-center gap-1.5 pointer-events-auto">
+            <span>Game by</span>
+            <a
+              href="https://sites.google.com/view/alexmcdonough/home"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-indigo-400 transition-colors underline decoration-slate-600 hover:decoration-indigo-400"
+            >
+              Alex McDonough
+            </a>
+            <span>&</span>
+            <a
+              href="https://mikeion.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-indigo-400 transition-colors underline decoration-slate-600 hover:decoration-indigo-400"
+            >
+              Mike Ion
+            </a>
+            <span className="text-slate-600 mx-0.5">•</span>
+            <span className="text-slate-400 italic">Paper coming soon</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
