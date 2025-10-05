@@ -222,9 +222,16 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       const centerY = canvasSize.height / 2;
       const angle = Math.atan2(pos.y - centerY, pos.x - centerX);
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-      const labelDistance = isMobile ? 42 : 50; // Closer on mobile to stay in bounds
-      const labelX = pos.x + Math.cos(angle) * labelDistance;
-      const labelY = pos.y + Math.sin(angle) * labelDistance;
+      const labelDistance = isMobile ? 48 : 50; // Slightly closer on mobile
+
+      // Special handling for V0 on mobile - position inside/below to avoid cutoff
+      let labelX = pos.x + Math.cos(angle) * labelDistance;
+      let labelY = pos.y + Math.sin(angle) * labelDistance;
+
+      if (isMobile && i === 0) {
+        // V0 is at top - position it inside the pentagon (closer to center)
+        labelY = pos.y + 48; // Position below the vertex
+      }
 
       ctx.fillStyle = '#EC4899';
       ctx.font = 'bold 18px monospace';
