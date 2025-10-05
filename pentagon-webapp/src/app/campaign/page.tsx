@@ -52,9 +52,9 @@ export default function CampaignPage() {
       initial="hidden"
       animate="visible"
       exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-      className="min-h-screen w-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-y-auto"
+      className="h-screen w-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-y-auto"
     >
-      <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="max-w-4xl mx-auto px-[4vw] py-[6vh] pb-[10vh]">
         <motion.h1
           variants={headerVariants}
           className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 mb-4 text-center"

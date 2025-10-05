@@ -4,10 +4,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import toast, { Toaster } from 'react-hot-toast';
-import { Menu, Lightbulb, ArrowLeft } from 'lucide-react';
+import { Menu, ArrowLeft } from 'lucide-react';
 import GameCanvas from './GameCanvas';
 import { ComplexNumber, GameState, Move, MoveType, UIMoveType, CampaignLevel } from '@/types/game';
-import { getMatrixHint, getFullSolution } from '@/utils/matrix-solver-mathjs';
 import { checkGoal } from '@/utils/goal-checker';
 import { useCampaignProgress } from '@/hooks/useCampaignProgress';
 
@@ -46,22 +45,12 @@ export default function CampaignLevelGame({ chapterId, level, onBack, onNext }: 
     isWon: false,
   });
 
-  const [hintVertex, setHintVertex] = useState<number | undefined>(undefined);
-  const [isGettingHint, setIsGettingHint] = useState(false);
-  const [fullSolution, setFullSolution] = useState<string[]>([]);
-  const [isGettingSolution, setIsGettingSolution] = useState(false);
-  const [showFullSolution, setShowFullSolution] = useState(false);
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
 
   const [moveCount, setMoveCount] = useState(0);
   const [startTime] = useState(Date.now());
   const [solveTime, setSolveTime] = useState<number | null>(null);
-  const [moveHistory, setMoveHistory] = useState<Array<{ vertices: ComplexNumber[]; moveType: MoveType }>>([
-    { vertices: level.startState.map(v => ({ ...v })), moveType: 'A' }
-  ]);
-  const [hintsUsed, setHintsUsed] = useState(0);
-  const [solutionViewed, setSolutionViewed] = useState(false);
-  const [showSolutionConfirm, setShowSolutionConfirm] = useState(false);
+
 
   const { updateLevelProgress } = useCampaignProgress();
 
@@ -97,27 +86,7 @@ export default function CampaignLevelGame({ chapterId, level, onBack, onNext }: 
     });
 
     setMoveCount(prev => prev + 1);
-    setMoveHistory(prev => [...prev, {
-      vertices: gameState.vertices.map(v => ({ ...v })),
-      moveType: actualMoveType
-    }]);
-  }, [gameState.currentMoveType, gameState.vertices]);
-
-  const undoMove = useCallback(() => {
-    if (moveHistory.length <= 1) return;
-
-    const newHistory = moveHistory.slice(0, -1);
-    const previousState = newHistory[newHistory.length - 1];
-
-    setMoveHistory(newHistory);
-    setMoveCount(prev => Math.max(0, prev - 1));
-    setGameState(prev => ({
-      ...prev,
-      vertices: previousState.vertices.map(v => ({ ...v })),
-      currentMoveType: previousState.moveType,
-      isWon: false,
-    }));
-  }, [moveHistory]);
+  }, [gameState.currentMoveType]);
 
   const setMoveType = useCallback((moveType: UIMoveType) => {
     const currentInternal = gameState.currentMoveType;
@@ -162,54 +131,6 @@ export default function CampaignLevelGame({ chapterId, level, onBack, onNext }: 
     }));
   }, [gameState.currentMoveType]);
 
-  const getHint = useCallback(async () => {
-    setIsGettingHint(true);
-    setHintVertex(undefined);
-
-    try {
-      const hint = await getMatrixHint(gameState, gameState.currentMoveType);
-      if (hint) {
-        setHintsUsed(prev => prev + 1);
-
-        if (hint.moveType !== gameState.currentMoveType) {
-          const uiMoveType: UIMoveType = (hint.moveType === 'A' || hint.moveType === 'C') ? 'A' : 'B';
-          setCurrentUIMoveType(uiMoveType);
-          setGameState(prev => ({
-            ...prev,
-            currentMoveType: hint.moveType,
-          }));
-        }
-
-        setGameState(prev => ({
-          ...prev,
-          selectedVertex: undefined,
-        }));
-        setHintVertex(hint.vertex);
-        setTimeout(() => setHintVertex(undefined), 3000);
-      }
-    } catch (error) {
-      console.error('Matrix solver error:', error);
-    } finally {
-      setIsGettingHint(false);
-    }
-  }, [gameState]);
-
-  const getFullSolutionMoves = useCallback(async () => {
-    setIsGettingSolution(true);
-    setShowFullSolution(false);
-
-    try {
-      const moves = await getFullSolution(gameState);
-      setSolutionViewed(true);
-      setFullSolution(moves);
-      setShowFullSolution(true);
-    } catch (error) {
-      console.error('Full solution error:', error);
-      setFullSolution([]);
-    } finally {
-      setIsGettingSolution(false);
-    }
-  }, [gameState]);
 
   // Check win condition
   useEffect(() => {
@@ -274,17 +195,6 @@ export default function CampaignLevelGame({ chapterId, level, onBack, onNext }: 
             <div className="text-xs text-slate-400 mt-1">Par: {level.par} moves</div>
           )}
         </motion.div>
-
-        {/* Hint button */}
-        <motion.button
-          onClick={getHint}
-          disabled={isGettingHint}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="w-12 h-12 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-xl shadow-xl backdrop-blur-md transition-colors disabled:opacity-50 border border-emerald-500/50 flex items-center justify-center"
-        >
-          <Lightbulb className={`w-6 h-6 ${isGettingHint ? 'animate-pulse' : ''}`} />
-        </motion.button>
       </div>
 
       {/* Top-right: Menu button */}
@@ -306,24 +216,10 @@ export default function CampaignLevelGame({ chapterId, level, onBack, onNext }: 
           <div className="absolute top-14 right-0 bg-slate-800/95 backdrop-blur-sm rounded-lg shadow-xl border border-slate-600 overflow-hidden min-w-[180px]">
             <button
               onClick={() => { onBack(); setShowMenuDropdown(false); }}
-              className="w-full px-4 py-3 bg-purple-600/90 hover:bg-purple-600 text-white text-left font-semibold transition-all border-b border-slate-600 flex items-center gap-2"
+              className="w-full px-4 py-3 bg-purple-600/90 hover:bg-purple-600 text-white text-left font-semibold transition-all flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Levels
-            </button>
-            <button
-              onClick={() => { undoMove(); setShowMenuDropdown(false); }}
-              disabled={moveHistory.length <= 1}
-              className="w-full px-4 py-3 bg-yellow-600/90 hover:bg-yellow-600 text-white text-left font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-b border-slate-600"
-            >
-              Undo
-            </button>
-            <button
-              onClick={() => { setShowSolutionConfirm(true); setShowMenuDropdown(false); }}
-              disabled={isGettingSolution}
-              className="w-full px-4 py-3 bg-indigo-600/90 hover:bg-indigo-600 text-white text-left font-semibold transition-all disabled:opacity-50"
-            >
-              {isGettingSolution ? 'Loading...' : 'Solution'}
             </button>
           </div>
         )}
@@ -386,73 +282,12 @@ export default function CampaignLevelGame({ chapterId, level, onBack, onNext }: 
         </div>
       )}
 
-      {/* Solution confirm dialog */}
-      {showSolutionConfirm && (
-        <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-slate-800 p-6 rounded-xl shadow-2xl border-2 border-yellow-500 max-w-sm">
-            <h3 className="text-xl font-bold text-white mb-3">View Solution?</h3>
-            <p className="text-slate-300 mb-6">This won't affect your progress.</p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowSolutionConfirm(false)}
-                className="flex-1 px-4 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-semibold transition-all"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => { setShowSolutionConfirm(false); getFullSolutionMoves(); }}
-                className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-all"
-              >
-                Show
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Full solution display */}
-      {showFullSolution && fullSolution.length > 0 && (
-        <div className="absolute top-20 right-4 z-20 max-w-sm bg-slate-800/95 p-4 rounded-xl shadow-2xl backdrop-blur-sm border border-indigo-500">
-          <h4 className="text-sm font-bold text-indigo-400 mb-2">
-            🎯 Solution ({fullSolution.length} moves):
-          </h4>
-          <div className="flex flex-wrap gap-1 mb-2 max-h-40 overflow-y-auto">
-            {fullSolution.map((move, index) => {
-              const cleanMove = move.replace(' (long press)', '');
-              const moveType = cleanMove[0];
-              const vertex = cleanMove[1];
-              let displayMove = '';
-              if (moveType === 'A') displayMove = 'A';
-              else if (moveType === 'C') displayMove = '-A';
-              else if (moveType === 'B') displayMove = 'B';
-              else displayMove = '-B';
-
-              return (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-indigo-600 text-white rounded text-xs font-mono"
-                >
-                  {index + 1}. {displayMove}, V{vertex}
-                </span>
-              );
-            })}
-          </div>
-          <button
-            onClick={() => setShowFullSolution(false)}
-            className="w-full px-2 py-1 bg-slate-600 text-white rounded text-xs hover:bg-slate-500"
-          >
-            Hide
-          </button>
-        </div>
-      )}
-
       {/* Game canvas */}
       <div className="w-full h-full flex items-center justify-center">
         <GameCanvas
           gameState={gameState}
           onVertexClick={applyMove}
           onCenterClick={toggleMoveType}
-          hintVertex={hintVertex}
           distinguishedVertex={level.distinguishedVertex}
         />
       </div>
