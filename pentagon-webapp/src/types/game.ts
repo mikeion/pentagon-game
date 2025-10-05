@@ -41,7 +41,9 @@ export interface VertexPosition {
 }
 
 // Puzzle & Campaign System
-export type Difficulty = 'easy' | 'medium' | 'hard';
+export type Difficulty = 'easy' | 'medium' | 'hard' | 'expert';
+
+export type GoalType = 'all-zeros' | 'nice-representative';
 
 export interface Puzzle {
   id: string;
@@ -50,7 +52,27 @@ export interface Puzzle {
   par: number; // Optimal move count
   category?: string; // e.g., "Tutorial", "Advanced", "Expert"
   startState: ComplexNumber[]; // Initial vertex values
+  goalType?: GoalType; // Default: 'all-zeros'
+  distinguishedVertex?: number; // For 'nice-representative' goal (default: 0)
   description?: string;
+}
+
+// Campaign levels organized by chapters
+export interface CampaignChapter {
+  id: string;
+  title: string;
+  description: string;
+  levels: CampaignLevel[];
+}
+
+export interface CampaignLevel {
+  id: string;
+  title: string;
+  description: string;
+  startState: ComplexNumber[];
+  goalType: GoalType;
+  distinguishedVertex?: number; // For nice-representative goal
+  par?: number; // Optimal move count
 }
 
 export interface PuzzleAttempt {
