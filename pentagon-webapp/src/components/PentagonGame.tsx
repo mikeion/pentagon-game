@@ -60,7 +60,7 @@ export default function PentagonGame() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Difficulty and menu state
-  type Difficulty = 'easy' | 'medium' | 'hard' | 'custom';
+  type Difficulty = 'easy' | 'medium' | 'hard' | 'expert' | 'custom';
   const [showMenu, setShowMenu] = useState(true);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('medium');
   const [customMoveCount, setCustomMoveCount] = useState(12);
@@ -86,10 +86,12 @@ export default function PentagonGame() {
     if (difficulty === 'custom' && customCount) {
       minMoves = maxMoves = customCount;
     } else if (difficulty === 'easy') {
-      minMoves = 8; maxMoves = 12;
+      minMoves = 3; maxMoves = 5;
     } else if (difficulty === 'medium') {
-      minMoves = 12; maxMoves = 16;
-    } else { // hard
+      minMoves = 6; maxMoves = 9;
+    } else if (difficulty === 'hard') {
+      minMoves = 10; maxMoves = 15;
+    } else { // expert
       minMoves = 16; maxMoves = 20;
     }
 
@@ -503,7 +505,7 @@ export default function PentagonGame() {
                 }}
                 className="w-full px-6 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-lg transition-all"
               >
-                Easy (8-12 moves)
+                Easy (3-5 moves)
               </button>
               <button
                 onClick={() => {
@@ -512,16 +514,25 @@ export default function PentagonGame() {
                 }}
                 className="w-full px-6 py-4 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-semibold text-lg transition-all"
               >
-                Medium (12-16 moves)
+                Medium (6-9 moves)
               </button>
               <button
                 onClick={() => {
                   setSelectedDifficulty('hard');
                   generateStartingState('hard');
                 }}
+                className="w-full px-6 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold text-lg transition-all"
+              >
+                Hard (10-15 moves)
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedDifficulty('expert');
+                  generateStartingState('expert');
+                }}
                 className="w-full px-6 py-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-lg transition-all"
               >
-                Hard (16-20 moves)
+                Expert (16-20 moves)
               </button>
 
               <div className="border-t border-slate-600 pt-3">
