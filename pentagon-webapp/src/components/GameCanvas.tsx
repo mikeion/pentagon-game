@@ -21,9 +21,10 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
   const calculateVertexPositions = useCallback((width: number, height: number) => {
     const centerX = width / 2;
     const centerY = height / 2;
-    // Pentagon radius - increased by ~25% for better visibility
+    // Pentagon radius - responsive sizing
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    const radius = Math.min(width, height) * (isMobile ? 0.44 : 0.50);
+    // Reduced from 0.44/0.50 to 0.38/0.42 to ensure labels fit
+    const radius = Math.min(width, height) * (isMobile ? 0.38 : 0.42);
 
     const positions: VertexPosition[] = [];
     for (let i = 0; i < 5; i++) {
@@ -116,9 +117,9 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     ctx.fillStyle = centerGradient;
 
     // Glow effect for center pentagon
-    ctx.shadowColor = uiMoveType === 'A' ? '#EC4899' : '#F59E0B';
+    ctx.shadowColor = '#06b6d4'; // Cyan for all moves
     ctx.shadowBlur = 20;
-    ctx.strokeStyle = uiMoveType === 'A' ? '#EC4899' : '#F59E0B';
+    ctx.strokeStyle = '#06b6d4'; // Cyan for all moves
     ctx.lineWidth = 5;
     ctx.beginPath();
     // Draw pentagon centered on screen
@@ -213,9 +214,9 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       ctx.fillStyle = vertexGradient;
 
       // Vertex border with glow
-      ctx.shadowColor = '#8B5CF6';
+      ctx.shadowColor = borderColor;
       ctx.shadowBlur = 10;
-      ctx.strokeStyle = '#8B5CF6';
+      ctx.strokeStyle = borderColor;
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.arc(pos.x, pos.y, 35, 0, 2 * Math.PI);
@@ -402,7 +403,7 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
         return (
           <div
             key={i}
-            className="absolute text-pink-500 font-bold text-lg font-mono pointer-events-none"
+            className="absolute text-cyan-400 font-bold text-lg font-mono pointer-events-none"
             style={{
               left: `${labelX}px`,
               top: `${labelY}px`,
