@@ -7,6 +7,16 @@ docs/
 # Project planning documents (keep local only)
 ROADMAP.md
 
+# Paper drafts and LaTeX files (keep local only)
+main.tex
+main.pdf
+main.aux
+main.log
+main.synctex.gz
+*.aux
+*.log
+*.synctex.gz
+
 # Node modules
 node_modules/
 
