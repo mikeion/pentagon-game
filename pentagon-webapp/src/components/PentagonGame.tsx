@@ -6,6 +6,7 @@ import confetti from 'canvas-confetti';
 import toast, { Toaster } from 'react-hot-toast';
 import { Menu, Lightbulb } from 'lucide-react';
 import GameCanvas from './GameCanvas';
+import PaperExampleTutorial, { PAPER_INITIAL_STATE, ALGORITHM_STEPS } from './PaperExampleTutorial';
 import { ComplexNumber, GameState, Move, MoveType, UIMoveType } from '@/types/game';
 import { getMatrixHint, getFullSolution } from '@/utils/matrix-solver-mathjs';
 import { isNiceRepresentative, getNiceRepresentativeProgress } from '@/utils/nice-representative-solver';
@@ -61,7 +62,7 @@ export default function PentagonGame() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Mode and menu state
-  type GameMode = 'sandbox' | 'puzzle' | 'nice-representative';
+  type GameMode = 'sandbox' | 'puzzle' | 'nice-representative' | 'paper-example';
   type Difficulty = 'easy' | 'medium' | 'hard' | 'expert' | 'custom';
   const [gameMode, setGameMode] = useState<GameMode | null>(null);
   const [showMenu, setShowMenu] = useState(true);
@@ -78,7 +79,11 @@ export default function PentagonGame() {
   const [solutionViewed, setSolutionViewed] = useState(false);
   const [showSolutionConfirm, setShowSolutionConfirm] = useState(false);
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
+  const [showQuickReference, setShowQuickReference] = useState(false);
   // const [showEducationalPanel, setShowEducationalPanel] = useState(false);
+
+  // Paper example mode - tutorial state
+  const [paperExampleStep, setPaperExampleStep] = useState(0);
 
   // Sandbox mode - vertex editor
   const [selectedVertexForEdit, setSelectedVertexForEdit] = useState(0);
@@ -379,6 +384,31 @@ export default function PentagonGame() {
     generateStartingState(selectedDifficulty, customMoveCount);
   }, [generateStartingState, selectedDifficulty, customMoveCount]);
 
+  // Paper example tutorial navigation
+  const handleNextStep = useCallback(() => {
+    if (paperExampleStep < ALGORITHM_STEPS.length - 1) {
+      setPaperExampleStep(prev => prev + 1);
+    }
+  }, [paperExampleStep]);
+
+  const handlePrevStep = useCallback(() => {
+    if (paperExampleStep > 0) {
+      setPaperExampleStep(prev => prev - 1);
+    }
+  }, [paperExampleStep]);
+
+  const handleResetPaperExample = useCallback(() => {
+    setGameState(prev => ({
+      ...prev,
+      vertices: PAPER_INITIAL_STATE.map(v => ({ ...v })),
+      goalVertices: zeroGoal.map(v => ({ ...v })),
+      isWon: false,
+    }));
+    setPaperExampleStep(0);
+    setMoveCount(0);
+    setMoveHistory([{ vertices: PAPER_INITIAL_STATE.map(v => ({ ...v })), moveType: 'A' }]);
+  }, []);
+
   const setMoveType = useCallback((moveType: UIMoveType) => {
     // Toggle behavior: if clicking the same button, switch between positive and negative
     const currentInternal = gameState.currentMoveType;
@@ -436,6 +466,13 @@ export default function PentagonGame() {
     if (gameMode === 'nice-representative') {
       // Nice representative mode: check if configuration matches criteria
       isWon = isNiceRepresentative(gameState.vertices, 0);
+    } else if (gameMode === 'paper-example') {
+      // Paper example mode: check if reached the nice representative (0, 1, 0, 0, 0)
+      isWon = gameState.vertices[0].real === 0 && gameState.vertices[0].imag === 0 &&
+              gameState.vertices[1].real === 1 && gameState.vertices[1].imag === 0 &&
+              gameState.vertices[2].real === 0 && gameState.vertices[2].imag === 0 &&
+              gameState.vertices[3].real === 0 && gameState.vertices[3].imag === 0 &&
+              gameState.vertices[4].real === 0 && gameState.vertices[4].imag === 0;
     } else if (gameMode === 'sandbox') {
       // Sandbox mode: no win condition, always false
       isWon = false;
@@ -494,6 +531,25 @@ export default function PentagonGame() {
     }
   }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized, startTime, solveTime, gameMode]);
 
+  // Initialize paper example mode
+  useEffect(() => {
+    if (gameMode === 'paper-example' && !isInitialized) {
+      console.log('Initializing paper example mode with state:', PAPER_INITIAL_STATE);
+      setGameState(prev => ({
+        ...prev,
+        vertices: PAPER_INITIAL_STATE.map(v => ({ ...v })),
+        goalVertices: zeroGoal.map(v => ({ ...v })),
+        isWon: false,
+      }));
+      setPaperExampleStep(0);
+      setMoveCount(0);
+      setStartTime(Date.now());
+      setSolveTime(null);
+      setMoveHistory([{ vertices: PAPER_INITIAL_STATE.map(v => ({ ...v })), moveType: 'A' }]);
+      setIsInitialized(true);
+    }
+  }, [gameMode, isInitialized]);
+
   // Don't auto-generate on mount - wait for user to select difficulty
   // useEffect is removed - game starts with menu
 
@@ -515,15 +571,71 @@ export default function PentagonGame() {
       {/* Mode/Difficulty Selection Menu */}
       {showMenu && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm">
-          <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl border-2 border-indigo-500 max-w-md w-full">
-            <h2 className="text-3xl font-bold text-white mb-2 text-center">R₁₀ Chip Firing</h2>
-            <p className="text-slate-400 text-center mb-6 text-sm">
-              A mathematical puzzle based on group theory
+          <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl border-2 border-indigo-500 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <h2 className="text-3xl font-bold text-white mb-1 text-center">R₁₀ Matroid Chip Firing</h2>
+            <p className="text-slate-400 text-center mb-2 text-xs">
+              Based on the paper:
+            </p>
+            <p className="text-indigo-300 text-center mb-4 text-sm font-semibold">
+              McDonough & Ion (2025) - Chip-Firing on Rank-Two Matroids
             </p>
 
             {showModeSelect ? (
               <>
-                <p className="text-white mb-4 text-center font-semibold">Select Mode</p>
+                {/* Introductory Context */}
+                <div className="bg-slate-700/50 p-4 rounded-lg mb-5 border border-slate-600">
+                  <p className="text-slate-200 text-sm leading-relaxed mb-2">
+                    This app demonstrates <span className="font-semibold text-white">chip-firing on the R₁₀ matroid</span>,
+                    a pentagon with vertices that hold <span className="font-semibold text-indigo-300">Gaussian integers</span> (real + imaginary chips).
+                  </p>
+                  <p className="text-slate-200 text-sm leading-relaxed">
+                    Apply <span className="font-semibold text-white">4 firing moves</span> (A, B, and their negatives)
+                    as described in <span className="text-indigo-300 font-medium">Section 3</span> to explore
+                    the <span className="font-semibold text-white">162 equivalence classes</span> of this mathematical system.
+                  </p>
+                </div>
+
+                {/* Quick Reference - Collapsible */}
+                <div className="mb-5">
+                  <button
+                    onClick={() => setShowQuickReference(!showQuickReference)}
+                    className="w-full px-4 py-2 bg-slate-700/70 hover:bg-slate-600/70 text-slate-200 rounded-lg text-sm font-medium transition-all border border-slate-600 flex items-center justify-between"
+                  >
+                    <span>Quick Reference: Firing Moves</span>
+                    <span className="text-lg">{showQuickReference ? '−' : '+'}</span>
+                  </button>
+                  {showQuickReference && (
+                    <div className="mt-2 bg-slate-700/30 p-4 rounded-lg border border-slate-600 text-xs space-y-2">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <div className="font-semibold text-indigo-300 mb-1">Move A (left-click)</div>
+                          <div className="text-slate-300">Vertex: +1+i</div>
+                          <div className="text-slate-300">Neighbors: −i</div>
+                        </div>
+                        <div>
+                          <div className="font-semibold text-purple-300 mb-1">Move B (left-click)</div>
+                          <div className="text-slate-300">Vertex: −1+i</div>
+                          <div className="text-slate-300">Neighbors: +1</div>
+                        </div>
+                        <div>
+                          <div className="font-semibold text-indigo-300 mb-1">Move −A (right-click)</div>
+                          <div className="text-slate-300">Vertex: −1−i</div>
+                          <div className="text-slate-300">Neighbors: +i</div>
+                        </div>
+                        <div>
+                          <div className="font-semibold text-purple-300 mb-1">Move −B (right-click)</div>
+                          <div className="text-slate-300">Vertex: +1−i</div>
+                          <div className="text-slate-300">Neighbors: −1</div>
+                        </div>
+                      </div>
+                      <p className="text-slate-400 text-center pt-2 border-t border-slate-600">
+                        Each move adds chips to a vertex and its two adjacent neighbors (pentagon edges only)
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <p className="text-white mb-4 text-center font-semibold text-lg">Select Mode</p>
                 <div className="space-y-3">
                   <button
                     onClick={() => {
@@ -535,14 +647,14 @@ export default function PentagonGame() {
                     className="w-full px-6 py-5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all border border-slate-600"
                   >
                     <div className="text-lg mb-1">Sandbox Mode</div>
-                    <div className="text-sm text-slate-300">Freely set chips and explore dynamics</div>
+                    <div className="text-sm text-slate-300">Freely set chips and explore dynamics. Experiment with <span className="font-medium text-indigo-300">Lemma 3.1</span>: removing imaginary chips through B-firings.</div>
                   </button>
                   <button
                     onClick={() => { setGameMode('puzzle'); setShowModeSelect(false); }}
                     className="w-full px-6 py-5 bg-cyan-700 hover:bg-cyan-600 text-white rounded-lg font-semibold transition-all border border-cyan-600"
                   >
                     <div className="text-lg mb-1">Puzzle Mode</div>
-                    <div className="text-sm text-cyan-100">Solve: reach all zeros</div>
+                    <div className="text-sm text-cyan-100">Solve: reach all zeros. Apply firing moves to find equivalence classes (<span className="font-medium">Section 3</span>).</div>
                   </button>
                   <button
                     onClick={() => {
@@ -553,7 +665,19 @@ export default function PentagonGame() {
                     className="w-full px-6 py-5 bg-blue-700 hover:bg-blue-600 text-white rounded-lg font-semibold transition-all border border-blue-600"
                   >
                     <div className="text-lg mb-1">Nice Representative</div>
-                    <div className="text-sm text-blue-100">Find canonical form</div>
+                    <div className="text-sm text-blue-100">Find canonical form. Discover the <span className="font-medium">162 representatives</span> from <span className="font-medium">Theorem 3.1</span>.</div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setGameMode('paper-example');
+                      setShowModeSelect(false);
+                      setShowMenu(false);
+                      setGameState(prev => ({ ...prev, isWon: false }));
+                    }}
+                    className="w-full px-6 py-5 bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-600 hover:to-indigo-600 text-white rounded-lg font-semibold transition-all border border-purple-500"
+                  >
+                    <div className="text-lg mb-1">Paper Example</div>
+                    <div className="text-sm text-purple-100">Step through <span className="font-medium">Algorithm 2.1</span> from the paper. Follow the example from line 463.</div>
                   </button>
                 </div>
               </>
@@ -632,6 +756,17 @@ export default function PentagonGame() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Paper Example Tutorial */}
+      {gameMode === 'paper-example' && !showMenu && (
+        <PaperExampleTutorial
+          currentStep={paperExampleStep}
+          currentState={gameState.vertices}
+          onNextStep={handleNextStep}
+          onPrevStep={handlePrevStep}
+          onReset={handleResetPaperExample}
+        />
       )}
 
       {/* Nice Representative Mode Progress */}
@@ -804,30 +939,33 @@ export default function PentagonGame() {
         </div>
       )}
 
-      {/* Bottom overlay: Move selector (A/B) - larger for mobile */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 flex gap-4 bg-slate-800/90 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-md border border-slate-700/50">
-        {(['A', 'B'] as const).map((moveType: UIMoveType) => (
-          <motion.button
-            key={moveType}
-            onClick={() => setMoveType(moveType)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            animate={currentUIMoveType === moveType ? {
-              scale: [1, 1.05, 1],
-            } : {}}
-            transition={{ duration: 0.3 }}
-            className={`
-              relative w-20 h-16 rounded-xl font-bold text-3xl transition-all duration-200
-              ${currentUIMoveType === moveType
-                ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/30 border border-cyan-500'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600 border border-slate-600'
-              }
-            `}
-          >
-            <span className="relative z-10">{moveType}</span>
-          </motion.button>
-        ))}
-      </div>
+      {/* Bottom overlay: Move selector (A/B) - HIDDEN per UI update requirements
+          Users will toggle moves by clicking the center pentagon instead */}
+      {false && (
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 flex gap-4 bg-slate-800/90 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-md border border-slate-700/50">
+          {(['A', 'B'] as const).map((moveType: UIMoveType) => (
+            <motion.button
+              key={moveType}
+              onClick={() => setMoveType(moveType)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              animate={currentUIMoveType === moveType ? {
+                scale: [1, 1.05, 1],
+              } : {}}
+              transition={{ duration: 0.3 }}
+              className={`
+                relative w-20 h-16 rounded-xl font-bold text-3xl transition-all duration-200
+                ${currentUIMoveType === moveType
+                  ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/30 border border-cyan-500'
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600 border border-slate-600'
+                }
+              `}
+            >
+              <span className="relative z-10">{moveType}</span>
+            </motion.button>
+          ))}
+        </div>
+      )}
 
       {/* Full solution modal */}
       {showFullSolution && fullSolution.length > 0 && (

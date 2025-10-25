@@ -21,9 +21,9 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
   const calculateVertexPositions = useCallback((width: number, height: number) => {
     const centerX = width / 2;
     const centerY = height / 2;
-    // Pentagon radius - scale down on mobile to prevent label cutoff
+    // Pentagon radius - increased by ~25% for better visibility
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    const radius = Math.min(width, height) * (isMobile ? 0.35 : 0.40);
+    const radius = Math.min(width, height) * (isMobile ? 0.44 : 0.50);
 
     const positions: VertexPosition[] = [];
     for (let i = 0; i < 5; i++) {
@@ -165,13 +165,18 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       line2 = '-1 to adj';
     }
 
-    ctx.fillText(moveLabel, centerX, centerY - 20);
+    ctx.fillText(moveLabel, centerX, centerY - 30);
 
     // Show complex number details (larger text for readability)
     ctx.font = '14px monospace'; // Increased from 10px
     ctx.fillStyle = '#94A3B8';
-    ctx.fillText(line1, centerX, centerY + 15);
-    ctx.fillText(line2, centerX, centerY + 32);
+    ctx.fillText(line1, centerX, centerY + 5);
+    ctx.fillText(line2, centerX, centerY + 22);
+
+    // Add instructional text
+    ctx.font = 'italic 12px monospace';
+    ctx.fillStyle = '#64748B';
+    ctx.fillText('Click to change', centerX, centerY + 42);
 
     // Draw vertices with color coding
     gameState.vertices.forEach((vertex, i) => {
@@ -233,8 +238,26 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
         ctx.fillText(`${vertex.real}`, pos.x, pos.y);
       } else {
         // Complex number - display as single string with gradient effect
-        const sign = vertex.imag >= 0 ? '+' : '';
-        const fullText = `${vertex.real}${sign}${vertex.imag}i`;
+        // Format imaginary part: show "i" for 1, "-i" for -1, otherwise show number
+        let imagPart = '';
+        if (vertex.imag === 1) {
+          imagPart = 'i';
+        } else if (vertex.imag === -1) {
+          imagPart = 'i';  // Will be handled by sign
+        } else {
+          imagPart = `${Math.abs(vertex.imag)}i`;
+        }
+
+        // Build full text
+        let fullText = '';
+        if (vertex.real === 0) {
+          // Pure imaginary: just show ±i or ±ni
+          fullText = vertex.imag >= 0 ? imagPart : `-${imagPart}`;
+        } else {
+          // Mixed: show real part + sign + imaginary part
+          const sign = vertex.imag >= 0 ? '+' : '-';
+          fullText = `${vertex.real}${sign}${imagPart}`;
+        }
 
         // Create gradient for complex numbers
         const textGradient = ctx.createLinearGradient(pos.x - 30, pos.y, pos.x + 30, pos.y);
