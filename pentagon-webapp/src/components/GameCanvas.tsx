@@ -185,11 +185,14 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       const isPureReal = vertex.imag === 0;
       const isZero = vertex.real === 0 && vertex.imag === 0;
 
+      // Determine border color based on vertex state
+      const borderColor = isZero ? '#10B981' : isPureReal ? '#60A5FA' : '#C084FC';
+
       // Highlight selected vertex with glow
       if (i === gameState.selectedVertex) {
-        ctx.shadowColor = '#EC4899';
+        ctx.shadowColor = '#06b6d4'; // Cyan for selected
         ctx.shadowBlur = 25;
-        ctx.fillStyle = 'rgba(236, 72, 153, 0.3)';
+        ctx.fillStyle = 'rgba(6, 182, 212, 0.3)'; // Cyan with transparency
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, 48, 0, 2 * Math.PI);
         ctx.fill();
