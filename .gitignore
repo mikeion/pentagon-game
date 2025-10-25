@@ -4,6 +4,9 @@ CLAUDE.md
 # Documentation folder
 docs/
 
+# Project planning documents (keep local only)
+ROADMAP.md
+
 # Node modules
 node_modules/
 

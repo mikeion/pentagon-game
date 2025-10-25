@@ -454,36 +454,38 @@ export default function PentagonGame() {
       if (isWon && startTime && !solveTime) {
         setSolveTime(Date.now() - startTime);
 
-        // Victory celebration!
+        // Victory celebration
         confetti({
           particleCount: 100,
           spread: 70,
           origin: { y: 0.6 },
-          colors: ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b']
+          colors: ['#06b6d4', '#0891b2', '#0e7490']
         });
 
-        // Second burst for extra celebration
+        // Second burst
         setTimeout(() => {
           confetti({
             particleCount: 50,
             angle: 60,
             spread: 55,
-            origin: { x: 0 }
+            origin: { x: 0 },
+            colors: ['#06b6d4', '#0891b2']
           });
           confetti({
             particleCount: 50,
             angle: 120,
             spread: 55,
-            origin: { x: 1 }
+            origin: { x: 1 },
+            colors: ['#06b6d4', '#0891b2']
           });
         }, 250);
 
         // Success toast
-        toast.success('Puzzle Solved! 🎉', {
+        toast.success('Puzzle Solved', {
           duration: 3000,
           position: 'top-center',
           style: {
-            background: '#10b981',
+            background: '#06b6d4',
             color: '#fff',
             fontWeight: '600',
           },
@@ -516,7 +518,7 @@ export default function PentagonGame() {
           <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl border-2 border-indigo-500 max-w-md w-full">
             <h2 className="text-3xl font-bold text-white mb-2 text-center">R₁₀ Chip Firing</h2>
             <p className="text-slate-400 text-center mb-6 text-sm">
-              Explore chip-firing dynamics on the pentagon graph
+              A mathematical puzzle based on group theory
             </p>
 
             {showModeSelect ? (
@@ -530,17 +532,17 @@ export default function PentagonGame() {
                       setShowMenu(false);
                       setGameState(prev => ({ ...prev, isWon: false }));
                     }}
-                    className="w-full px-6 py-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-semibold transition-all"
+                    className="w-full px-6 py-5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all border border-slate-600"
                   >
                     <div className="text-lg mb-1">Sandbox Mode</div>
-                    <div className="text-sm text-purple-200">Freely set chips and explore dynamics</div>
+                    <div className="text-sm text-slate-300">Freely set chips and explore dynamics</div>
                   </button>
                   <button
                     onClick={() => { setGameMode('puzzle'); setShowModeSelect(false); }}
-                    className="w-full px-6 py-5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg font-semibold transition-all"
+                    className="w-full px-6 py-5 bg-cyan-700 hover:bg-cyan-600 text-white rounded-lg font-semibold transition-all border border-cyan-600"
                   >
                     <div className="text-lg mb-1">Puzzle Mode</div>
-                    <div className="text-sm text-emerald-200">Solve: reach all zeros</div>
+                    <div className="text-sm text-cyan-100">Solve: reach all zeros</div>
                   </button>
                   <button
                     onClick={() => {
@@ -548,10 +550,10 @@ export default function PentagonGame() {
                       setShowModeSelect(false);
                       setGameState(prev => ({ ...prev, isWon: false }));
                     }}
-                    className="w-full px-6 py-5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg font-semibold transition-all"
+                    className="w-full px-6 py-5 bg-blue-700 hover:bg-blue-600 text-white rounded-lg font-semibold transition-all border border-blue-600"
                   >
                     <div className="text-lg mb-1">Nice Representative</div>
-                    <div className="text-sm text-amber-200">Find canonical form</div>
+                    <div className="text-sm text-blue-100">Find canonical form</div>
                   </button>
                 </div>
               </>
@@ -571,7 +573,7 @@ export default function PentagonGame() {
                   setSelectedDifficulty('easy');
                   generateStartingState('easy');
                 }}
-                className="w-full px-6 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-lg transition-all"
+                className="w-full px-6 py-4 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-semibold text-lg transition-all border border-slate-500"
               >
                 Easy (3-5 moves)
               </button>
@@ -580,7 +582,7 @@ export default function PentagonGame() {
                   setSelectedDifficulty('medium');
                   generateStartingState('medium');
                 }}
-                className="w-full px-6 py-4 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-semibold text-lg transition-all"
+                className="w-full px-6 py-4 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-semibold text-lg transition-all border border-slate-500"
               >
                 Medium (6-9 moves)
               </button>
@@ -589,7 +591,7 @@ export default function PentagonGame() {
                   setSelectedDifficulty('hard');
                   generateStartingState('hard');
                 }}
-                className="w-full px-6 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold text-lg transition-all"
+                className="w-full px-6 py-4 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold text-lg transition-all border border-slate-600"
               >
                 Hard (10-15 moves)
               </button>
@@ -598,7 +600,7 @@ export default function PentagonGame() {
                   setSelectedDifficulty('expert');
                   generateStartingState('expert');
                 }}
-                className="w-full px-6 py-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-lg transition-all"
+                className="w-full px-6 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold text-lg transition-all border border-slate-700"
               >
                 Expert (16-20 moves)
               </button>
@@ -634,9 +636,9 @@ export default function PentagonGame() {
 
       {/* Nice Representative Mode Progress */}
       {gameMode === 'nice-representative' && !showMenu && !gameState.isWon && (
-        <div className="absolute top-16 left-4 z-20 bg-slate-800/95 backdrop-blur-md px-4 py-3 rounded-xl border border-amber-500/50 shadow-xl max-w-xs">
+        <div className="absolute top-16 left-4 z-20 bg-slate-800/95 backdrop-blur-md px-4 py-3 rounded-xl border border-blue-500/50 shadow-xl max-w-xs">
           <div className="mb-2">
-            <div className="text-amber-400 font-bold text-sm mb-1">Goal: Nice Representative</div>
+            <div className="text-blue-400 font-bold text-sm mb-1">Goal: Nice Representative</div>
             <div className="text-slate-300 text-xs">
               V0 ∈ {'{0, 3}'} • V1-V4 ∈ {'{0, 1, 2}'} • All real
             </div>
@@ -647,7 +649,7 @@ export default function PentagonGame() {
             return (
               <div className="text-xs space-y-1">
                 {progress.issues.map((issue, i) => (
-                  <div key={i} className="text-red-400">✗ {issue}</div>
+                  <div key={i} className="text-red-400">× {issue}</div>
                 ))}
               </div>
             );
@@ -746,21 +748,21 @@ export default function PentagonGame() {
           <div className="absolute top-14 right-0 bg-slate-800/95 backdrop-blur-sm rounded-lg shadow-xl border border-slate-600 overflow-hidden min-w-[150px]">
             <button
               onClick={() => { resetGame(); setShowMenuDropdown(false); }}
-              className="w-full px-4 py-3 bg-blue-600/90 hover:bg-blue-600 text-white text-left font-semibold transition-all border-b border-slate-600"
+              className="w-full px-4 py-3 bg-slate-700/90 hover:bg-slate-600 text-white text-left font-semibold transition-all border-b border-slate-600"
             >
               New Game
             </button>
             <button
               onClick={() => { undoMove(); setShowMenuDropdown(false); }}
               disabled={moveHistory.length <= 1}
-              className="w-full px-4 py-3 bg-yellow-600/90 hover:bg-yellow-600 text-white text-left font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-b border-slate-600"
+              className="w-full px-4 py-3 bg-slate-700/90 hover:bg-slate-600 text-white text-left font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-b border-slate-600"
             >
               Undo
             </button>
             <button
               onClick={() => { handleSolutionClick(); setShowMenuDropdown(false); }}
               disabled={isGettingSolution}
-              className="w-full px-4 py-3 bg-indigo-600/90 hover:bg-indigo-600 text-white text-left font-semibold transition-all disabled:opacity-50 border-b border-slate-600"
+              className="w-full px-4 py-3 bg-slate-700/90 hover:bg-slate-600 text-white text-left font-semibold transition-all disabled:opacity-50 border-b border-slate-600"
             >
               {isGettingSolution ? 'Loading...' : 'Solution'}
             </button>
@@ -770,7 +772,7 @@ export default function PentagonGame() {
                 setShowModeSelect(true);
                 setShowMenuDropdown(false);
               }}
-              className="w-full px-4 py-3 bg-purple-600/90 hover:bg-purple-600 text-white text-left font-semibold transition-all"
+              className="w-full px-4 py-3 bg-slate-700/90 hover:bg-slate-600 text-white text-left font-semibold transition-all"
             >
               Main Menu
             </button>
@@ -781,7 +783,7 @@ export default function PentagonGame() {
       {/* Solution Confirmation Dialog */}
       {showSolutionConfirm && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-slate-800 p-6 rounded-xl shadow-2xl border-2 border-yellow-500 max-w-sm">
+          <div className="bg-slate-800 p-6 rounded-xl shadow-2xl border-2 border-cyan-500 max-w-sm">
             <h3 className="text-xl font-bold text-white mb-3">View Solution?</h3>
             <p className="text-slate-300 mb-6">This will mark the puzzle as solved with assistance.</p>
             <div className="flex gap-3">
@@ -793,7 +795,7 @@ export default function PentagonGame() {
               </button>
               <button
                 onClick={confirmSolution}
-                className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-all"
+                className="flex-1 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-semibold transition-all"
               >
                 Show Solution
               </button>
@@ -803,7 +805,7 @@ export default function PentagonGame() {
       )}
 
       {/* Bottom overlay: Move selector (A/B) - larger for mobile */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 flex gap-4 bg-gradient-to-r from-slate-800/90 to-slate-900/90 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-md border border-slate-700/50">
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 flex gap-4 bg-slate-800/90 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-md border border-slate-700/50">
         {(['A', 'B'] as const).map((moveType: UIMoveType) => (
           <motion.button
             key={moveType}
@@ -815,20 +817,13 @@ export default function PentagonGame() {
             } : {}}
             transition={{ duration: 0.3 }}
             className={`
-              relative w-20 h-16 rounded-xl font-bold text-3xl transition-all duration-200 overflow-hidden
+              relative w-20 h-16 rounded-xl font-bold text-3xl transition-all duration-200
               ${currentUIMoveType === moveType
-                ? 'bg-gradient-to-br from-pink-500 to-rose-600 text-white shadow-lg shadow-pink-600/50'
-                : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/70 border border-slate-600'
+                ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/30 border border-cyan-500'
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600 border border-slate-600'
               }
             `}
           >
-            {currentUIMoveType === moveType && (
-              <motion.div
-                layoutId="activeButton"
-                className="absolute inset-0 bg-gradient-to-br from-pink-500 to-rose-600"
-                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-              />
-            )}
             <span className="relative z-10">{moveType}</span>
           </motion.button>
         ))}
@@ -836,9 +831,9 @@ export default function PentagonGame() {
 
       {/* Full solution modal */}
       {showFullSolution && fullSolution.length > 0 && (
-        <div className="absolute top-20 right-4 z-20 max-w-sm bg-slate-800/95 p-4 rounded-xl shadow-2xl backdrop-blur-sm border border-indigo-500">
-          <h4 className="text-sm font-bold text-indigo-400 mb-2">
-            🎯 Solution ({fullSolution.length} moves):
+        <div className="absolute top-20 right-4 z-20 max-w-sm bg-slate-800/95 p-4 rounded-xl shadow-2xl backdrop-blur-sm border border-cyan-500">
+          <h4 className="text-sm font-bold text-cyan-400 mb-2">
+            Solution ({fullSolution.length} moves):
           </h4>
           <div className="flex flex-wrap gap-1 mb-2 max-h-40 overflow-y-auto">
             {fullSolution.map((move, index) => {
@@ -856,7 +851,7 @@ export default function PentagonGame() {
               return (
                 <span
                   key={index}
-                  className="px-2 py-1 bg-indigo-600 text-white rounded text-xs font-mono"
+                  className="px-2 py-1 bg-cyan-600 text-white rounded text-xs font-mono"
                 >
                   {index + 1}. {displayMove}, V{vertex}
                 </span>
@@ -887,7 +882,7 @@ export default function PentagonGame() {
           />
 
           {/* Modal - centered on mobile, top-right on desktop */}
-          <div className="absolute top-1/2 left-1/2 md:top-20 md:left-auto md:right-6 transform -translate-x-1/2 -translate-y-1/2 md:translate-x-0 md:translate-y-0 z-30 bg-gradient-to-br from-green-600/95 to-emerald-700/95 px-8 py-6 rounded-2xl shadow-2xl backdrop-blur-sm border-2 border-green-400/50 max-w-sm w-full mx-4">
+          <div className="absolute top-1/2 left-1/2 md:top-20 md:left-auto md:right-6 transform -translate-x-1/2 -translate-y-1/2 md:translate-x-0 md:translate-y-0 z-30 bg-cyan-700/95 px-8 py-6 rounded-2xl shadow-2xl backdrop-blur-sm border-2 border-cyan-500/50 max-w-sm w-full mx-4">
             {/* Close button - desktop only */}
             <button
               onClick={() => {
@@ -897,12 +892,12 @@ export default function PentagonGame() {
               className="hidden md:block absolute top-3 right-3 w-8 h-8 text-white/70 hover:text-white hover:bg-white/20 rounded-lg transition-all"
               aria-label="Close"
             >
-              ✕
+              ×
             </button>
 
             <div className="text-center">
-              <p className="text-3xl font-bold text-white mb-3">🎉 Congratulations!</p>
-              <p className="text-lg text-green-100 mb-4">Puzzle Solved!</p>
+              <p className="text-3xl font-bold text-white mb-3">Congratulations</p>
+              <p className="text-lg text-cyan-100 mb-4">Puzzle Solved</p>
 
               <div className="bg-white/20 rounded-lg p-4 mb-4 space-y-2 text-left">
                 <div className="flex justify-between items-center text-white">
@@ -929,7 +924,7 @@ export default function PentagonGame() {
 
               <button
                 onClick={resetGame}
-                className="w-full px-6 py-3 bg-white text-green-700 rounded-lg font-bold text-base hover:bg-green-50 transition-all shadow-lg"
+                className="w-full px-6 py-3 bg-white text-cyan-700 rounded-lg font-bold text-base hover:bg-cyan-50 transition-all shadow-lg"
               >
                 New Puzzle
               </button>
