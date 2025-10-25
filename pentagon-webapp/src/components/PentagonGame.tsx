@@ -674,10 +674,10 @@ export default function PentagonGame() {
                       setShowMenu(false);
                       setGameState(prev => ({ ...prev, isWon: false }));
                     }}
-                    className="w-full px-6 py-5 bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-600 hover:to-indigo-600 text-white rounded-lg font-semibold transition-all border border-purple-500"
+                    className="w-full px-6 py-5 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-semibold transition-all border border-cyan-500"
                   >
                     <div className="text-lg mb-1">Paper Example</div>
-                    <div className="text-sm text-purple-100">Step through <span className="font-medium">Algorithm 2.1</span> from the paper. Follow the example from line 463.</div>
+                    <div className="text-sm text-slate-200">Step through <span className="font-medium">Algorithm 2.1</span> from the paper. Follow the example from line 463.</div>
                   </button>
                 </div>
               </>

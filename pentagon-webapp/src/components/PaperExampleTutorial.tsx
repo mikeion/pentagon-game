@@ -140,43 +140,43 @@ export default function PaperExampleTutorial({
     : true;
 
   return (
-    <div className="absolute top-4 left-4 right-4 md:left-4 md:right-auto md:max-w-md z-20 bg-gradient-to-br from-purple-900/95 to-indigo-900/95 backdrop-blur-md px-5 py-4 rounded-xl border-2 border-purple-500/50 shadow-2xl">
+    <div className="absolute bottom-4 left-4 right-4 md:top-16 md:bottom-auto md:left-4 md:right-auto md:max-w-sm z-10 bg-slate-800/95 backdrop-blur-md px-4 py-3 rounded-xl border border-cyan-500/50 shadow-2xl max-h-[40vh] md:max-h-[80vh] overflow-y-auto">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-3 pb-3 border-b border-purple-400/30">
-        <BookOpen className="w-5 h-5 text-purple-300" />
-        <h3 className="text-lg font-bold text-white">Algorithm 2.1 in Action</h3>
+      <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-600">
+        <BookOpen className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
+        <h3 className="text-base md:text-lg font-bold text-white">Algorithm 2.1 in Action</h3>
       </div>
 
       {/* Progress Bar */}
-      <div className="mb-4">
-        <div className="flex justify-between text-xs text-purple-300 mb-1">
+      <div className="mb-3">
+        <div className="flex justify-between text-xs text-slate-300 mb-1">
           <span>Step {currentStep + 1} of {ALGORITHM_STEPS.length}</span>
           <span>{Math.round(((currentStep + 1) / ALGORITHM_STEPS.length) * 100)}%</span>
         </div>
-        <div className="w-full bg-purple-950/50 rounded-full h-2">
+        <div className="w-full bg-slate-700 rounded-full h-2">
           <div
-            className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+            className="bg-cyan-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentStep + 1) / ALGORITHM_STEPS.length) * 100}%` }}
           />
         </div>
       </div>
 
       {/* Step Content */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         <div>
-          <h4 className="text-md font-bold text-purple-200 mb-1">{step.title}</h4>
-          <p className="text-sm text-purple-100 leading-relaxed">{step.description}</p>
+          <h4 className="text-sm md:text-md font-bold text-cyan-300 mb-1">{step.title}</h4>
+          <p className="text-xs md:text-sm text-slate-200 leading-relaxed">{step.description}</p>
         </div>
 
         {step.calculation && (
-          <div className="bg-purple-950/40 rounded-lg p-3 border border-purple-500/20">
-            <div className="text-xs font-semibold text-purple-300 mb-1">Calculation:</div>
-            <div className="text-sm text-white font-mono">{step.calculation}</div>
+          <div className="bg-slate-900/60 rounded-lg p-2 border border-slate-600">
+            <div className="text-xs font-semibold text-cyan-400 mb-1">Calculation:</div>
+            <div className="text-xs md:text-sm text-white font-mono break-all">{step.calculation}</div>
           </div>
         )}
 
         {step.reference && (
-          <div className="text-xs text-purple-400 italic">
+          <div className="text-xs text-slate-400 italic">
             Reference: {step.reference}
           </div>
         )}
@@ -197,24 +197,24 @@ export default function PaperExampleTutorial({
       </div>
 
       {/* Navigation */}
-      <div className="flex gap-2 mt-4 pt-3 border-t border-purple-400/30">
+      <div className="flex gap-2 mt-4 pt-3 border-t border-slate-600">
         <button
           onClick={onReset}
-          className="px-3 py-2 bg-purple-800/60 hover:bg-purple-700/70 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Reset
         </button>
         <button
           onClick={onPrevStep}
           disabled={isFirstStep}
-          className="px-3 py-2 bg-purple-800/60 hover:bg-purple-700/70 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           ← Prev
         </button>
         <button
           onClick={onNextStep}
           disabled={isLastStep}
-          className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
+          className="flex-1 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
         >
           {isLastStep ? 'Completed' : 'Next Step'}
           {!isLastStep && <ChevronRight className="w-4 h-4" />}
