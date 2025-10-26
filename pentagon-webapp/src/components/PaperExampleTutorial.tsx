@@ -1,8 +1,9 @@
 'use client';
 
 import { ComplexNumber } from '@/types/game';
-import { BookOpen, ChevronRight } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { generateExample311Tutorial, formatState } from '@/utils/pedagogical-solver';
+import { useState } from 'react';
 
 // From the paper (Example 3.11, page 8):
 // Initial: (3+i, 4-6i, 7+i, -8-8i, 3)
@@ -119,6 +120,7 @@ export default function PaperExampleTutorial({
   onReset,
   onApplyMove,
 }: PaperExampleTutorialProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const step = FIRING_SEQUENCE[currentStep] || FIRING_SEQUENCE[0];
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === FIRING_SEQUENCE.length - 1;
@@ -141,11 +143,39 @@ export default function PaperExampleTutorial({
   const isExplanationStep = step.moves === 'No firing - explanation only';
 
   return (
+    <>
+      {/* Collapsed state - show minimal bar */}
+      {isCollapsed && (
+        <div className="md:hidden absolute bottom-4 left-4 right-4 z-10 bg-slate-800/95 backdrop-blur-md px-4 py-2 rounded-xl border border-cyan-500/50 shadow-2xl">
+          <button
+            onClick={() => setIsCollapsed(false)}
+            className="w-full flex items-center justify-between text-white"
+          >
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-cyan-400" />
+              <span className="text-sm font-semibold">Step {currentStep + 1}/{FIRING_SEQUENCE.length}</span>
+            </div>
+            <ChevronUp className="w-5 h-5 text-cyan-400" />
+          </button>
+        </div>
+      )}
+
+      {/* Expanded state - show full panel */}
+      {!isCollapsed && (
     <div className="absolute bottom-4 left-4 right-4 md:top-16 md:bottom-auto md:left-4 md:right-auto md:max-w-sm z-10 bg-slate-800/95 backdrop-blur-md px-4 py-3 rounded-xl border border-cyan-500/50 shadow-2xl max-h-[40vh] md:max-h-[80vh] overflow-y-auto">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-600">
-        <BookOpen className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
-        <h3 className="text-base md:text-lg font-bold text-white">Firing Sequence Tutorial</h3>
+      <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-600">
+        <div className="flex items-center gap-2">
+          <BookOpen className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
+          <h3 className="text-base md:text-lg font-bold text-white">Firing Sequence Tutorial</h3>
+        </div>
+        <button
+          onClick={() => setIsCollapsed(true)}
+          className="md:hidden p-1 hover:bg-slate-700 rounded transition-all"
+          aria-label="Minimize tutorial"
+        >
+          <ChevronDown className="w-5 h-5 text-cyan-400" />
+        </button>
       </div>
 
       {/* Progress Bar */}
@@ -297,5 +327,7 @@ export default function PaperExampleTutorial({
         </div>
       )}
     </div>
+      )}
+    </>
   );
 }
