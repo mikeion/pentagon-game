@@ -903,7 +903,7 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
       )}
 
       {/* Top-left: Hint button */}
-      {gameMode !== 'sandbox' && (
+      {gameMode !== 'sandbox' && gameMode !== 'paper-example' && (
         <div className="absolute" style={{ top: '1rem', left: '1rem', zIndex: 20 }}>
         <motion.button
           onClick={getHint}

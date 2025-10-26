@@ -164,7 +164,6 @@ export default function PaperExampleTutorial({
       <div className="space-y-2">
         <div>
           <h4 className="text-sm md:text-md font-bold text-cyan-300 mb-1">{step.title}</h4>
-          <p className="text-xs md:text-sm text-slate-200 leading-relaxed">{step.description}</p>
         </div>
 
         {/* Firing Moves Display */}
@@ -264,13 +263,13 @@ export default function PaperExampleTutorial({
       {isLastStep && (
         <div className="mt-3 pt-3 border-t border-cyan-400/30 space-y-2">
           <div className="text-xs text-cyan-100">
-            <div className="font-semibold mb-1">Key Insights:</div>
+            <div className="font-semibold mb-1">From Theorem 3.8:</div>
             <ul className="list-disc list-inside space-y-1 text-slate-200">
-              <li>Algorithm 3.10's abstract steps are achieved through firing sequences</li>
-              <li>Each A or B firing has side effects on neighboring vertices</li>
-              <li>The K⁻¹ matrix calculation tells us exactly which firings are needed</li>
-              <li>Nice representatives have 0 or 3 chips on v₀, and 0, 1, or 2 on others</li>
-              <li>There are exactly 162 such equivalence classes in S(R₁₀)</li>
+              <li>Every equivalence class contains a unique nice representative</li>
+              <li>Nice representatives have the form (0 or 3, 0-2, 0-2, 0-2, 0-2) with all real chips</li>
+              <li>S(R₁₀) ≅ (ℤ/3ℤ)³ ⊕ (ℤ/6ℤ), giving exactly 2 × 3⁴ = 162 equivalence classes</li>
+              <li>Configuration (0, 1, 0, 0, 0) is the nice representative for this equivalence class</li>
+              <li>Algorithm 3.10 uses the K⁻¹ matrix to compute the firing vector needed</li>
             </ul>
           </div>
         </div>
