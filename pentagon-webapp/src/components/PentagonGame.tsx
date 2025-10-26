@@ -446,7 +446,7 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
 
     // Apply the move 'count' times
     setGameState(prev => {
-      let newVertices = prev.vertices.map(v => ({ ...v }));
+      const newVertices = prev.vertices.map(v => ({ ...v }));
 
       for (let i = 0; i < count; i++) {
         const move = moves[internalMoveType];
@@ -734,11 +734,11 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
                   >
                     <div className="text-lg mb-1 flex items-center justify-center gap-2">
                       <span>📖</span>
-                      <span>Example 3.11 Walkthrough</span>
+                      <span>Example 3.11</span>
                     </div>
                     <div className="text-sm text-slate-200 space-y-1">
-                      <div><span className="font-semibold text-cyan-300">Goal:</span> Find nice rep. for (3+i, 4-6i, 7+i, -8-8i, 3)</div>
-                      <div className="text-xs text-slate-300">See how Algorithm 3.10 translates to actual firing moves. Step-by-step with validation & auto-apply!</div>
+                      <div><span className="font-semibold text-cyan-300">Initial:</span> (3+i, 4-6i, 7+i, -8-8i, 3)</div>
+                      <div className="text-xs text-slate-300">Interactive demonstration of Algorithm 3.10 applied to find the nice representative for this equivalence class.</div>
                     </div>
                   </button>
                 </div>
