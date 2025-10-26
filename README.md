@@ -8,7 +8,7 @@ Web app for exploring chip-firing on the R₁₀ matroid using Gaussian integers
 
 This game implements chip-firing on a pentagon graph where each vertex holds a Gaussian integer (a complex number a+bi with integer coefficients). You can fire vertices using four different moves (A, B, -A, -B) to explore the 162 equivalence classes of this system.
 
-Research by Alex McDonough. Implementation by Mike Ion.
+Research by Dr. Alex McDonough. Implementation by Dr. Michael Ion.
 
 **Paper:** [arXiv link - coming soon]
 
