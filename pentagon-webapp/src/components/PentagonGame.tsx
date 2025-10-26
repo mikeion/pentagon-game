@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import toast, { Toaster } from 'react-hot-toast';
 import { Menu, Lightbulb } from 'lucide-react';
 import GameCanvas from './GameCanvas';
-import PaperExampleTutorial, { PAPER_INITIAL_STATE, ALGORITHM_STEPS } from './PaperExampleTutorial';
+import PaperExampleTutorial, { PAPER_INITIAL_STATE, FIRING_SEQUENCE } from './PaperExampleTutorial';
 import { ComplexNumber, GameState, Move, MoveType, UIMoveType } from '@/types/game';
-import { getMatrixHint, getFullSolution } from '@/utils/matrix-solver-mathjs';
 import { isNiceRepresentative, getNiceRepresentativeProgress } from '@/utils/nice-representative-solver';
 
 // Move definitions (CORRECTED to match Alex's paper lines 231-234)
@@ -42,7 +42,13 @@ const zeroGoal: ComplexNumber[] = [
   { real: 0, imag: 0 }, // vertex 4
 ];
 
-export default function PentagonGame() {
+interface PentagonGameProps {
+  initialMode?: 'free-play' | 'nice-rep' | 'paper-example';
+}
+
+export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
+  const router = useRouter();
+
   // Use UI move type (A or B only) for display
   const [currentUIMoveType, setCurrentUIMoveType] = useState<UIMoveType>('A');
 
@@ -64,9 +70,17 @@ export default function PentagonGame() {
   // Mode and menu state
   type GameMode = 'sandbox' | 'puzzle' | 'nice-representative' | 'paper-example';
   type Difficulty = 'easy' | 'medium' | 'hard' | 'expert' | 'custom';
-  const [gameMode, setGameMode] = useState<GameMode | null>(null);
-  const [showMenu, setShowMenu] = useState(true);
-  const [showModeSelect, setShowModeSelect] = useState(true);
+
+  // Initialize game mode based on initialMode prop
+  const [gameMode, setGameMode] = useState<GameMode | null>(() => {
+    if (initialMode === 'paper-example') return 'paper-example';
+    if (initialMode === 'nice-rep') return 'nice-representative';
+    if (initialMode === 'free-play') return 'sandbox';
+    return null;
+  });
+
+  const [showMenu, setShowMenu] = useState(!initialMode); // Hide menu if initialMode is set
+  const [showModeSelect, setShowModeSelect] = useState(!initialMode); // Hide mode select if initialMode is set
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('medium');
   const [customMoveCount, setCustomMoveCount] = useState(12);
 
@@ -231,6 +245,8 @@ export default function PentagonGame() {
         `V${i}: {real: ${v.real}, imag: ${v.imag}}`
       ).join(', '));
 
+      // Dynamically import matrix solver to avoid loading math.js on initial page load
+      const { getMatrixHint } = await import('@/utils/matrix-solver-mathjs');
       const hint = await getMatrixHint(gameState, gameState.currentMoveType);
       console.log('Hint result:', hint);
 
@@ -289,6 +305,8 @@ export default function PentagonGame() {
 
     try {
       console.log('Getting full solution for state:', gameState.vertices);
+      // Dynamically import matrix solver to avoid loading math.js on initial page load
+      const { getFullSolution } = await import('@/utils/matrix-solver-mathjs');
       const moves = await getFullSolution(gameState);
       console.log('Full solution moves:', moves);
 
@@ -376,9 +394,15 @@ export default function PentagonGame() {
   }, [moveHistory]);
 
   const resetGame = useCallback(() => {
-    setShowMenu(true);
-    setIsInitialized(false);
-  }, []);
+    // If we're in paper-example mode (on /example-311 route), navigate back to home
+    if (gameMode === 'paper-example') {
+      router.push('/');
+    } else {
+      setShowMenu(true);
+      setShowModeSelect(true);
+      setIsInitialized(false);
+    }
+  }, [gameMode, router]);
 
   const startNewGame = useCallback(() => {
     generateStartingState(selectedDifficulty, customMoveCount);
@@ -386,7 +410,7 @@ export default function PentagonGame() {
 
   // Paper example tutorial navigation
   const handleNextStep = useCallback(() => {
-    if (paperExampleStep < ALGORITHM_STEPS.length - 1) {
+    if (paperExampleStep < FIRING_SEQUENCE.length - 1) {
       setPaperExampleStep(prev => prev + 1);
     }
   }, [paperExampleStep]);
@@ -407,6 +431,45 @@ export default function PentagonGame() {
     setPaperExampleStep(0);
     setMoveCount(0);
     setMoveHistory([{ vertices: PAPER_INITIAL_STATE.map(v => ({ ...v })), moveType: 'A' }]);
+  }, []);
+
+  const handleApplyTutorialMove = useCallback((vertex: number, moveType: 'A' | 'B' | '-A' | '-B', count: number) => {
+    // Convert UI move types to internal move types
+    const moveTypeMap: Record<string, MoveType> = {
+      'A': 'A',
+      'B': 'B',
+      '-A': 'C', // C = -A
+      '-B': 'D', // D = -B
+    };
+
+    const internalMoveType = moveTypeMap[moveType];
+
+    // Apply the move 'count' times
+    setGameState(prev => {
+      let newVertices = prev.vertices.map(v => ({ ...v }));
+
+      for (let i = 0; i < count; i++) {
+        const move = moves[internalMoveType];
+
+        // Apply to selected vertex
+        newVertices[vertex].real += move.vertex.real;
+        newVertices[vertex].imag += move.vertex.imag;
+
+        // Apply to adjacent vertices
+        for (const adj of adjacency[vertex]) {
+          newVertices[adj].real += move.adjacent.real;
+          newVertices[adj].imag += move.adjacent.imag;
+        }
+      }
+
+      return {
+        ...prev,
+        vertices: newVertices,
+      };
+    });
+
+    setMoveCount(prev => prev + count);
+    toast.success(`Applied ${count}× ${moveType} at v${vertex}`);
   }, []);
 
   const setMoveType = useCallback((moveType: UIMoveType) => {
@@ -467,12 +530,14 @@ export default function PentagonGame() {
       // Nice representative mode: check if configuration matches criteria
       isWon = isNiceRepresentative(gameState.vertices, 0);
     } else if (gameMode === 'paper-example') {
-      // Paper example mode: check if reached the nice representative (0, 1, 0, 0, 0)
-      isWon = gameState.vertices[0].real === 0 && gameState.vertices[0].imag === 0 &&
+      // Paper example mode: only win when at the final tutorial step
+      const isAtFinalState = gameState.vertices[0].real === 0 && gameState.vertices[0].imag === 0 &&
               gameState.vertices[1].real === 1 && gameState.vertices[1].imag === 0 &&
               gameState.vertices[2].real === 0 && gameState.vertices[2].imag === 0 &&
               gameState.vertices[3].real === 0 && gameState.vertices[3].imag === 0 &&
               gameState.vertices[4].real === 0 && gameState.vertices[4].imag === 0;
+      // Only trigger win on the last step (step 13 - the conclusion)
+      isWon = isAtFinalState && paperExampleStep === FIRING_SEQUENCE.length - 1;
     } else if (gameMode === 'sandbox') {
       // Sandbox mode: no win condition, always false
       isWon = false;
@@ -518,23 +583,25 @@ export default function PentagonGame() {
         }, 250);
 
         // Success toast
-        toast.success('Puzzle Solved', {
-          duration: 3000,
-          position: 'top-center',
-          style: {
-            background: '#06b6d4',
-            color: '#fff',
-            fontWeight: '600',
-          },
-        });
+        toast.success(
+          gameMode === 'paper-example' ? 'Tutorial Complete!' : 'Puzzle Solved',
+          {
+            duration: 3000,
+            position: 'top-center',
+            style: {
+              background: '#06b6d4',
+              color: '#fff',
+              fontWeight: '600',
+            },
+          }
+        );
       }
     }
-  }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized, startTime, solveTime, gameMode]);
+  }, [gameState.vertices, gameState.goalVertices, gameState.isWon, isInitialized, startTime, solveTime, gameMode, paperExampleStep]);
 
   // Initialize paper example mode
   useEffect(() => {
     if (gameMode === 'paper-example' && !isInitialized) {
-      console.log('Initializing paper example mode with state:', PAPER_INITIAL_STATE);
       setGameState(prev => ({
         ...prev,
         vertices: PAPER_INITIAL_STATE.map(v => ({ ...v })),
@@ -549,14 +616,6 @@ export default function PentagonGame() {
       setIsInitialized(true);
     }
   }, [gameMode, isInitialized]);
-
-  // Don't auto-generate on mount - wait for user to select difficulty
-  // useEffect is removed - game starts with menu
-
-  // Debug game state
-  useEffect(() => {
-    console.log('PentagonGame: Current game state:', gameState);
-  }, [gameState]);
 
   return (
     <div
@@ -577,16 +636,18 @@ export default function PentagonGame() {
               Based on the paper:
             </p>
             <p className="text-indigo-300 text-center mb-4 text-sm font-semibold">
-              McDonough & Ion (2025) - Chip-Firing on Rank-Two Matroids
+              McDonough & Ion (2025) - CHIP-FIRING AND THE SANDPILE GROUP OF THE R10 MATROID
             </p>
 
             {showModeSelect ? (
               <>
                 {/* Introductory Context */}
                 <div className="bg-slate-700/50 p-4 rounded-lg mb-5 border border-slate-600">
+                  <p className="text-slate-200 text-sm leading-relaxed mb-3">
+                    <span className="font-semibold text-cyan-300">What this app does:</span> Visualizes chip-firing on the R₁₀ matroid using <span className="font-semibold text-indigo-300">Gaussian integers</span> (real + imaginary chips) on a pentagon.
+                  </p>
                   <p className="text-slate-200 text-sm leading-relaxed mb-2">
-                    This app demonstrates <span className="font-semibold text-white">chip-firing on the R₁₀ matroid</span>,
-                    a pentagon with vertices that hold <span className="font-semibold text-indigo-300">Gaussian integers</span> (real + imaginary chips).
+                    <span className="font-semibold text-cyan-300">Paper's contribution:</span> Shows all <span className="font-semibold text-white">162 equivalence classes</span> of S(R₁₀) have explicit "nice representatives" (Theorem 3.8) and gives Algorithm 3.10 to find them.
                   </p>
                   <p className="text-slate-200 text-sm leading-relaxed">
                     Apply <span className="font-semibold text-white">4 firing moves</span> (A, B, and their negatives)
@@ -668,16 +729,17 @@ export default function PentagonGame() {
                     <div className="text-sm text-blue-100">Find canonical form. Discover the <span className="font-medium">162 representatives</span> from <span className="font-medium">Theorem 3.1</span>.</div>
                   </button>
                   <button
-                    onClick={() => {
-                      setGameMode('paper-example');
-                      setShowModeSelect(false);
-                      setShowMenu(false);
-                      setGameState(prev => ({ ...prev, isWon: false }));
-                    }}
+                    onClick={() => router.push('/example-311')}
                     className="w-full px-6 py-5 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-semibold transition-all border border-cyan-500"
                   >
-                    <div className="text-lg mb-1">Paper Example</div>
-                    <div className="text-sm text-slate-200">Step through <span className="font-medium">Algorithm 2.1</span> from the paper. Follow the example from line 463.</div>
+                    <div className="text-lg mb-1 flex items-center justify-center gap-2">
+                      <span>📖</span>
+                      <span>Example 3.11 Walkthrough</span>
+                    </div>
+                    <div className="text-sm text-slate-200 space-y-1">
+                      <div><span className="font-semibold text-cyan-300">Goal:</span> Find nice rep. for (3+i, 4-6i, 7+i, -8-8i, 3)</div>
+                      <div className="text-xs text-slate-300">See how Algorithm 3.10 translates to actual firing moves. Step-by-step with validation & auto-apply!</div>
+                    </div>
                   </button>
                 </div>
               </>
@@ -766,6 +828,7 @@ export default function PentagonGame() {
           onNextStep={handleNextStep}
           onPrevStep={handlePrevStep}
           onReset={handleResetPaperExample}
+          onApplyMove={handleApplyTutorialMove}
         />
       )}
 
@@ -1034,37 +1097,54 @@ export default function PentagonGame() {
             </button>
 
             <div className="text-center">
-              <p className="text-3xl font-bold text-white mb-3">Congratulations</p>
-              <p className="text-lg text-cyan-100 mb-4">Puzzle Solved</p>
+              <p className="text-3xl font-bold text-white mb-3">
+                {gameMode === 'paper-example' ? 'Tutorial Complete!' : 'Congratulations'}
+              </p>
+              <p className="text-lg text-cyan-100 mb-4">
+                {gameMode === 'paper-example'
+                  ? 'You reached the nice representative (0, 1, 0, 0, 0)!'
+                  : 'Puzzle Solved'}
+              </p>
 
-              <div className="bg-white/20 rounded-lg p-4 mb-4 space-y-2 text-left">
-                <div className="flex justify-between items-center text-white">
-                  <span className="text-base">Moves:</span>
-                  <span className="text-xl font-bold">{moveCount}</span>
+              {gameMode === 'paper-example' ? (
+                <div className="bg-white/20 rounded-lg p-4 mb-4 text-left space-y-2">
+                  <p className="text-white text-sm leading-relaxed">
+                    You've completed Example 3.11 from the paper! This demonstrated Algorithm 3.10 in action: using the K⁻¹ matrix to compute the exact firing sequence needed to reach a nice representative.
+                  </p>
+                  <p className="text-cyan-200 text-sm">
+                    Every equivalence class in S(R₁₀) has exactly one configuration of the form (0 or 3, 0-2, 0-2, 0-2, 0-2) with all real chips.
+                  </p>
                 </div>
-                {solveTime && (
+              ) : (
+                <div className="bg-white/20 rounded-lg p-4 mb-4 space-y-2 text-left">
                   <div className="flex justify-between items-center text-white">
-                    <span className="text-base">Time:</span>
-                    <span className="text-xl font-bold">
-                      {Math.floor(solveTime / 60000)}:{String(Math.floor((solveTime % 60000) / 1000)).padStart(2, '0')}
-                    </span>
+                    <span className="text-base">Moves:</span>
+                    <span className="text-xl font-bold">{moveCount}</span>
                   </div>
-                )}
-                <div className="flex justify-between items-center text-white">
-                  <span className="text-base">Hints Used:</span>
-                  <span className="text-xl font-bold">{hintsUsed}</span>
+                  {solveTime && (
+                    <div className="flex justify-between items-center text-white">
+                      <span className="text-base">Time:</span>
+                      <span className="text-xl font-bold">
+                        {Math.floor(solveTime / 60000)}:{String(Math.floor((solveTime % 60000) / 1000)).padStart(2, '0')}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center text-white">
+                    <span className="text-base">Hints Used:</span>
+                    <span className="text-xl font-bold">{hintsUsed}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-white">
+                    <span className="text-base">Solution Viewed:</span>
+                    <span className="text-xl font-bold">{solutionViewed ? 'Yes' : 'No'}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center text-white">
-                  <span className="text-base">Solution Viewed:</span>
-                  <span className="text-xl font-bold">{solutionViewed ? 'Yes' : 'No'}</span>
-                </div>
-              </div>
+              )}
 
               <button
                 onClick={resetGame}
                 className="w-full px-6 py-3 bg-white text-cyan-700 rounded-lg font-bold text-base hover:bg-cyan-50 transition-all shadow-lg"
               >
-                New Puzzle
+                {gameMode === 'paper-example' ? 'Back to Menu' : 'New Puzzle'}
               </button>
             </div>
           </div>

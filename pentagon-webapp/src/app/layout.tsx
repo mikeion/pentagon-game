@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,16 +12,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover', // Important for iPhone notch support
+};
+
 export const metadata: Metadata = {
   title: "Pentagon Complex Number Firing Game",
   description: "A mathematical puzzle game based on Dr. Alex McDonough's research into group theory and complex number operations on pentagon configurations.",
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover', // Important for iPhone notch support
-  },
   icons: {
     icon: '/favicon.svg?v=4',
     shortcut: '/favicon.svg?v=4',
