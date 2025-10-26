@@ -240,7 +240,7 @@ export default function PaperExampleTutorial({
           onClick={onReset}
           className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Reset
+          {isLastStep ? 'Back to Menu' : 'Reset'}
         </button>
         <button
           onClick={onPrevStep}

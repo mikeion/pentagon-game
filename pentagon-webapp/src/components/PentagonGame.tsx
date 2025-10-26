@@ -1068,8 +1068,8 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
         </div>
       )}
 
-      {/* Win celebration overlay */}
-      {gameState.isWon && (
+      {/* Win celebration overlay - not shown in paper-example mode (uses left panel instead) */}
+      {gameState.isWon && gameMode !== 'paper-example' && (
         <>
           {/* Backdrop - click to dismiss on desktop */}
           <div
