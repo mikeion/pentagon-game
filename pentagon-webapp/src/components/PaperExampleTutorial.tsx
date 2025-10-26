@@ -105,6 +105,7 @@ interface PaperExampleTutorialProps {
   onNextStep: () => void;
   onPrevStep: () => void;
   onReset: () => void;
+  onBackToMenu?: () => void;
   onApplyMove?: (vertex: number, moveType: 'A' | 'B' | '-A' | '-B', count: number) => void;
   highlightedVertex?: number;
 }
@@ -112,6 +113,7 @@ interface PaperExampleTutorialProps {
 export default function PaperExampleTutorial({
   currentStep,
   currentState,
+  onBackToMenu,
   onNextStep,
   onPrevStep,
   onReset,
@@ -236,27 +238,47 @@ export default function PaperExampleTutorial({
 
       {/* Navigation */}
       <div className="flex gap-2 mt-4 pt-3 border-t border-slate-600">
-        <button
-          onClick={onReset}
-          className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLastStep ? 'Back to Menu' : 'Reset'}
-        </button>
-        <button
-          onClick={onPrevStep}
-          disabled={isFirstStep}
-          className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          ← Prev
-        </button>
-        <button
-          onClick={onNextStep}
-          disabled={isLastStep}
-          className="flex-1 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
-        >
-          {isLastStep ? 'Completed' : 'Next Step'}
-          {!isLastStep && <ChevronRight className="w-4 h-4" />}
-        </button>
+        {isLastStep ? (
+          <>
+            {/* Final step: Try Again and Back to Menu */}
+            <button
+              onClick={onReset}
+              className="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-semibold transition-all"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={onBackToMenu}
+              className="flex-1 px-3 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-sm font-semibold transition-all"
+            >
+              Back to Menu
+            </button>
+          </>
+        ) : (
+          <>
+            {/* Normal navigation */}
+            <button
+              onClick={onReset}
+              className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-semibold transition-all"
+            >
+              Reset
+            </button>
+            <button
+              onClick={onPrevStep}
+              disabled={isFirstStep}
+              className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              ← Prev
+            </button>
+            <button
+              onClick={onNextStep}
+              className="flex-1 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-1"
+            >
+              Next Step
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </>
+        )}
       </div>
 
       {/* Educational Context for Final Step */}

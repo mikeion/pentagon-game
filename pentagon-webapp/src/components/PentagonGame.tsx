@@ -828,6 +828,7 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
           onNextStep={handleNextStep}
           onPrevStep={handlePrevStep}
           onReset={handleResetPaperExample}
+          onBackToMenu={() => router.push('/')}
           onApplyMove={handleApplyTutorialMove}
         />
       )}
