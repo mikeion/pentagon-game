@@ -1082,8 +1082,8 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
             }}
           />
 
-          {/* Modal - centered on mobile, top-right on desktop */}
-          <div className="absolute top-1/2 left-1/2 md:top-20 md:left-auto md:right-6 transform -translate-x-1/2 -translate-y-1/2 md:translate-x-0 md:translate-y-0 z-30 bg-cyan-700/95 px-8 py-6 rounded-2xl shadow-2xl backdrop-blur-sm border-2 border-cyan-500/50 max-w-sm w-full mx-4">
+          {/* Modal - bottom center on mobile, top-right on desktop */}
+          <div className="absolute bottom-4 left-1/2 md:top-20 md:left-auto md:right-6 md:bottom-auto transform -translate-x-1/2 md:translate-x-0 md:translate-y-0 z-30 bg-cyan-700/95 px-8 py-6 rounded-2xl shadow-2xl backdrop-blur-sm border-2 border-cyan-500/50 max-w-sm w-full mx-4">
             {/* Close button - desktop only */}
             <button
               onClick={() => {
