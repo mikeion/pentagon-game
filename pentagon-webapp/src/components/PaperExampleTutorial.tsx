@@ -198,11 +198,13 @@ export default function PaperExampleTutorial({
           <h4 className="text-sm md:text-md font-bold text-cyan-300 mb-1">{step.title}</h4>
         </div>
 
-        {/* Firing Moves Display */}
-        <div className="bg-slate-900/60 rounded-lg p-2 border border-slate-600">
-          <div className="text-xs font-semibold text-cyan-400 mb-1">Moves:</div>
-          <div className="text-xs md:text-sm text-white font-mono break-all">{step.moves}</div>
-        </div>
+        {/* Firing Moves Display - only show if moves exist */}
+        {step.moves && step.moves.trim() !== '' && (
+          <div className="bg-slate-900/60 rounded-lg p-2 border border-slate-600">
+            <div className="text-xs font-semibold text-cyan-400 mb-1">Moves:</div>
+            <div className="text-xs md:text-sm text-white font-mono break-all">{step.moves}</div>
+          </div>
+        )}
 
         {step.explanation && (
           <div className="bg-slate-900/40 rounded-lg p-2 border border-slate-700">

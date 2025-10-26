@@ -78,17 +78,11 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
 
     if (vertexPositions.length === 0) return;
 
-    // Draw pentagon edges with gradient and glow
-    const edgeGradient = ctx.createLinearGradient(0, 0, width, height);
-    edgeGradient.addColorStop(0, '#3B82F6');
-    edgeGradient.addColorStop(0.5, '#8B5CF6');
-    edgeGradient.addColorStop(1, '#06B6D4');
-
-    // Glow effect
-    ctx.shadowColor = '#3B82F6';
-    ctx.shadowBlur = 15;
-    ctx.strokeStyle = edgeGradient;
-    ctx.lineWidth = 4;
+    // Draw pentagon edges with subtle gray
+    ctx.shadowColor = '#475569';
+    ctx.shadowBlur = 8;
+    ctx.strokeStyle = '#475569';
+    ctx.lineWidth = 3;
     ctx.beginPath();
     for (let i = 0; i < vertexPositions.length; i++) {
       const pos = vertexPositions[i];
@@ -117,10 +111,10 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
     ctx.fillStyle = centerGradient;
 
     // Glow effect for center pentagon
-    ctx.shadowColor = '#06b6d4'; // Cyan for all moves
-    ctx.shadowBlur = 20;
-    ctx.strokeStyle = '#06b6d4'; // Cyan for all moves
-    ctx.lineWidth = 5;
+    ctx.shadowColor = '#91C4C3'; // Seafoam for all moves
+    ctx.shadowBlur = 15;
+    ctx.strokeStyle = '#91C4C3'; // Seafoam for all moves
+    ctx.lineWidth = 4;
     ctx.beginPath();
     // Draw pentagon centered on screen
     for (let i = 0; i < 5; i++) {
@@ -186,13 +180,13 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       const isZero = vertex.real === 0 && vertex.imag === 0;
 
       // Determine border color based on vertex state
-      const borderColor = isZero ? '#10B981' : isPureReal ? '#60A5FA' : '#C084FC';
+      const borderColor = isZero ? '#B4DEBD' : isPureReal ? '#80A1BA' : '#91C4C3';
 
       // Highlight selected vertex with glow
       if (i === gameState.selectedVertex) {
-        ctx.shadowColor = '#06b6d4'; // Cyan for selected
+        ctx.shadowColor = '#91C4C3'; // Seafoam for selected
         ctx.shadowBlur = 25;
-        ctx.fillStyle = 'rgba(6, 182, 212, 0.3)'; // Cyan with transparency
+        ctx.fillStyle = 'rgba(145, 196, 195, 0.3)'; // Seafoam with transparency
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, 48, 0, 2 * Math.PI);
         ctx.fill();
@@ -201,11 +195,11 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
 
       // Highlight hint vertex with pulsing glow
       if (hintVertex !== undefined && i === hintVertex) {
-        ctx.shadowColor = '#22C55E';
-        ctx.shadowBlur = 30;
-        ctx.fillStyle = 'rgba(34, 197, 94, 0.4)';
+        ctx.shadowColor = '#FFF7DD';
+        ctx.shadowBlur = 45;
+        ctx.fillStyle = 'rgba(255, 247, 221, 0.7)';
         ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 42, 0, 2 * Math.PI); // Smaller radius to avoid covering label
+        ctx.arc(pos.x, pos.y, 50, 0, 2 * Math.PI); // Larger, more visible hint glow
         ctx.fill();
         ctx.shadowBlur = 0;
       }
@@ -235,10 +229,10 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
       ctx.textBaseline = 'middle';
 
       if (isZero) {
-        ctx.fillStyle = '#10B981'; // Green for zero
+        ctx.fillStyle = '#B4DEBD'; // Mint green for zero
         ctx.fillText('0', pos.x, pos.y);
       } else if (isPureReal) {
-        ctx.fillStyle = '#60A5FA'; // Blue for pure real
+        ctx.fillStyle = '#80A1BA'; // Slate blue for pure real
         ctx.fillText(`${vertex.real}`, pos.x, pos.y);
       } else {
         // Complex number - display as single string with gradient effect
@@ -263,11 +257,8 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
           fullText = `${vertex.real}${sign}${imagPart}`;
         }
 
-        // Create gradient for complex numbers
-        const textGradient = ctx.createLinearGradient(pos.x - 30, pos.y, pos.x + 30, pos.y);
-        textGradient.addColorStop(0, '#60A5FA'); // Blue
-        textGradient.addColorStop(1, '#C084FC'); // Purple
-        ctx.fillStyle = textGradient;
+        // Seafoam color for complex numbers
+        ctx.fillStyle = '#91C4C3';
         ctx.fillText(fullText, pos.x, pos.y);
       }
     });
@@ -406,11 +397,12 @@ export default function GameCanvas({ gameState, onVertexClick, onCenterClick, hi
         return (
           <div
             key={i}
-            className="absolute text-cyan-400 font-bold text-lg font-mono pointer-events-none"
+            className="absolute font-bold text-lg font-mono pointer-events-none"
             style={{
               left: `${labelX}px`,
               top: `${labelY}px`,
               transform: 'translate(-50%, -50%)',
+              color: '#A8C5D1', // Lighter shade of slate blue for readability
             }}
           >
             V{i}
