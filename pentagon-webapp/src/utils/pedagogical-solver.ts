@@ -201,7 +201,7 @@ export function generateExample311Tutorial(): PedagogicalStep[] {
   steps.push({
     stepNumber: stepNumber++,
     description: 'Nice Representative Achieved!',
-    explanation: `We've successfully reached (0, 1, 0, 0, 0) - the unique nice representative for the equivalence class containing our initial configuration (3+i, 4-6i, 7+i, -8-8i, 3).\n\nThis demonstrates Algorithm 3.10 from the paper: using the K⁻¹ matrix calculation, we determined the exact firing sequence needed. Every equivalence class in S(R₁₀) has exactly ONE nice representative of the form (0 or 3, 0-2, 0-2, 0-2, 0-2) with all real chips.\n\nTheorem 3.8 guarantees there are exactly 2 × 3⁴ = 162 such representatives, matching |S(R₁₀)| = 162.`,
+    explanation: `We've successfully reached (0, 1, 0, 0, 0) - the unique nice representative for the equivalence class containing our initial configuration (3+i, 4-6i, 7+i, -8-8i, 3).\n\nThis demonstrates Algorithm 3.10: using the K⁻¹ matrix calculation, we determined the exact firing sequence needed to reach this representative.`,
     stateBefore: [...currentState],
     stateAfter: [...currentState],
     isExplanation: true,

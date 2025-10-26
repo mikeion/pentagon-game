@@ -261,10 +261,10 @@ export default function PaperExampleTutorial({
 
       {/* Educational Context for Final Step */}
       {isLastStep && (
-        <div className="mt-3 pt-3 border-t border-cyan-400/30 space-y-2">
+        <div className="mt-3 pt-3 border-t border-cyan-400/30">
           <div className="text-xs text-cyan-100">
             <div className="font-semibold mb-1">From Theorem 3.8:</div>
-            <ul className="list-disc list-inside space-y-1 text-slate-200">
+            <ul className="list-disc list-inside space-y-0.5 text-slate-200">
               <li>Every equivalence class contains a unique nice representative</li>
               <li>Nice representatives have the form (0 or 3, 0-2, 0-2, 0-2, 0-2) with all real chips</li>
               <li>S(R₁₀) ≅ (ℤ/3ℤ)³ ⊕ (ℤ/6ℤ), giving exactly 2 × 3⁴ = 162 equivalence classes</li>
