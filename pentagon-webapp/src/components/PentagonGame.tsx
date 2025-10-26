@@ -1098,53 +1098,40 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
 
             <div className="text-center">
               <p className="text-3xl font-bold text-white mb-3">
-                {gameMode === 'paper-example' ? 'Tutorial Complete!' : 'Congratulations'}
+                Congratulations
               </p>
               <p className="text-lg text-cyan-100 mb-4">
-                {gameMode === 'paper-example'
-                  ? 'You reached the nice representative (0, 1, 0, 0, 0)!'
-                  : 'Puzzle Solved'}
+                Puzzle Solved
               </p>
 
-              {gameMode === 'paper-example' ? (
-                <div className="bg-white/20 rounded-lg p-4 mb-4 text-left space-y-2">
-                  <p className="text-white text-sm leading-relaxed">
-                    You've completed Example 3.11 from the paper! This demonstrated Algorithm 3.10 in action: using the K⁻¹ matrix to compute the exact firing sequence needed to reach a nice representative.
-                  </p>
-                  <p className="text-cyan-200 text-sm">
-                    Every equivalence class in S(R₁₀) has exactly one configuration of the form (0 or 3, 0-2, 0-2, 0-2, 0-2) with all real chips.
-                  </p>
+              <div className="bg-white/20 rounded-lg p-4 mb-4 space-y-2 text-left">
+                <div className="flex justify-between items-center text-white">
+                  <span className="text-base">Moves:</span>
+                  <span className="text-xl font-bold">{moveCount}</span>
                 </div>
-              ) : (
-                <div className="bg-white/20 rounded-lg p-4 mb-4 space-y-2 text-left">
+                {solveTime && (
                   <div className="flex justify-between items-center text-white">
-                    <span className="text-base">Moves:</span>
-                    <span className="text-xl font-bold">{moveCount}</span>
+                    <span className="text-base">Time:</span>
+                    <span className="text-xl font-bold">
+                      {Math.floor(solveTime / 60000)}:{String(Math.floor((solveTime % 60000) / 1000)).padStart(2, '0')}
+                    </span>
                   </div>
-                  {solveTime && (
-                    <div className="flex justify-between items-center text-white">
-                      <span className="text-base">Time:</span>
-                      <span className="text-xl font-bold">
-                        {Math.floor(solveTime / 60000)}:{String(Math.floor((solveTime % 60000) / 1000)).padStart(2, '0')}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex justify-between items-center text-white">
-                    <span className="text-base">Hints Used:</span>
-                    <span className="text-xl font-bold">{hintsUsed}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-white">
-                    <span className="text-base">Solution Viewed:</span>
-                    <span className="text-xl font-bold">{solutionViewed ? 'Yes' : 'No'}</span>
-                  </div>
+                )}
+                <div className="flex justify-between items-center text-white">
+                  <span className="text-base">Hints Used:</span>
+                  <span className="text-xl font-bold">{hintsUsed}</span>
                 </div>
-              )}
+                <div className="flex justify-between items-center text-white">
+                  <span className="text-base">Solution Viewed:</span>
+                  <span className="text-xl font-bold">{solutionViewed ? 'Yes' : 'No'}</span>
+                </div>
+              </div>
 
               <button
                 onClick={resetGame}
                 className="w-full px-6 py-3 bg-white text-cyan-700 rounded-lg font-bold text-base hover:bg-cyan-50 transition-all shadow-lg"
               >
-                {gameMode === 'paper-example' ? 'Back to Menu' : 'New Puzzle'}
+                New Puzzle
               </button>
             </div>
           </div>
