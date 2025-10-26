@@ -644,7 +644,7 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
                 {/* Introductory Context */}
                 <div className="bg-slate-700/50 p-4 rounded-lg mb-5 border border-slate-600">
                   <p className="text-slate-200 text-sm leading-relaxed mb-3">
-                    <span className="font-semibold text-cyan-300">What this app does:</span> Visualizes chip-firing on the R₁₀ matroid using <span className="font-semibold text-indigo-300">Gaussian integers</span> (real + imaginary chips) on a pentagon.
+                    <span className="font-semibold text-cyan-300">What this app does:</span> Visualizes chip-firing on the R₁₀ matroid using <span className="font-semibold text-indigo-300">Gaussian integers</span> (complex numbers a+bi where a,b are integers) on a pentagon.
                   </p>
                   <p className="text-slate-200 text-sm leading-relaxed mb-2">
                     <span className="font-semibold text-cyan-300">Paper's contribution:</span> Shows all <span className="font-semibold text-white">162 equivalence classes</span> of S(R₁₀) have explicit "nice representatives" (Theorem 3.8) and gives Algorithm 3.10 to find them.
