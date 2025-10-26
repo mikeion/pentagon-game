@@ -636,7 +636,7 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
               Based on the paper:
             </p>
             <p className="text-indigo-300 text-center mb-4 text-sm font-semibold">
-              McDonough & Ion (2025) - CHIP-FIRING AND THE SANDPILE GROUP OF THE R10 MATROID
+              McDonough & Ion (2025) - Chip-Firing and the Sandpile Group of the R₁₀ Matroid
             </p>
 
             {showModeSelect ? (
