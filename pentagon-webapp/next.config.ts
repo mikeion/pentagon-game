@@ -10,7 +10,20 @@ const nextConfig: NextConfig = {
   basePath: '',
   images: {
     unoptimized: true
-  }
+  },
+  // Redirect all Vercel traffic to GitHub Pages
+  async redirects() {
+    if (isVercel) {
+      return [
+        {
+          source: '/:path*',
+          destination: 'https://pentagon-game.github.io/:path*',
+          permanent: true,
+        },
+      ];
+    }
+    return [];
+  },
 };
 
 export default nextConfig;
