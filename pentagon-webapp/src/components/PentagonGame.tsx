@@ -217,7 +217,15 @@ export default function PentagonGame({ initialMode, initialDifficulty }: Pentago
     console.log('Per-vertex breakdown:', vertexMoves.map(v =>
       `V${v.vertex}: ${v.aMoves}A, ${v.bMoves}B`
     ).join(' | '))
-    
+
+    // For Expert mode, check if we accidentally generated a nice representative
+    // If so, regenerate to ensure the puzzle needs solving
+    if (difficulty === 'expert' && isNiceRepresentative(startingVertices, 0)) {
+      console.log('Generated state is already a nice representative - regenerating...');
+      generateStartingState(difficulty, customCount);
+      return;
+    }
+
     setGameState(prev => ({
       ...prev,
       vertices: startingVertices,
