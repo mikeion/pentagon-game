@@ -198,7 +198,8 @@ export function getNiceRepresentativeProgress(
     if (v.imag !== 0) {
       othersValid = false;
       // Already covered in hasImaginary check
-    } else if (v.real < 0 || v.real > 2) {
+    }
+    if (v.real < 0 || v.real > 2) {
       othersValid = false;
       issues.push(`V${i} has ${v.real} chips (must be 0, 1, or 2)`);
     }
