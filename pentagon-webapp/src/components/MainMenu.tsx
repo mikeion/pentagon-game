@@ -81,14 +81,8 @@ export default function MainMenu() {
             onClick={() => router.push('/example-311')}
             className="w-full px-6 py-5 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-semibold transition-all border border-cyan-500"
           >
-            <div className="text-lg mb-1 flex items-center justify-center gap-2">
-              <span>📖</span>
-              <span>Example 3.11 Tutorial</span>
-            </div>
-            <div className="text-sm text-slate-200 space-y-1">
-              <div><span className="font-semibold text-cyan-300">Initial:</span> (3+i, 4-6i, 7+i, -8-8i, 3)</div>
-              <div className="text-xs text-slate-300">Interactive demonstration of Algorithm 3.10 using linear algebra and direct transformations.</div>
-            </div>
+            <div className="text-lg mb-1">Interactive Tutorial</div>
+            <div className="text-sm text-slate-200">Starting from (3+i, 4-6i, 7+i, -8-8i, 3), learn how to find the simplest equivalent configuration.</div>
           </button>
           <button
             onClick={() => router.push('/sandbox')}
