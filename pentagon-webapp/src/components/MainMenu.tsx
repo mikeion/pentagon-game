@@ -78,13 +78,6 @@ export default function MainMenu() {
             <div className="text-sm text-cyan-100">Solve puzzles with 4 difficulty levels. Easy-Hard: reach (0,0,0,0,0). <span className="font-medium text-cyan-200">Expert</span>: reach any nice representative!</div>
           </button>
           <button
-            onClick={() => router.push('/example-311')}
-            className="w-full px-6 py-5 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-semibold transition-all border border-cyan-500"
-          >
-            <div className="text-lg mb-1">Interactive Tutorial</div>
-            <div className="text-sm text-slate-200">Starting from (3+i, 4-6i, 7+i, -8-8i, 3), learn how to find the simplest equivalent configuration.</div>
-          </button>
-          <button
             onClick={() => router.push('/sandbox')}
             className="w-full px-6 py-5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all border border-slate-600"
           >
