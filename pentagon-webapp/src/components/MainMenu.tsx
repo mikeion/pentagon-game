@@ -21,15 +21,10 @@ export default function MainMenu() {
         {/* Introductory Context */}
         <div className="bg-slate-700/50 p-4 rounded-lg mb-5 border border-slate-600">
           <p className="text-slate-200 text-sm leading-relaxed mb-3">
-            <span className="font-semibold text-cyan-300">What this app does:</span> Visualizes chip-firing on the R₁₀ matroid using <span className="font-semibold text-indigo-300">Gaussian integers</span> (complex numbers a+bi where a,b are integers) on a pentagon.
-          </p>
-          <p className="text-slate-200 text-sm leading-relaxed mb-2">
-            <span className="font-semibold text-cyan-300">Paper's contribution:</span> Shows all <span className="font-semibold text-white">162 equivalence classes</span> of S(R₁₀) have explicit "nice representatives" (Theorem 3.8) and gives Algorithm 3.10 to find them.
+            <span className="font-semibold text-cyan-300">What this app does:</span> Visualize and explore chip-firing dynamics on a pentagon using <span className="font-semibold text-indigo-300">Gaussian integers</span> (complex numbers a+bi where a,b are integers).
           </p>
           <p className="text-slate-200 text-sm leading-relaxed">
-            Apply <span className="font-semibold text-white">4 firing moves</span> (A, B, and their negatives)
-            as described in <span className="text-indigo-300 font-medium">Section 3</span> to explore
-            the <span className="font-semibold text-white">162 equivalence classes</span> of this mathematical system.
+            Apply <span className="font-semibold text-white">4 firing moves</span> (A, B, and their negatives) to explore the <span className="font-semibold text-white">162 distinct configurations</span> of this combinatorial system. Each configuration represents a different pattern in how chips can be distributed across the pentagon.
           </p>
         </div>
 
