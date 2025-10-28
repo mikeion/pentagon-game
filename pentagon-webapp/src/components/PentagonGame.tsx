@@ -42,11 +42,14 @@ const zeroGoal: ComplexNumber[] = [
   { real: 0, imag: 0 }, // vertex 4
 ];
 
+type Difficulty = 'easy' | 'medium' | 'hard' | 'expert' | 'custom';
+
 interface PentagonGameProps {
-  initialMode?: 'free-play' | 'nice-rep' | 'paper-example';
+  initialMode?: 'free-play' | 'puzzle' | 'paper-example';
+  initialDifficulty?: Difficulty;
 }
 
-export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
+export default function PentagonGame({ initialMode, initialDifficulty }: PentagonGameProps = {}) {
   const router = useRouter();
 
   // Use UI move type (A or B only) for display
@@ -68,20 +71,19 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Mode and menu state
-  type GameMode = 'sandbox' | 'puzzle' | 'nice-representative' | 'paper-example';
-  type Difficulty = 'easy' | 'medium' | 'hard' | 'expert' | 'custom';
+  type GameMode = 'sandbox' | 'puzzle' | 'paper-example';
 
   // Initialize game mode based on initialMode prop
   const [gameMode, setGameMode] = useState<GameMode | null>(() => {
     if (initialMode === 'paper-example') return 'paper-example';
-    if (initialMode === 'nice-rep') return 'nice-representative';
     if (initialMode === 'free-play') return 'sandbox';
+    if (initialMode === 'puzzle') return 'puzzle';
     return null;
   });
 
-  const [showMenu, setShowMenu] = useState(!initialMode); // Hide menu if initialMode is set
-  const [showModeSelect, setShowModeSelect] = useState(!initialMode); // Hide mode select if initialMode is set
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('medium');
+  const [showMenu, setShowMenu] = useState(false); // Never show menu overlay - use routes instead
+  const [showModeSelect, setShowModeSelect] = useState(false); // Never show mode select overlay
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>(initialDifficulty || 'medium');
   const [customMoveCount, setCustomMoveCount] = useState(12);
 
   // Track stats for completion screen
@@ -119,7 +121,7 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
       minMoves = 6; maxMoves = 9;
     } else if (difficulty === 'hard') {
       minMoves = 10; maxMoves = 15;
-    } else { // expert
+    } else { // expert (nice representative mode)
       minMoves = 16; maxMoves = 20;
     }
 
@@ -365,7 +367,8 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
         ...prev,
         vertices: newVertices,
         selectedVertex: vertexIndex,
-        currentMoveType: actualMoveType,
+        // Don't update currentMoveType - keep the displayed button unchanged
+        // Right-clicking applies the negative move without changing the UI
       };
     });
 
@@ -388,7 +391,7 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
     setGameState(prev => ({
       ...prev,
       vertices: previousState.vertices.map(v => ({ ...v })),
-      currentMoveType: previousState.moveType,
+      // Don't restore currentMoveType - keep the displayed button unchanged during undo
       isWon: false, // Reset win state when undoing
     }));
   }, [moveHistory]);
@@ -411,13 +414,41 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
   // Paper example tutorial navigation
   const handleNextStep = useCallback(() => {
     if (paperExampleStep < FIRING_SEQUENCE.length - 1) {
-      setPaperExampleStep(prev => prev + 1);
+      const nextStepIndex = paperExampleStep + 1;
+      const nextStep = FIRING_SEQUENCE[nextStepIndex];
+
+      // Always update the pentagon to show the new state if stateAfter is available
+      if (nextStep?.stateAfter) {
+        console.log('Updating state for step', nextStepIndex, 'stateAfter:', nextStep.stateAfter);
+        setGameState(prev => ({
+          ...prev,
+          vertices: nextStep.stateAfter!.map(v => ({ ...v })),
+        }));
+      } else {
+        console.log('No stateAfter for step', nextStepIndex);
+      }
+
+      setPaperExampleStep(nextStepIndex);
     }
   }, [paperExampleStep]);
 
   const handlePrevStep = useCallback(() => {
     if (paperExampleStep > 0) {
-      setPaperExampleStep(prev => prev - 1);
+      const prevStepIndex = paperExampleStep - 1;
+      const prevStep = FIRING_SEQUENCE[prevStepIndex];
+
+      // When going back, restore the stateAfter of the previous step (which is what we want to show)
+      if (prevStep?.stateAfter) {
+        console.log('Going back to step', prevStepIndex, 'stateAfter:', prevStep.stateAfter);
+        setGameState(prev => ({
+          ...prev,
+          vertices: prevStep.stateAfter!.map(v => ({ ...v })),
+        }));
+      } else {
+        console.log('No stateAfter for step', prevStepIndex);
+      }
+
+      setPaperExampleStep(prevStepIndex);
     }
   }, [paperExampleStep]);
 
@@ -526,8 +557,8 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
 
     let isWon = false;
 
-    if (gameMode === 'nice-representative') {
-      // Nice representative mode: check if configuration matches criteria
+    if (gameMode === 'puzzle' && selectedDifficulty === 'expert') {
+      // Expert mode: check if configuration is a nice representative
       isWon = isNiceRepresentative(gameState.vertices, 0);
     } else if (gameMode === 'paper-example') {
       // Paper example mode: only win when at the final tutorial step
@@ -617,6 +648,28 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
     }
   }, [gameMode, isInitialized]);
 
+  // Sync pentagon visualization with current tutorial step
+  useEffect(() => {
+    if (gameMode === 'paper-example' && isInitialized && FIRING_SEQUENCE.length > 0) {
+      const currentStepData = FIRING_SEQUENCE[paperExampleStep];
+      if (currentStepData?.stateAfter) {
+        console.log(`[Tutorial Sync] Step ${paperExampleStep}: Updating pentagon to`, currentStepData.stateAfter);
+        setGameState(prev => ({
+          ...prev,
+          vertices: currentStepData.stateAfter!.map(v => ({ ...v })),
+        }));
+      }
+    }
+  }, [gameMode, paperExampleStep, isInitialized]);
+
+  // Initialize puzzle mode with selected difficulty
+  useEffect(() => {
+    if (gameMode === 'puzzle' && !isInitialized && initialDifficulty) {
+      generateStartingState(initialDifficulty);
+      setIsInitialized(true);
+    }
+  }, [gameMode, isInitialized, initialDifficulty]);
+
   return (
     <div
       className="relative w-screen h-screen overflow-hidden bg-slate-900"
@@ -699,34 +752,11 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
                 <p className="text-white mb-4 text-center font-semibold text-lg">Select Mode</p>
                 <div className="space-y-3">
                   <button
-                    onClick={() => {
-                      setGameMode('sandbox');
-                      setShowModeSelect(false);
-                      setShowMenu(false);
-                      setGameState(prev => ({ ...prev, isWon: false }));
-                    }}
-                    className="w-full px-6 py-5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all border border-slate-600"
-                  >
-                    <div className="text-lg mb-1">Sandbox Mode</div>
-                    <div className="text-sm text-slate-300">Freely set chips and explore dynamics. Experiment with <span className="font-medium text-indigo-300">Lemma 3.1</span>: removing imaginary chips through B-firings.</div>
-                  </button>
-                  <button
                     onClick={() => { setGameMode('puzzle'); setShowModeSelect(false); }}
                     className="w-full px-6 py-5 bg-cyan-700 hover:bg-cyan-600 text-white rounded-lg font-semibold transition-all border border-cyan-600"
                   >
                     <div className="text-lg mb-1">Puzzle Mode</div>
-                    <div className="text-sm text-cyan-100">Solve: reach all zeros. Apply firing moves to find equivalence classes (<span className="font-medium">Section 3</span>).</div>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setGameMode('nice-representative');
-                      setShowModeSelect(false);
-                      setGameState(prev => ({ ...prev, isWon: false }));
-                    }}
-                    className="w-full px-6 py-5 bg-blue-700 hover:bg-blue-600 text-white rounded-lg font-semibold transition-all border border-blue-600"
-                  >
-                    <div className="text-lg mb-1">Nice Representative</div>
-                    <div className="text-sm text-blue-100">Find canonical form. Discover the <span className="font-medium">162 representatives</span> from <span className="font-medium">Theorem 3.1</span>.</div>
+                    <div className="text-sm text-cyan-100">Solve puzzles with 5 difficulty levels. Easy-Expert: reach (0,0,0,0,0). <span className="font-medium text-cyan-200">Super Hard</span>: reach any nice representative!</div>
                   </button>
                   <button
                     onClick={() => router.push('/example-311')}
@@ -734,12 +764,31 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
                   >
                     <div className="text-lg mb-1 flex items-center justify-center gap-2">
                       <span>📖</span>
-                      <span>Example 3.11</span>
+                      <span>Example 3.11 Tutorial</span>
                     </div>
                     <div className="text-sm text-slate-200 space-y-1">
                       <div><span className="font-semibold text-cyan-300">Initial:</span> (3+i, 4-6i, 7+i, -8-8i, 3)</div>
-                      <div className="text-xs text-slate-300">Interactive demonstration of Algorithm 3.10 applied to find the nice representative for this equivalence class.</div>
+                      <div className="text-xs text-slate-300">Interactive demonstration of Algorithm 3.10 using linear algebra and direct transformations.</div>
                     </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setGameMode('sandbox');
+                      setShowModeSelect(false);
+                      setShowMenu(false);
+                      // Reset to zeros when entering sandbox
+                      setGameState({
+                        vertices: Array(5).fill(null).map(() => ({ real: 0, imag: 0 })),
+                        goalVertices: zeroGoal.map(v => ({ ...v })),
+                        currentMoveType: 'A',
+                        selectedVertex: -1,
+                        isWon: false,
+                      });
+                    }}
+                    className="w-full px-6 py-5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all border border-slate-600"
+                  >
+                    <div className="text-lg mb-1">Sandbox Mode</div>
+                    <div className="text-sm text-slate-300">Freely set chips and explore dynamics. Experiment with <span className="font-medium text-indigo-300">Lemma 3.4</span>: removing imaginary chips through B-firings.</div>
                   </button>
                 </div>
               </>
@@ -790,6 +839,16 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
               >
                 Expert (16-20 moves)
               </button>
+              <button
+                onClick={() => {
+                  setSelectedDifficulty('super-hard');
+                  generateStartingState('super-hard');
+                }}
+                className="w-full px-6 py-4 bg-gradient-to-r from-purple-700 to-blue-700 hover:from-purple-600 hover:to-blue-600 text-white rounded-lg font-semibold text-lg transition-all border-2 border-purple-400"
+              >
+                <div>Super Hard 🔥</div>
+                <div className="text-sm font-normal text-purple-100">Reach ANY nice representative (V0∈{'{0,3}'}, V1-V4∈{'{0,1,2}'})</div>
+              </button>
 
               <div className="border-t border-slate-600 pt-3">
                 <label className="text-slate-300 text-sm mb-2 block">Custom (move count):</label>
@@ -833,11 +892,11 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
         />
       )}
 
-      {/* Nice Representative Mode Progress */}
-      {gameMode === 'nice-representative' && !showMenu && !gameState.isWon && (
-        <div className="absolute top-16 left-4 z-20 bg-slate-800/95 backdrop-blur-md px-4 py-3 rounded-xl border border-blue-500/50 shadow-xl max-w-xs">
+      {/* Expert Mode Progress */}
+      {gameMode === 'puzzle' && selectedDifficulty === 'expert' && !showMenu && !gameState.isWon && (
+        <div className="absolute top-16 left-4 z-20 bg-slate-800/95 backdrop-blur-md px-4 py-3 rounded-xl border border-purple-500/50 shadow-xl max-w-xs">
           <div className="mb-2">
-            <div className="text-blue-400 font-bold text-sm mb-1">Goal: Nice Representative</div>
+            <div className="text-purple-400 font-bold text-sm mb-1">Goal: Nice Representative</div>
             <div className="text-slate-300 text-xs">
               V0 ∈ {'{0, 3}'} • V1-V4 ∈ {'{0, 1, 2}'} • All real
             </div>
@@ -898,6 +957,24 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
               className="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded font-semibold transition-all"
             >
               Set
+            </button>
+            <button
+              onClick={() => {
+                setGameState({
+                  vertices: Array(5).fill(null).map(() => ({ real: 0, imag: 0 })),
+                  goalVertices: zeroGoal.map(v => ({ ...v })),
+                  currentMoveType: 'A',
+                  selectedVertex: -1,
+                  isWon: false,
+                });
+                setMoveHistory([]);
+                setSelectedVertexForEdit(0);
+                setEditReal('0');
+                setEditImag('0');
+              }}
+              className="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded font-semibold transition-all"
+            >
+              Reset to Zero
             </button>
           </div>
         </div>
@@ -967,8 +1044,7 @@ export default function PentagonGame({ initialMode }: PentagonGameProps = {}) {
             </button>
             <button
               onClick={() => {
-                setShowMenu(true);
-                setShowModeSelect(true);
+                router.push('/');
                 setShowMenuDropdown(false);
               }}
               className="w-full px-4 py-3 bg-slate-700/90 hover:bg-slate-600 text-white text-left font-semibold transition-all"

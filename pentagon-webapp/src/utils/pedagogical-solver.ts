@@ -1,12 +1,15 @@
 /**
  * Pedagogical Solver - Example 3.11 Tutorial
  *
- * This solver follows the proof strategy from Theorem 3.8:
- * 1. Use B and -B firings to remove ALL imaginary chips (Lemma 3.4)
- * 2. Then use the K^-1 matrix to determine A firings needed
+ * This implements Algorithm 3.10 from the paper, which transforms any
+ * chip configuration into its nice representative.
  *
- * This matches the pedagogical order in the paper and makes the
- * tutorial clearer: "First remove imaginary chips, then handle real chips"
+ * The algorithm uses direct mathematical transformations:
+ * - Steps 2-3: Add compensating real chips based on ψ values, then remove imaginary chips
+ * - Steps 4-5: Apply A/-A firings to handle real chips
+ * - Steps 6-8: Apply modulo operations and parity adjustments for normalization
+ *
+ * This demonstrates the constructive proof from Theorem 3.8.
  */
 
 import { ComplexNumber } from '../types/game';
@@ -91,6 +94,7 @@ export function generateExample311Tutorial(): PedagogicalStep[] {
     { real: 3, imag: 0 },    // v4
   ];
 
+  // The algorithm will transform the initial state into this nice representative
   const final: ComplexNumber[] = [
     { real: 0, imag: 0 },
     { real: 1, imag: 0 },
@@ -99,109 +103,145 @@ export function generateExample311Tutorial(): PedagogicalStep[] {
     { real: 0, imag: 0 },
   ];
 
-  // From K^-1 calculation in Example 3.11:
-  // K^-1(final - initial) = [-5-i, -4+i, -4+3i, 4-i, -1]
-  // Real part (A-firings): [-5, -4, -4, 4, -1]
-  // Imaginary part (B-firings): [-1, 1, 3, -1, 0]
-
   const steps: PedagogicalStep[] = [];
-  let currentState = [...initial];
+  // IMPORTANT: Use deep copy to avoid mutating the initial state
+  let currentState = initial.map(v => ({ ...v }));
   let stepNumber = 1;
 
   // Add introductory explanation step
   steps.push({
     stepNumber: stepNumber++,
-    description: 'Using Linear Algebra to Find the Firing Sequence',
-    explanation: `Example 3.11 uses the K⁻¹ matrix to compute the exact firings needed. We calculate:\n\nK⁻¹(final - initial) = K⁻¹((0,1,0,0,0) - (3+i, 4-6i, 7+i, -8-8i, 3))\n\nThis gives the firing vector: [-5-i, -4+i, -4+3i, 4-i, -1]\n\n• Real part = A-firings needed at each vertex: [-5, -4, -4, 4, -1]\n• Imaginary part = B-firings needed: [-1, 1, 3, -1, 0]\n\nNegative values mean fire the opposite move (e.g., -5 A-firings = 5 -A firings).`,
-    stateBefore: [...initial],
-    stateAfter: [...initial],
+    description: 'Example 3.11: Find a Nice Representative',
+    explanation: `We start with the configuration (3+i, 4-6i, 7+i, -8-8i, 3) and will apply Algorithm 3.10 to find its nice representative.\n\nAlgorithm 3.10 transforms any configuration into a nice representative (where V0 ∈ {0,3}, V1-V4 ∈ {0,1,2}, all real).\n\nThe algorithm uses direct mathematical transformations based on the current imaginary chip distribution (ψ values):\n• ψ(v0) = 1, ψ(v1) = -6, ψ(v2) = 1, ψ(v3) = -8, ψ(v4) = 0\n\nWe'll follow the algorithm step-by-step to see how it works!`,
+    stateBefore: initial.map(v => ({ ...v })),
+    stateAfter: initial.map(v => ({ ...v })),
     isExplanation: true,
   });
 
   // Add strategy explanation
   steps.push({
     stepNumber: stepNumber++,
-    description: 'Strategy: Remove Imaginary Chips First (Lemma 3.4)',
-    explanation: `Following Algorithm 3.10, we apply all B/-B firings first to remove imaginary chips, then all A/-A firings to reach the nice representative.\n\nIMPORTANT: You'll see imaginary chips appear during the process! This is expected - A-firings affect imaginary parts and B-firings affect real parts. The K⁻¹ calculation accounts for all these interactions.\n\nBecause S(R₁₀) is an abelian group, the ORDER doesn't matter - we could do these firings in any sequence and get the same result. We show them grouped by type for clarity.`,
-    stateBefore: [...initial],
-    stateAfter: [...initial],
+    description: 'Algorithm 3.10 Strategy',
+    explanation: `Algorithm 3.10 follows these steps:\n\n**Steps 2-3:** Use the formula ψ(vk) - ψ(vk+1) - ψ(vk-1) to add compensating real chips, then remove all imaginary chips. This is a direct mathematical transformation.\n\n**Steps 4-5:** Apply A/-A firings to each vertex to handle the real chips.\n\n**Steps 6-8:** Apply modulo operations and parity adjustments to ensure V0 ∈ {0,3} and V1-V4 ∈ {0,1,2}.\n\nThe result will be a nice representative in the same equivalence class as our initial configuration!`,
+    stateBefore: initial.map(v => ({ ...v })),
+    stateAfter: initial.map(v => ({ ...v })),
     isExplanation: true,
   });
 
-  const aFirings = [-5, -4, -4, 4, -1]; // Real part of K^-1 result
-  const bFirings = [-1, 1, 3, -1, 0];   // Imaginary part of K^-1 result
+  // These firing counts come from the Example 3.11 calculation in the paper
+  const aFirings = [-5, -4, -4, 4, -1]; // A/-A firings needed at each vertex
+  const bFirings = [-1, 1, 3, -1, 0];   // B/-B firings (used to compute compensating chips)
 
-  // STEP 1: Remove ALL imaginary chips first (Lemma 3.4)
-  // Do all B/-B firings across all vertices
-  for (let vertex = 0; vertex < 5; vertex++) {
-    const bCount = bFirings[vertex];
+  // STEP 2: Add compensating real chips (Algorithm 3.10, Step 2)
+  // At each node vk, add ψ(vk) - ψ(vk+1) - ψ(vk-1) real chips
+  const stateBefore2 = currentState.map(v => ({ ...v }));
 
-    if (bCount !== 0) {
-      const moveType = bCount > 0 ? 'B' : '-B';
-      const count = Math.abs(bCount);
-      const stateBefore = [...currentState];
-      const stateAfter = applyMoveMultiple(currentState, vertex, moveType, count);
-
-      const firingVectorInfo = `From K⁻¹: vertex ${vertex} needs ${bCount > 0 ? bCount : bCount} B-firings (imaginary part of firing vector).`;
-
-      steps.push({
-        stepNumber: stepNumber++,
-        vertex,
-        moveType,
-        count,
-        description: `Fire ${moveType} at v${vertex} [${count}×]`,
-        explanation: `${firingVectorInfo}\n\n${moveType} adds ${moveType === 'B' ? '-1+i' : '1-i'} to v${vertex} and ${moveType === 'B' ? '+1' : '-1'} to neighbors v${adjacency[vertex].join(', v')}.\n\nNote: This also affects real chips! The final state will be correct after all firings.`,
-        stateBefore,
-        stateAfter,
-      });
-
-      currentState = stateAfter;
-    }
+  for (let k = 0; k < 5; k++) {
+    const kPlus1 = (k + 1) % 5;
+    const kMinus1 = (k + 4) % 5; // (k - 1 + 5) % 5
+    const realToAdd = stateBefore2[k].imag - stateBefore2[kPlus1].imag - stateBefore2[kMinus1].imag;
+    currentState[k].real += realToAdd;
   }
 
-  // Add transition explanation before A-firings
   steps.push({
     stepNumber: stepNumber++,
-    description: 'Transition: Now Apply A/-A Firings',
-    explanation: `We've completed all B/-B firings from the firing vector. Now we apply the A/-A firings (real part of K⁻¹ result):\n\nA-firings needed: [-5, -4, -4, 4, -1]\n• v0: 5 -A firings\n• v1: 4 -A firings\n• v2: 4 -A firings\n• v3: 4 A firings\n• v4: 1 -A firing\n\nThese will finalize the transformation to the nice representative (0, 1, 0, 0, 0).`,
-    stateBefore: [...currentState],
-    stateAfter: [...currentState],
+    description: 'Step 2: Add Compensating Real Chips',
+    explanation: `Using Algorithm 3.10 Step 2, we add real chips based on imaginary chip distribution:\n\nAt each vertex vk, add ψ(vk) - ψ(vk+1) - ψ(vk-1) real chips.\n\n• v0: ${stateBefore2[0].imag} - ${stateBefore2[1].imag} - ${stateBefore2[4].imag} = ${stateBefore2[0].imag - stateBefore2[1].imag - stateBefore2[4].imag} → add ${stateBefore2[0].imag - stateBefore2[1].imag - stateBefore2[4].imag} real chips\n• v1: ${stateBefore2[1].imag} - ${stateBefore2[2].imag} - ${stateBefore2[0].imag} = ${stateBefore2[1].imag - stateBefore2[2].imag - stateBefore2[0].imag} → add ${stateBefore2[1].imag - stateBefore2[2].imag - stateBefore2[0].imag} real chips\n• v2: ${stateBefore2[2].imag} - ${stateBefore2[3].imag} - ${stateBefore2[1].imag} = ${stateBefore2[2].imag - stateBefore2[3].imag - stateBefore2[1].imag} → add ${stateBefore2[2].imag - stateBefore2[3].imag - stateBefore2[1].imag} real chips\n• v3: ${stateBefore2[3].imag} - ${stateBefore2[4].imag} - ${stateBefore2[2].imag} = ${stateBefore2[3].imag - stateBefore2[4].imag - stateBefore2[2].imag} → add ${stateBefore2[3].imag - stateBefore2[4].imag - stateBefore2[2].imag} real chips\n• v4: ${stateBefore2[4].imag} - ${stateBefore2[0].imag} - ${stateBefore2[3].imag} = ${stateBefore2[4].imag - stateBefore2[0].imag - stateBefore2[3].imag} → add ${stateBefore2[4].imag - stateBefore2[0].imag - stateBefore2[3].imag} real chips\n\nThis formula pre-compensates for the interactions between B/-B firings.`,
+    stateBefore: stateBefore2,
+    stateAfter: currentState.map(v => ({ ...v })),
     isExplanation: true,
   });
 
-  // STEP 2: Adjust real chips (Algorithm 3.10)
-  // Do all A/-A firings across all vertices
-  for (let vertex = 0; vertex < 5; vertex++) {
-    const aCount = aFirings[vertex];
+  // STEP 3: Remove all imaginary chips (Algorithm 3.10, Step 3)
+  const stateBefore3 = currentState.map(v => ({ ...v }));
 
-    if (aCount !== 0) {
-      const moveType = aCount > 0 ? 'A' : '-A';
-      const count = Math.abs(aCount);
-      const stateBefore = [...currentState];
-      const stateAfter = applyMoveMultiple(currentState, vertex, moveType, count);
-
-      const firingVectorInfo = `From K⁻¹: vertex ${vertex} needs ${aCount > 0 ? aCount : aCount} A-firings (real part of firing vector).`;
-
-      steps.push({
-        stepNumber: stepNumber++,
-        vertex,
-        moveType,
-        count,
-        description: `Fire ${moveType} at v${vertex} [${count}×]`,
-        explanation: `${firingVectorInfo}\n\n${moveType} adds ${moveType === 'A' ? '1+i' : '-1-i'} to v${vertex} and ${moveType === 'A' ? '-i' : '+i'} to neighbors v${adjacency[vertex].join(', v')}.`,
-        stateBefore,
-        stateAfter,
-      });
-
-      currentState = stateAfter;
-    }
+  for (let k = 0; k < 5; k++) {
+    currentState[k].imag = 0;
   }
+
+  steps.push({
+    stepNumber: stepNumber++,
+    description: 'Step 3: Remove All Imaginary Chips',
+    explanation: `Following Algorithm 3.10 Step 3, we remove all imaginary chips by setting imag = 0 at each vertex.\n\nThis direct transformation is mathematically equivalent to performing all the B/-B firings from the firing vector:\n• v0: ${bFirings[0]} B-firings\n• v1: ${bFirings[1]} B-firings\n• v2: ${bFirings[2]} B-firings\n• v3: ${bFirings[3]} B-firings\n• v4: ${bFirings[4]} B-firings\n\nThe compensating real chips we added in Step 2 ensure the final result is correct after removing imaginary parts.`,
+    stateBefore: stateBefore3,
+    stateAfter: currentState.map(v => ({ ...v })),
+    isExplanation: true,
+  });
+
+  // STEPS 4-5: Introduce isEven variable and check initial parity
+  const stateBefore4 = currentState.map(v => ({ ...v }));
+
+  // Step 5: Count total chips BEFORE any transformations, set isEven flag
+  const totalChipsBefore = currentState.reduce((sum, v) => sum + v.real, 0);
+  const isEven = totalChipsBefore % 2 === 0;
+
+  steps.push({
+    stepNumber: stepNumber++,
+    description: 'Steps 4-5: Introduce isEven Variable',
+    explanation: `**Step 4:** Introduce a boolean variable isEven.\n\n**Step 5:** Count the total chips: ${currentState[0].real} + ${currentState[1].real} + ${currentState[2].real} + ${currentState[3].real} + ${currentState[4].real} = ${totalChipsBefore}\n\nSince ${totalChipsBefore} is ${totalChipsBefore % 2 === 0 ? 'EVEN' : 'ODD'}, set isEven = ${isEven ? 'True' : 'False'}`,
+    stateBefore: stateBefore4,
+    stateAfter: currentState.map(v => ({ ...v })),
+    isExplanation: true,
+  });
+
+  // STEP 6: Subtract the distinguished node (V0) from every node
+  const stateBefore6 = currentState.map(v => ({ ...v }));
+  const v0Value = currentState[0].real;
+
+  for (let k = 0; k < 5; k++) {
+    currentState[k].real -= v0Value;
+  }
+
+  steps.push({
+    stepNumber: stepNumber++,
+    description: 'Step 6: Subtract Distinguished Node from All Nodes',
+    explanation: `Subtract V0 (${v0Value}) from every node:\n• v0: ${stateBefore6[0].real} - ${v0Value} = ${currentState[0].real}\n• v1: ${stateBefore6[1].real} - ${v0Value} = ${currentState[1].real}\n• v2: ${stateBefore6[2].real} - ${v0Value} = ${currentState[2].real}\n• v3: ${stateBefore6[3].real} - ${v0Value} = ${currentState[3].real}\n• v4: ${stateBefore6[4].real} - ${v0Value} = ${currentState[4].real}`,
+    stateBefore: stateBefore6,
+    stateAfter: currentState.map(v => ({ ...v })),
+    isExplanation: true,
+  });
+
+  // STEP 7: Apply modulo 3 to each node
+  const stateBefore7 = currentState.map(v => ({ ...v }));
+
+  for (let k = 0; k < 5; k++) {
+    currentState[k].real = ((currentState[k].real % 3) + 3) % 3; // Handle negative modulo
+  }
+
+  steps.push({
+    stepNumber: stepNumber++,
+    description: 'Step 7: Apply Modulo 3 to All Nodes',
+    explanation: `At each node, set the number of chips to the remainder after dividing by 3:\n• v0: ${stateBefore7[0].real} mod 3 = ${currentState[0].real}\n• v1: ${stateBefore7[1].real} mod 3 = ${currentState[1].real}\n• v2: ${stateBefore7[2].real} mod 3 = ${currentState[2].real}\n• v3: ${stateBefore7[3].real} mod 3 = ${currentState[3].real}\n• v4: ${stateBefore7[4].real} mod 3 = ${currentState[4].real}\n\nNow all vertices have values in {0, 1, 2}`,
+    stateBefore: stateBefore7,
+    stateAfter: currentState.map(v => ({ ...v })),
+    isExplanation: true,
+  });
+
+  // STEP 8: Final parity check with isEven
+  const totalChipsAfter = currentState.reduce((sum, v) => sum + v.real, 0);
+  const stateBefore8 = currentState.map(v => ({ ...v }));
+
+  // Check: if (total is even AND isEven = False) OR (total is odd AND isEven = True), add 3 to V0
+  const shouldAdd3 = (totalChipsAfter % 2 === 0 && !isEven) || (totalChipsAfter % 2 === 1 && isEven);
+
+  if (shouldAdd3) {
+    currentState[0].real += 3;
+  }
+
+  steps.push({
+    stepNumber: stepNumber++,
+    description: 'Step 8: Final Parity Check',
+    explanation: `Count the total chips: ${stateBefore8[0].real} + ${stateBefore8[1].real} + ${stateBefore8[2].real} + ${stateBefore8[3].real} + ${stateBefore8[4].real} = ${totalChipsAfter}\n\nTotal is ${totalChipsAfter % 2 === 0 ? 'EVEN' : 'ODD'} and isEven = ${isEven ? 'True' : 'False'}\n\n${shouldAdd3 ? `Since (total is ${totalChipsAfter % 2 === 0 ? 'even' : 'odd'} AND isEven = ${isEven ? 'True' : 'False'}), we add 3 to V0.\n\nFinal: (${currentState.map(v => v.real).join(', ')})` : `No adjustment needed.\n\nFinal: (${currentState.map(v => v.real).join(', ')})`}\n\nThis ensures V0 ∈ {0, 3} and preserves the correct equivalence class!`,
+    stateBefore: stateBefore8,
+    stateAfter: currentState.map(v => ({ ...v })),
+    isExplanation: true,
+  });
 
   // Add final conclusion step
   steps.push({
     stepNumber: stepNumber++,
     description: 'Nice Representative Achieved!',
-    explanation: `We've successfully reached (0, 1, 0, 0, 0) - the unique nice representative for the equivalence class containing our initial configuration (3+i, 4-6i, 7+i, -8-8i, 3).\n\nThis demonstrates Algorithm 3.10: using the K⁻¹ matrix calculation, we determined the exact firing sequence needed to reach this representative.`,
+    explanation: `We've successfully reached (0, 1, 0, 0, 0) - the unique nice representative for the equivalence class containing our initial configuration (3+i, 4-6i, 7+i, -8-8i, 3).\n\nAlgorithm 3.10 used direct mathematical transformations (not individual firings!) to find this representative:\n• Steps 2-3: Handled imaginary chips using formulas\n• Steps 4-5: Applied modulo operations\n• Steps 6-7: Normalized to ensure V0 ∈ {0,3}, V1-V4 ∈ {0,1,2}\n• Step 8: Final parity adjustment\n\n**Verification (optional):** You can verify these configurations are equivalent by computing K⁻¹((0,1,0,0,0) - (3+i, 4-6i, 7+i, -8-8i, 3)) = (-5-i, -4+i, -4+3i, 4-i, -1), which gives the firing vector needed to transform one into the other.`,
     stateBefore: [...currentState],
     stateAfter: [...currentState],
     isExplanation: true,
