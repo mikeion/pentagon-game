@@ -107,9 +107,28 @@ export default function PentagonGame({ initialMode, initialDifficulty }: Pentago
   const [editImag, setEditImag] = useState('0');
 
   const generateStartingState = useCallback((difficulty: Difficulty, customCount?: number) => {
-    // Generate random starting state by assigning move coefficients to each vertex
-    // Each vertex gets: some number of A moves (+ or -) and some number of B moves (+ or -)
-    const startingVertices = Array(5).fill(null).map(() => ({ real: 0, imag: 0 }));
+    // For Expert mode, start from a random nice representative instead of (0,0,0,0,0)
+    // This prevents players from just "undoing" back to zero
+    let startingVertices: ComplexNumber[];
+
+    if (difficulty === 'expert') {
+      // Generate a random nice representative:
+      // V0 ∈ {0, 3}
+      // V1-V4 ∈ {0, 1, 2}
+      // All imaginary = 0
+      startingVertices = [
+        { real: Math.random() < 0.5 ? 0 : 3, imag: 0 }, // V0: randomly 0 or 3
+        { real: Math.floor(Math.random() * 3), imag: 0 }, // V1: randomly 0, 1, or 2
+        { real: Math.floor(Math.random() * 3), imag: 0 }, // V2: randomly 0, 1, or 2
+        { real: Math.floor(Math.random() * 3), imag: 0 }, // V3: randomly 0, 1, or 2
+        { real: Math.floor(Math.random() * 3), imag: 0 }, // V4: randomly 0, 1, or 2
+      ];
+      console.log('Expert mode: Starting from random nice representative:',
+        startingVertices.map(v => v.real).join(', '));
+    } else {
+      // For Easy/Medium/Hard, start from (0,0,0,0,0)
+      startingVertices = Array(5).fill(null).map(() => ({ real: 0, imag: 0 }));
+    }
 
     // Determine target move count based on difficulty
     let minMoves, maxMoves;
