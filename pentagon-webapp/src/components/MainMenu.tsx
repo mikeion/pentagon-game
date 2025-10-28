@@ -95,7 +95,7 @@ export default function MainMenu() {
             className="w-full px-6 py-5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all border border-slate-600"
           >
             <div className="text-lg mb-1">Sandbox Mode</div>
-            <div className="text-sm text-slate-300">Freely set chips and explore dynamics. Experiment with <span className="font-medium text-indigo-300">Lemma 3.4</span>: removing imaginary chips through B-firings.</div>
+            <div className="text-sm text-slate-300">Freely set chips and explore the dynamics. Experiment with different configurations and firing patterns.</div>
           </button>
         </div>
       </div>
