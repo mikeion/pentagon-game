@@ -1,11 +1,7 @@
 'use client';
 
-import PentagonGame from '@/components/PentagonGame';
+import MainMenu from '@/components/MainMenu';
 
 export default function Home() {
-  return (
-    <div className="h-screen w-screen overflow-hidden">
-      <PentagonGame key="home" />
-    </div>
-  );
+  return <MainMenu />;
 }
