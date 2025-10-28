@@ -839,16 +839,6 @@ export default function PentagonGame({ initialMode, initialDifficulty }: Pentago
               >
                 Expert (16-20 moves)
               </button>
-              <button
-                onClick={() => {
-                  setSelectedDifficulty('super-hard');
-                  generateStartingState('super-hard');
-                }}
-                className="w-full px-6 py-4 bg-gradient-to-r from-purple-700 to-blue-700 hover:from-purple-600 hover:to-blue-600 text-white rounded-lg font-semibold text-lg transition-all border-2 border-purple-400"
-              >
-                <div>Super Hard 🔥</div>
-                <div className="text-sm font-normal text-purple-100">Reach ANY nice representative (V0∈{'{0,3}'}, V1-V4∈{'{0,1,2}'})</div>
-              </button>
 
               <div className="border-t border-slate-600 pt-3">
                 <label className="text-slate-300 text-sm mb-2 block">Custom (move count):</label>

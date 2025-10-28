@@ -105,6 +105,7 @@ export function generateExample311Tutorial(): PedagogicalStep[] {
 
   const steps: PedagogicalStep[] = [];
   // IMPORTANT: Use deep copy to avoid mutating the initial state
+  // eslint-disable-next-line prefer-const
   let currentState = initial.map(v => ({ ...v }));
   let stepNumber = 1;
 
