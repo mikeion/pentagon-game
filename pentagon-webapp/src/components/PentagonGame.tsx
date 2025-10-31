@@ -716,7 +716,14 @@ export default function PentagonGame({ initialMode, initialDifficulty }: Pentago
               Based on the paper:
             </p>
             <p className="text-indigo-300 text-center mb-4 text-sm font-semibold">
-              McDonough & Ion (2025) - Chip-Firing and the Sandpile Group of the R₁₀ Matroid
+              <a
+                href="https://arxiv.org/abs/2510.26021"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-indigo-200 transition-colors underline"
+              >
+                Ion & McDonough (2025) - Chip-Firing and the Sandpile Group of the R₁₀ Matroid
+              </a>
             </p>
 
             {showModeSelect ? (
@@ -1251,15 +1258,6 @@ export default function PentagonGame({ initialMode, initialDifficulty }: Pentago
           <div className="text-xs text-slate-500 flex items-center gap-1.5 pointer-events-auto">
             <span>Game by</span>
             <a
-              href="https://sites.google.com/view/alexmcdonough/home"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-400 hover:text-indigo-400 transition-colors underline decoration-slate-600 hover:decoration-indigo-400"
-            >
-              Alex McDonough
-            </a>
-            <span>&</span>
-            <a
               href="https://mikeion.com"
               target="_blank"
               rel="noopener noreferrer"
@@ -1267,8 +1265,24 @@ export default function PentagonGame({ initialMode, initialDifficulty }: Pentago
             >
               Mike Ion
             </a>
+            <span>&</span>
+            <a
+              href="https://sites.google.com/view/alexmcdonough/home"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-indigo-400 transition-colors underline decoration-slate-600 hover:decoration-indigo-400"
+            >
+              Alex McDonough
+            </a>
             <span className="text-slate-600 mx-0.5">•</span>
-            <span className="text-slate-400 italic">Paper coming soon</span>
+            <a
+              href="https://arxiv.org/abs/2510.26021"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-indigo-400 transition-colors underline decoration-slate-600 hover:decoration-indigo-400"
+            >
+              Read the paper
+            </a>
           </div>
         </div>
       )}

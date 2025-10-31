@@ -15,7 +15,14 @@ export default function MainMenu() {
           Based on the paper:
         </p>
         <p className="text-indigo-300 text-center mb-4 text-sm font-semibold">
-          McDonough & Ion (2025) - Chip-Firing and the Sandpile Group of the R₁₀ Matroid
+          <a
+            href="https://arxiv.org/abs/2510.26021"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-indigo-200 transition-colors underline"
+          >
+            Ion & McDonough (2025) - Chip-Firing and the Sandpile Group of the R₁₀ Matroid
+          </a>
         </p>
 
         {/* Introductory Context */}

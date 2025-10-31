@@ -21,8 +21,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Pentagon Complex Number Firing Game",
-  description: "A mathematical puzzle game based on Dr. Alex McDonough's research into group theory and complex number operations on pentagon configurations.",
+  title: "R₁₀ Matroid Chip Firing",
+  description: "A mathematical puzzle game based on Ion & McDonough's research into chip-firing on the R₁₀ matroid using Gaussian integers. Explore the 162 equivalence classes of the sandpile group through interactive gameplay.",
   icons: {
     icon: '/favicon.svg?v=4',
     shortcut: '/favicon.svg?v=4',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Pentagon Game',
+    title: 'R₁₀ Chip Firing',
   },
 };
 
