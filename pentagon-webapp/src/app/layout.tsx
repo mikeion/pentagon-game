@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import GoogleAnalytics from "./google-analytics";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -40,11 +41,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
   return (
     <html lang="en" className="h-full">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-full m-0 p-0 overflow-hidden`}
       >
+        {measurementId && <GoogleAnalytics measurementId={measurementId} />}
         {children}
       </body>
     </html>
